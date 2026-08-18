@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<style>
+    .recon-card {
+        background: #111;
+        border: 1px solid #1e1e1e;
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+    }
+    .recon-mode-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 10px 0;
+    }
+    .recon-mode-group button {
+        padding: 6px 20px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #888;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: 0.2s;
+    }
+    .recon-mode-group button:hover {
+        border-color: #666;
+        color: #ccc;
+    }
+    .recon-mode-group button.active {
+        border-color: #4dd0e1;
+        color: #4dd0e1;
+        background: #0d1a2a;
+    }
+    .recon-output {
+        background: #0a0a0a;
+        border: 1px solid #1a1a1a;
+        border-radius: 12px;
+        padding: 16px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        color: #aaa;
+        max-height: 500px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+        line-height: 1.8;
+    }
+    .recon-output .hl {
+        color: #4dd0e1;
+    }
+    .recon-output .success {
+        color: #4caf50;
+    }
+    .recon-output .warn {
+        color: #ffb74d;
+    }
+    .recon-output .danger {
+        color: #f44336;
+    }
+    .recon-output .dim {
+        color: #555;
+    }
+    .recon-progress {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 10px 0 12px;
+        font-size: 12px;
+        color: #666;
+    }
+    .recon-progress .step {
+        background: #0d0d0d;
+        padding: 3px 14px;
+        border-radius: 20px;
+        border: 1px solid #1a1a1a;
+    }
+    .recon-progress .step.done {
+        border-color: #4caf50;
+        color: #4caf50;
+    }
+    .recon-progress .step.active {
+        border-color: #ffb74d;
+        color: #ffb74d;
+    }
+    .recon-progress .step.error {
+        border-color: #f44336;
+        color: #f44336;
+    }
+    .recon-btn {
+        padding: 8px 28px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #ccc;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+    .recon-btn:hover {
+        border-color: #666;
+        color: #fff;
+    }
+    .recon-btn.primary {
+        background: #1a3a3a;
+        border-color: #4dd0e1;
+        color: #4dd0e1;
+    }
+    .recon-btn.primary:hover {
+        background: #0d2a2a;
+        border-color: #7dd8e8;
+        color: #7dd8e8;
+    }
+    .recon-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+    .recon-input {
+        flex: 1;
+        padding: 10px 18px;
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 30px;
+        color: #e0e0e0;
+        font-size: 14px;
+        outline: none;
+        min-width: 200px;
+    }
+    .recon-input:focus {
+        border-color: #555;
+    }
+    .recon-summary {
+        background: #0d0d0d;
+        border: 1px solid #1a1a1a;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-top: 10px;
+        font-size: 13px;
+        color: #888;
+    }
+    .recon-summary .label {
+        color: #555;
+        letter-spacing: 1px;
+    }
+    .recon-summary .value {
+        color: #eee;
+    }
+    @media (max-width:500px) {
+        .recon-mode-group button {
+            font-size: 11px;
+            padding: 4px 14px;
+        }
+        .recon-output {
+            font-size: 11px;
+            max-height: 350px;
+        }
+    }
+</style>
+
+<h2 style="font-weight:300;letter-spacing:2px;margin-bottom:4px;color:#aaa;">🚀 自动侦查系统</h2>
+<p style="color:#666;margin-bottom:12px;font-size:13px;">输入 IP 或域名，一键执行信息收集侦查</p>
+
+<div class="recon-card">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <input type="text" id="reconTarget" class="recon-input" placeholder="输入 IP / 域名" value="github.com">
+    </div>
+
+    <div class="recon-mode-group">
+        <button class="active" data-mode="quick" onclick="setReconMode('quick')">⚡ 快速</button>
+        <button data-mode="full" onclick="setReconMode('full')">🔍 完整</button>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="recon-btn primary" onclick="startRecon()">▶ 开始侦查</button>
+        <button class="recon-btn" onclick="clearRecon()">清空结果</button>
+        <button class="recon-btn" onclick="exportRecon()" style="color:#666;">📥 导出报告</button>
+    </div>
+
+    <div class="recon-progress" id="reconProgress">
+        <span class="step done">⚡ 就绪</span>
+    </div>
+</div>
+
+<div class="recon-output" id="reconOutput">
+⚡ 等待侦查指令...
+</div>
+
+<script>
+    // =========================================================
+    // 状态
+    // =========================================================
+    let reconMode = 'quick';
+    let reconRunning = false;
+    let reconResults = {};
+
+    // =========================================================
+    // 模式切换
+    // =========================================================
+    function setReconMode(mode) {
+        if (reconRunning) return;
+        reconMode = mode;
+        document.querySelectorAll('.recon-mode-group button').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.mode === mode);
+        });
+    }
+
+    // =========================================================
+    // 清空
+    // =========================================================
+    function clearRecon() {
+        if (reconRunning) return;
+        document.getElementById('reconOutput').innerHTML = '⚡ 等待侦查指令...';
+        document.getElementById('reconProgress').innerHTML = '<span class="step done">⚡ 就绪</span>';
+        reconResults = {};
+    }
+
+    // =========================================================
+    // 导出报告
+    // =========================================================
+    function exportRecon() {
+        const output = document.getElementById('reconOutput').innerText;
+        if (!output || output.includes('等待侦查')) {
+            alert('请先执行侦查！');
+            return;
+        }
+        const blob = new Blob([output], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.download = 'recon_report_' + new Date().toISOString().slice(0, 10) + '.txt';
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        URL.revokeObjectURL(link.href);
+    }
+
+    // =========================================================
+    // 工具函数
+    // =========================================================
+    function log(text, type) {
+        const output = document.getElementById('reconOutput');
+        const cls = type === 'hl' ? 'hl' :
+            type === 'success' ? 'success' :
+            type === 'warn' ? 'warn' :
+            type === 'danger' ? 'danger' : '';
+        output.innerHTML += `<span class="${cls}">${text}</span>`;
+        output.scrollTop = output.scrollHeight;
+    }
+
+    function logLine(text, type) {
+        log(text + '\n', type);
+    }
+
+    function setProgressSteps(labels) {
+        const progress = document.getElementById('reconProgress');
+        progress.innerHTML = labels.map((label, i) =>
+            `<span class="step" data-step="${i}">${label}</span>`
+        ).join('');
+    }
+
+    function setStepDone(index) {
+        const steps = document.querySelectorAll('#reconProgress .step');
+        if (steps[index]) { steps[index].classList.remove('active');
+            steps[index].classList.add('done'); }
+    }
+
+    function setStepActive(index) {
+        const steps = document.querySelectorAll('#reconProgress .step');
+        if (steps[index]) { steps[index].classList.add('active'); }
+    }
+
+    function setStepError(index) {
+        const steps = document.querySelectorAll('#reconProgress .step');
+        if (steps[index]) { steps[index].classList.remove('active');
+            steps[index].classList.add('error'); }
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    // =========================================================
+    // 判断目标类型
+    // =========================================================
+    function isIP(target) {
+        return /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(target);
+    }
+
+    function isDomain(target) {
+        return /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/.test(target);
+    }
+
+    // =========================================================
+    // 侦查函数 - 真实 API
+    // =========================================================
+
+    // 1. IP 定位 (真实)
+    async function ipLocation(target) {
+        logLine(`\n⏳ 正在查询 IP 定位...`, 'hl');
+        try {
+            const res = await fetch('https://ipapi.co/' + target + '/json/');
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+            const result = {
+                ip: data.ip || target,
+                country: data.country_name || '未知',
+                city: data.city || '未知',
+                region: data.region || '未知',
+                org: data.org || '未知',
+                asn: data.asn || '未知',
+                lat: data.latitude || '--',
+                lon: data.longitude || '--'
+            };
+            logLine(`✅ IP: <span class="hl">${result.ip}</span>`, 'success');
+            logLine(`   🌍 国家: ${result.country}  |  城市: ${result.city}  |  区域: ${result.region}`);
+            logLine(`   🏢 运营商: ${result.org}  |  ASN: ${result.asn}`);
+            logLine(`   📍 经纬度: ${result.lat}, ${result.lon}`);
+            return result;
+        } catch (e) {
+            logLine(`❌ IP 定位失败: ${e.message}`, 'danger');
+            return null;
+        }
+    }
+
+    // 2. DNS 枚举 (真实)
+    async function dnsEnum(domain) {
+        logLine(`\n⏳ 正在查询 DNS 记录...`, 'hl');
+        const types = ['A', 'AAAA', 'MX', 'NS', 'TXT'];
+        const results = [];
+        let successCount = 0;
+        for (const type of types) {
+            try {
+                const res = await fetch(`https://dns.google/resolve?name=${domain}&type=${type}`);
+                const data = await res.json();
+                const answer = data.Answer || [];
+                if (answer.length > 0) {
+                    results.push(`<span class="hl">${type}:</span> ${answer.map(a => a.data).join(', ')}`);
+                    successCount++;
+                } else {
+                    results.push(`<span class="dim">${type}:</span> 无记录`);
+                }
+            } catch (e) {
+                results.push(`<span class="warn">${type}:</span> 查询失败`);
+            }
+        }
+        if (successCount > 0) {
+            logLine(`✅ DNS 查询完成 (${successCount}/${types.length} 条记录)`, 'success');
+        } else {
+            logLine(`⚠️ DNS 查询完成，未发现记录`, 'warn');
+        }
+        results.forEach(r => logLine(`   ${r}`));
+        return results;
+    }
+
+    // 3. WHOIS 查询 (真实)
+    async function whoisQuery(domain) {
+        logLine(`\n⏳ 正在查询 WHOIS...`, 'hl');
+        try {
+            const res = await fetch('https://whoisjson.com/api/v1/whois?domain=' + domain);
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+            const result = {
+                domain: data.domain || domain,
+                created: data.created || '未知',
+                expires: data.expires || '未知',
+                registrar: data.registrar || '未知',
+                owner: data.owner || '未知',
+                email: data.email || '未知'
+            };
+            logLine(`✅ WHOIS 查询成功`, 'success');
+            logLine(`   📋 域名: <span class="hl">${result.domain}</span>`);
+            logLine(`   📅 注册: ${result.created}`);
+            logLine(`   ⏳ 到期: ${result.expires}`);
+            logLine(`   🏢 注册商: ${result.registrar}`);
+            if (result.owner && result.owner !== '未知') logLine(`   👤 所有者: ${result.owner}`);
+            return result;
+        } catch (e) {
+            logLine(`⚠️ WHOIS 查询受限: ${e.message}`, 'warn');
+            logLine(`   💡 建议手动查询: https://who.is/whois/${domain}`);
+            return null;
+        }
+    }
+
+    // 4. 子域名枚举 (通过 crt.sh 证书透明度)
+    async function subdomainEnum(domain) {
+        logLine(`\n⏳ 正在枚举子域名 (通过 crt.sh)...`, 'hl');
+        try {
+            const res = await fetch(`https://crt.sh/?q=%.${domain}&output=json`);
+            const data = await res.json();
+            if (!data || data.length === 0) {
+                logLine(`⚠️ 未发现子域名`, 'warn');
+                return [];
+            }
+            const subs = new Set();
+            data.forEach(item => {
+                const name = item.name_value || '';
+                if (name.includes(domain) && name !== domain) {
+                    subs.add(name);
+                }
+            });
+            const subList = Array.from(subs).slice(0, 20);
+            if (subList.length > 0) {
+                logLine(`✅ 发现 <span class="hl">${subList.length}</span> 个子域名`, 'success');
+                subList.forEach(s => logLine(`   · ${s}`));
+            } else {
+                logLine(`⚠️ 未发现子域名`, 'warn');
+            }
+            return subList;
+        } catch (e) {
+            logLine(`⚠️ 子域名枚举失败: ${e.message}`, 'warn');
+            return [];
+        }
+    }
+
+    // 5. SSL 证书信息 (通过 crt.sh)
+    async function sslInfo(domain) {
+        logLine(`\n⏳ 正在查询 SSL 证书...`, 'hl');
+        try {
+            const res = await fetch(`https://crt.sh/?q=${domain}&output=json`);
+            const data = await res.json();
+            if (!data || data.length === 0) {
+                logLine(`⚠️ 未找到证书`, 'warn');
+                return null;
+            }
+            const latest = data[0];
+            logLine(`✅ 证书信息`, 'success');
+            logLine(`   🔒 颁发者: ${latest.issuer_name || '未知'}`);
+            logLine(`   📅 颁发时间: ${latest.entry_timestamp || '未知'}`);
+            logLine(`   🏷️ 主题: ${latest.name_value || domain}`);
+            return latest;
+        } catch (e) {
+            logLine(`⚠️ 证书查询受限`, 'warn');
+            return null;
+        }
+    }
+
+    // 6. 在线端口扫描入口 (提供跳转)
+    function portScanRedirect(target) {
+        logLine(`\n📌 端口扫描`, 'hl');
+        logLine(`   ⚠️ 浏览器无法直接进行端口扫描`, 'warn');
+        logLine(`   💡 推荐在线扫描工具:`);
+        logLine(`   · <a href="https://hackertarget.com/nmap-online-port-scanner/?ip=${target}" target="_blank" style="color:#4dd0e1;">HackerTarget</a>`);
+        logLine(`   · <a href="https://www.yougetsignal.com/tools/open-ports/?address=${target}" target="_blank" style="color:#4dd0e1;">YouGetSignal</a>`);
+        logLine(`   · <a href="https://pentest-tools.com/network-vulnerability-scanning/tcp-port-scanner-online-nmap#${target}" target="_blank" style="color:#4dd0e1;">Pentest-Tools</a>`);
+    }
+
+    // =========================================================
+    // 主函数
+    // =========================================================
+    async function startRecon() {
+        if (reconRunning) return;
+        const target = document.getElementById('reconTarget').value.trim();
+        if (!target) {
+            alert('请输入目标 IP 或域名');
+            return;
+        }
+        const output = document.getElementById('reconOutput');
+
+        reconRunning = true;
+        reconResults = {};
+        output.innerHTML = '';
+
+        const modeNames = { quick: '快速模式', full: '完整模式' };
+        const isIPAddr = isIP(target);
+        const isDomainName = isDomain(target);
+
+        // 定义步骤
+        let steps = ['ipLocation'];
+        let labels = ['🌐 IP 定位'];
+        if (reconMode === 'full') {
+            if (!isIPAddr) {
+                steps.push('dnsEnum');
+                labels.push('📋 DNS 枚举');
+                steps.push('whoisQuery');
+                labels.push('📜 WHOIS');
+                steps.push('subdomainEnum');
+                labels.push('🧩 子域名');
+                steps.push('sslInfo');
+                labels.push('🔒 SSL 证书');
+            }
+            // 即使是IP，也显示端口扫描入口
+            steps.push('portScanRedirect');
+            labels.push('🔌 端口扫描入口');
+        }
+
+        // 如果是IP且完整模式，只做IP定位 + 端口扫描入口
+        if (isIPAddr && reconMode === 'full') {
+            steps = ['ipLocation', 'portScanRedirect'];
+            labels = ['🌐 IP 定位', '🔌 端口扫描入口'];
+        }
+
+        // 如果是IP且快速模式，只做IP定位
+        if (isIPAddr && reconMode === 'quick') {
+            steps = ['ipLocation'];
+            labels = ['🌐 IP 定位'];
+        }
+
+        setProgressSteps(labels);
+
+        const startTime = Date.now();
+        const targetType = isIPAddr ? 'IP' : '域名';
+        logLine(`🚀 启动侦查... 目标: <span class="hl">${target}</span> (${targetType})`);
+        logLine(`📌 模式: <span class="hl">${modeNames[reconMode]}</span>`);
+        logLine(`📅 时间: ${new Date().toLocaleString()}`);
+        logLine(`\n${'─'.repeat(40)}\n`);
+
+        let results = {};
+
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+            setStepActive(i);
+            try {
+                let result = null;
+                switch (step) {
+                    case 'ipLocation':
+                        result = await ipLocation(target);
+                        break;
+                    case 'dnsEnum':
+                        result = await dnsEnum(target);
+                        break;
+                    case 'whoisQuery':
+                        result = await whoisQuery(target);
+                        break;
+                    case 'subdomainEnum':
+                        result = await subdomainEnum(target);
+                        break;
+                    case 'sslInfo':
+                        result = await sslInfo(target);
+                        break;
+                    case 'portScanRedirect':
+                        portScanRedirect(target);
+                        result = true;
+                        break;
+                }
+                results[step] = result;
+                setStepDone(i);
+            } catch (e) {
+                logLine(`\n❌ 步骤执行失败: ${e.message}`, 'danger');
+                setStepError(i);
+            }
+            await sleep(200);
+        }
+
+        reconResults = results;
+
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        logLine(`\n${'─'.repeat(40)}`);
+        logLine(`\n✅ <span class="success">侦查完成！</span> 用时 ${elapsed}s`);
+
+        // 汇总报告
+        logLine(`\n📊 侦查报告:`);
+        if (results.ipLocation) {
+            logLine(`   · IP 定位: ${results.ipLocation.ip} (${results.ipLocation.country})`);
+        }
+        if (results.whoisQuery && results.whoisQuery.domain) {
+            logLine(`   · WHOIS: ${results.whoisQuery.domain}`);
+        }
+        if (results.subdomainEnum && results.subdomainEnum.length > 0) {
+            logLine(`   · 子域名: ${results.subdomainEnum.length} 个`);
+        }
+        if (results.sslInfo) {
+            logLine(`   · SSL 证书: 已获取`);
+        }
+
+        logLine(`\n💡 提示: 部分查询受 API 限制，建议结合专业工具使用`);
+        logLine(`📌 如需端口扫描，请使用上方提供的在线扫描工具`);
+        reconRunning = false;
+        output.scrollTop = output.scrollHeight;
+    }
+
+    // =========================================================
+    // 回车触发
+    // =========================================================
+    document.getElementById('reconTarget').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') startRecon();
+    });
+
+    console.log('🚀 自动侦查已加载 (真实 API 模式)');
+</script>
+</body>
+</html>

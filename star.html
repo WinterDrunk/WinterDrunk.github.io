@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<style>
+    .star-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .star-header h2 {
+        font-weight: 300;
+        letter-spacing: 2px;
+        color: #aaa;
+    }
+    .star-header p {
+        color: #666;
+        font-size: 13px;
+        margin-top: 2px;
+    }
+    .star-header .actions {
+        display: flex;
+        gap: 8px;
+    }
+    .star-header .actions button {
+        padding: 6px 18px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #ccc;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: 0.2s;
+    }
+    .star-header .actions button:hover {
+        border-color: #666;
+        color: #fff;
+    }
+    .star-container {
+        width: 100%;
+        height: 700px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #1a1a1a;
+        background: #000000;
+    }
+    .star-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    .star-footer {
+        display: flex;
+        gap: 16px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+        color: #555;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+    .star-footer span {
+        color: #555;
+    }
+    .star-note {
+        margin-top: 14px;
+        font-size: 11px;
+        color: #444;
+        border-top: 1px solid #1a1a1a;
+        padding-top: 10px;
+        letter-spacing: 1px;
+        text-align: center;
+    }
+    .star-note a {
+        color: #4dd0e1;
+        text-decoration: none;
+    }
+    @media (max-width: 768px) {
+        .star-container {
+            height: 450px;
+        }
+        .star-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .star-header .actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+    }
+    @media (max-width: 500px) {
+        .star-container {
+            height: 350px;
+        }
+        .star-header .actions button {
+            font-size: 11px;
+            padding: 4px 14px;
+        }
+    }
+</style>
+
+<div class="star-header">
+    <div>
+        <h2>🔭 专业星图 · Stellarium</h2>
+        <p>3D 实时星空渲染 · 88 星座连线 · 行星/恒星/深空天体 · 支持搜索</p>
+    </div>
+    <div class="actions">
+        <button onclick="reloadStellarium()">🔄 刷新</button>
+        <button onclick="openStellariumFull()">⛶ 全屏</button>
+        <button onclick="resetStellarium()">🏠 重置</button>
+    </div>
+</div>
+
+<div class="star-container" id="starContainer">
+    <iframe id="stellariumFrame" src="https://stellarium-web.org/" allowfullscreen loading="lazy"></iframe>
+</div>
+
+<div class="star-footer">
+    <span>🖱️ 鼠标拖拽旋转 · 滚轮缩放</span>
+    <span>🔍 右上角搜索天体名称</span>
+    <span>🌌 88 星座连线 · 深空天体</span>
+</div>
+
+<div class="star-note">
+    🔭 基于 <a href="https://stellarium-web.org/" target="_blank">Stellarium Web</a> 开源引擎 · 实时天文模拟 · 3D 星空渲染
+</div>
+
+<script>
+    // =========================================================
+    // Stellarium 控制
+    // =========================================================
+
+    function reloadStellarium() {
+        const frame = document.getElementById('stellariumFrame');
+        if (frame) {
+            // 强制刷新
+            frame.src = 'https://stellarium-web.org/';
+        }
+    }
+
+    function resetStellarium() {
+        const frame = document.getElementById('stellariumFrame');
+        if (frame) {
+            // 重置到主页（相当于重新加载）
+            frame.src = 'https://stellarium-web.org/';
+        }
+    }
+
+    function openStellariumFull() {
+        const container = document.getElementById('starContainer');
+        if (container.requestFullscreen) {
+            container.requestFullscreen();
+        } else if (container.webkitRequestFullscreen) {
+            container.webkitRequestFullscreen();
+        } else if (container.msRequestFullscreen) {
+            container.msRequestFullscreen();
+        } else {
+            // 降级：新窗口打开
+            window.open('https://stellarium-web.org/', '_blank');
+        }
+    }
+
+    // 键盘快捷键：F 全屏
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'f' || e.key === 'F') {
+            // 检查是否在 star 面板内
+            const container = document.getElementById('starContainer');
+            if (container && container.offsetParent !== null) {
+                openStellariumFull();
+            }
+        }
+    });
+
+    console.log('🔭 专业星图已加载');
+    console.log('💡 按 F 键全屏');
+</script>
+</body>
+</html>

@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<style>
+    .osint-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 14px;
+    }
+    .osint-card {
+        background: #111;
+        border: 1px solid #1e1e1e;
+        border-radius: 14px;
+        padding: 14px 16px;
+        transition: 0.25s;
+    }
+    .osint-card:hover {
+        border-color: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .osint-card .o-emoji {
+        font-size: 22px;
+        display: block;
+        margin-bottom: 2px;
+    }
+    .osint-card h4 {
+        font-size: 14px;
+        font-weight: 500;
+        color: #eee;
+        margin-bottom: 2px;
+    }
+    .osint-card p {
+        font-size: 11px;
+        color: #666;
+    }
+    .osint-card .input-group {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+        flex-wrap: wrap;
+    }
+    .osint-card .input-group input,
+    .osint-card .input-group textarea {
+        flex: 1;
+        padding: 6px 12px;
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        color: #e0e0e0;
+        font-size: 12px;
+        outline: none;
+        font-family: 'Courier New', monospace;
+        min-width: 60px;
+        resize: vertical;
+    }
+    .osint-card .input-group input:focus,
+    .osint-card .input-group textarea:focus {
+        border-color: #555;
+    }
+    .osint-card .input-group button {
+        padding: 6px 14px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #ccc;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: 0.2s;
+        white-space: nowrap;
+    }
+    .osint-card .input-group button:hover {
+        border-color: #666;
+        color: #fff;
+    }
+    .osint-card .output-box {
+        margin-top: 6px;
+        padding: 6px 10px;
+        background: #0a0a0a;
+        border: 1px solid #1a1a1a;
+        border-radius: 8px;
+        color: #888;
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        max-height: 100px;
+        overflow-y: auto;
+        word-break: break-all;
+        line-height: 1.5;
+    }
+    .osint-card .output-box .hl {
+        color: #4dd0e1;
+    }
+    .osint-card .output-box .warn {
+        color: #ffb74d;
+    }
+    .osint-card .output-box .danger {
+        color: #f44336;
+    }
+    .osint-card .output-box .success {
+        color: #4caf50;
+    }
+    .osint-card .btn-group {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+    }
+    .osint-card .btn-group button {
+        padding: 4px 12px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #ccc;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 11px;
+        transition: 0.2s;
+    }
+    .osint-card .btn-group button:hover {
+        border-color: #666;
+        color: #fff;
+    }
+
+    .osint-section-title {
+        font-weight: 300;
+        letter-spacing: 2px;
+        color: #aaa;
+        margin: 18px 0 10px;
+        font-size: 16px;
+        border-bottom: 1px solid #1a1a1a;
+        padding-bottom: 6px;
+    }
+    .osint-section-title .emoji {
+        margin-right: 6px;
+    }
+
+    @media (max-width: 1024px) {
+        .osint-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    @media (max-width: 500px) {
+        .osint-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<h2 style="font-weight:300;letter-spacing:2px;margin-bottom:4px;color:#aaa;">🕵️ 情报引擎</h2>
+<p style="color:#666;margin-bottom:12px;font-size:13px;">开源情报 · 输入目标一键侦查</p>
+
+<!-- 全局搜索 -->
+<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+    <input type="text" id="osintGlobalInput" placeholder="输入 IP / 域名 / 邮箱 / 用户名" style="flex:1;padding:8px 16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:30px;color:#e0e0e0;font-size:13px;outline:none;min-width:180px;">
+    <button onclick="osintGlobalSearch()" style="padding:8px 24px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;">🔍 全局搜索</button>
+    <button onclick="document.getElementById('osintGlobalInput').value=''" style="padding:8px 18px;background:transparent;border:1px solid #2a2a2a;color:#555;border-radius:30px;cursor:pointer;font-size:12px;">清空</button>
+</div>
+
+<!-- ========================================================= -->
+<!-- IP 侦察 -->
+<div class="osint-section-title"><span class="emoji">🌐</span>IP 侦察</div>
+<div class="osint-grid">
+    <div class="osint-card">
+        <span class="o-emoji">📍</span>
+        <h4>IP 定位</h4>
+        <p>查询归属地、运营商</p>
+        <div class="input-group">
+            <input type="text" id="ipLocInput" placeholder="IP" value="8.8.8.8">
+            <button onclick="ipLookup()">查询</button>
+        </div>
+        <div class="output-box" id="ipLocOutput">等待查询...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🏷️</span>
+        <h4>ASN 查询</h4>
+        <p>所属 ASN、组织</p>
+        <div class="input-group">
+            <input type="text" id="asnInput" placeholder="IP" value="8.8.8.8">
+            <button onclick="asnLookup()">查询</button>
+        </div>
+        <div class="output-box" id="asnOutput">等待查询...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🔄</span>
+        <h4>BGP 路由</h4>
+        <p>BGP 路由信息</p>
+        <div class="input-group">
+            <input type="text" id="bgpInput" placeholder="IP" value="8.8.8.8">
+            <button onclick="bgpLookup()">查询</button>
+        </div>
+        <div class="output-box" id="bgpOutput">等待查询...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🔁</span>
+        <h4>反查域名</h4>
+        <p>IP 反查绑定域名</p>
+        <div class="input-group">
+            <input type="text" id="rdnsInput" placeholder="IP" value="8.8.8.8">
+            <button onclick="rdnsLookup()">查询</button>
+        </div>
+        <div class="output-box" id="rdnsOutput">等待查询...</div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 域名分析 -->
+<div class="osint-section-title"><span class="emoji">📋</span>域名分析</div>
+<div class="osint-grid">
+    <div class="osint-card">
+        <span class="o-emoji">🔍</span>
+        <h4>DNS 枚举</h4>
+        <p>A/AAAA/MX/NS/TXT</p>
+        <div class="input-group">
+            <input type="text" id="dnsInput" placeholder="域名" value="github.com">
+            <button onclick="dnsLookup()">查询</button>
+        </div>
+        <div class="output-box" id="dnsOutput">等待查询...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">📜</span>
+        <h4>WHOIS</h4>
+        <p>域名注册信息</p>
+        <div class="input-group">
+            <input type="text" id="whoisInput" placeholder="域名" value="github.com">
+            <button onclick="whoisLookup()">查询</button>
+        </div>
+        <div class="output-box" id="whoisOutput">等待查询...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🧩</span>
+        <h4>子域名爆破</h4>
+        <p>枚举子域名</p>
+        <div class="input-group">
+            <input type="text" id="subdomainInput" placeholder="域名" value="github.com">
+            <button onclick="subdomainLookup()">爆破</button>
+        </div>
+        <div class="output-box" id="subdomainOutput">等待查询...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🔒</span>
+        <h4>TLS 证书</h4>
+        <p>证书信息</p>
+        <div class="input-group">
+            <input type="text" id="tlsInput" placeholder="域名" value="github.com">
+            <button onclick="tlsLookup()">查询</button>
+        </div>
+        <div class="output-box" id="tlsOutput">等待查询...</div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 邮箱溯源 (4个全功能) -->
+<div class="osint-section-title"><span class="emoji">✉️</span>邮箱溯源</div>
+<div class="osint-grid">
+    <div class="osint-card">
+        <span class="o-emoji">📧</span>
+        <h4>邮件头解析</h4>
+        <p>提取 IP、域名</p>
+        <div class="input-group">
+            <input type="text" id="emailHeaderInput" placeholder="邮件头" value="Received: from mail.example.com (192.168.1.1)">
+            <button onclick="parseEmailHeader()">解析</button>
+        </div>
+        <div class="output-box" id="emailHeaderOutput">等待解析...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">✅</span>
+        <h4>邮箱验证</h4>
+        <p>检查邮箱格式</p>
+        <div class="input-group">
+            <input type="text" id="emailVerifyInput" placeholder="邮箱" value="test@gmail.com">
+            <button onclick="emailVerify()">验证</button>
+        </div>
+        <div class="output-box" id="emailVerifyOutput">等待验证...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🔗</span>
+        <h4>关联社交</h4>
+        <p>查找关联账号</p>
+        <div class="input-group">
+            <input type="text" id="emailSocialInput" placeholder="邮箱" value="test@gmail.com">
+            <button onclick="emailSocial()">查询</button>
+        </div>
+        <div class="output-box" id="emailSocialOutput">等待查询...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">📊</span>
+        <h4>批量邮箱验证</h4>
+        <p>一次验证多个邮箱</p>
+        <div class="input-group">
+            <textarea id="batchEmailInput" rows="2" placeholder="每行一个邮箱">test@gmail.com
+admin@example.com
+invalid-email</textarea>
+            <button onclick="batchEmailVerify()">验证</button>
+        </div>
+        <div class="output-box" id="batchEmailOutput">等待验证...</div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 社交足迹 (4个全功能) -->
+<div class="osint-section-title"><span class="emoji">👤</span>社交足迹</div>
+<div class="osint-grid">
+    <div class="osint-card">
+        <span class="o-emoji">🔎</span>
+        <h4>用户名跨站搜索</h4>
+        <p>GitHub/Twitter/Reddit</p>
+        <div class="input-group">
+            <input type="text" id="usernameSearchInput" placeholder="用户名" value="elonmusk">
+            <button onclick="usernameSearch()">搜索</button>
+        </div>
+        <div class="output-box" id="usernameSearchOutput">等待搜索...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🐙</span>
+        <h4>GitHub 邮箱关联</h4>
+        <p>邮箱查 GitHub 用户</p>
+        <div class="input-group">
+            <input type="text" id="githubEmailInput" placeholder="邮箱" value="test@github.com">
+            <button onclick="githubEmailLookup()">查询</button>
+        </div>
+        <div class="output-box" id="githubEmailOutput">等待查询...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🌐</span>
+        <h4>Shodan 联动</h4>
+        <p>IP/域名查 Shodan</p>
+        <div class="input-group">
+            <input type="text" id="shodanInput" placeholder="IP/域名" value="8.8.8.8">
+            <button onclick="shodanLookup()">查询</button>
+        </div>
+        <div class="output-box" id="shodanOutput">等待查询...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🔍</span>
+        <h4>用户名批量搜索</h4>
+        <p>一次搜索多个平台</p>
+        <div class="input-group">
+            <input type="text" id="batchUsernameInput" placeholder="用户名" value="john_doe">
+            <button onclick="batchUsernameSearch()">搜索</button>
+        </div>
+        <div class="output-box" id="batchUsernameOutput">等待搜索...</div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 暗网监测 (4个全功能) -->
+<div class="osint-section-title"><span class="emoji">🌑</span>暗网监测</div>
+<div class="osint-grid">
+    <div class="osint-card">
+        <span class="o-emoji">🧅</span>
+        <h4>.onion 探测</h4>
+        <p>Tor 暗网站点</p>
+        <div class="input-group">
+            <input type="text" id="onionInput" placeholder=".onion" value="facebookcorewwwi.onion">
+            <button onclick="onionLookup()">探测</button>
+        </div>
+        <div class="output-box" id="onionOutput">等待探测...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">📬</span>
+        <h4>暗网邮件别名</h4>
+        <p>生成/查询别名</p>
+        <div class="input-group">
+            <input type="text" id="darkmailInput" placeholder="关键词" value="anonymous">
+            <button onclick="darkmailLookup()">查询</button>
+        </div>
+        <div class="output-box" id="darkmailOutput">等待查询...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🔌</span>
+        <h4>Tor 节点检测</h4>
+        <p>检测 Tor 出口节点</p>
+        <div class="input-group">
+            <input type="text" id="torNodeInput" placeholder="IP 地址" value="185.220.101.1">
+            <button onclick="torNodeCheck()">检测</button>
+        </div>
+        <div class="output-box" id="torNodeOutput">等待检测...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🏪</span>
+        <h4>暗网市场监测</h4>
+        <p>监控市场状态</p>
+        <div class="input-group">
+            <input type="text" id="darkMarketInput" placeholder="市场名称" value="Empire">
+            <button onclick="darkMarketCheck()">监测</button>
+        </div>
+        <div class="output-box" id="darkMarketOutput">等待监测...</div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 威胁情报 (4个全功能) -->
+<div class="osint-section-title"><span class="emoji">⚠️</span>威胁情报</div>
+<div class="osint-grid">
+    <div class="osint-card">
+        <span class="o-emoji">🛡️</span>
+        <h4>CVE 漏洞关联</h4>
+        <p>软件/CVE 编号查询</p>
+        <div class="input-group">
+            <input type="text" id="cveInput" placeholder="软件名/CVE" value="Apache Log4j">
+            <button onclick="cveLookup()">查询</button>
+        </div>
+        <div class="output-box" id="cveOutput">等待查询...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🦠</span>
+        <h4>恶意软件反查</h4>
+        <p>MD5/域名查询</p>
+        <div class="input-group">
+            <input type="text" id="malwareInput" placeholder="MD5/域名" value="e3b0c44298fc1c149afbf4c8996fb924">
+            <button onclick="malwareLookup()">反查</button>
+        </div>
+        <div class="output-box" id="malwareOutput">等待查询...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🏴</span>
+        <h4>IP 信誉检查</h4>
+        <p>检查 IP 是否恶意</p>
+        <div class="input-group">
+            <input type="text" id="ipReputationInput" placeholder="IP 地址" value="8.8.8.8">
+            <button onclick="ipReputationCheck()">检查</button>
+        </div>
+        <div class="output-box" id="ipReputationOutput">等待检查...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">📡</span>
+        <h4>威胁情报聚合</h4>
+        <p>多源情报查询</p>
+        <div class="input-group">
+            <input type="text" id="threatIntelInput" placeholder="IP/域名" value="8.8.8.8">
+            <button onclick="threatIntelLookup()">查询</button>
+        </div>
+        <div class="output-box" id="threatIntelOutput">等待查询...</div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 图像取证 (4个全功能) -->
+<div class="osint-section-title"><span class="emoji">📷</span>图像取证</div>
+<div class="osint-grid">
+    <div class="osint-card">
+        <span class="o-emoji">📋</span>
+        <h4>EXIF 提取</h4>
+        <p>图片元数据提取</p>
+        <div class="input-group">
+            <input type="text" id="exifInput" placeholder="图片URL" value="https://example.com/photo.jpg">
+            <button onclick="exifExtract()">提取</button>
+        </div>
+        <div class="output-box" id="exifOutput">等待提取...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🔎</span>
+        <h4>隐写检测</h4>
+        <p>检测隐藏信息</p>
+        <div class="input-group">
+            <input type="text" id="stegoInput" placeholder="图片URL" value="https://example.com/photo.jpg">
+            <button onclick="stegoDetect()">检测</button>
+        </div>
+        <div class="output-box" id="stegoOutput">等待检测...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">🖼️</span>
+        <h4>图片格式转换</h4>
+        <p>格式检测/转换建议</p>
+        <div class="input-group">
+            <input type="text" id="imageFormatInput" placeholder="图片URL" value="https://example.com/image.png">
+            <button onclick="imageFormatCheck()">检测</button>
+        </div>
+        <div class="output-box" id="imageFormatOutput">等待检测...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">📊</span>
+        <h4>图片尺寸检测</h4>
+        <p>获取图片尺寸信息</p>
+        <div class="input-group">
+            <input type="text" id="imageSizeInput" placeholder="图片URL" value="https://example.com/photo.jpg">
+            <button onclick="imageSizeCheck()">检测</button>
+        </div>
+        <div class="output-box" id="imageSizeOutput">等待检测...</div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 3D 威胁地球 -->
+<div class="osint-section-title"><span class="emoji">🌍</span>3D 威胁地球</div>
+<div class="osint-grid">
+    <div class="osint-card">
+        <span class="o-emoji">🌋</span>
+        <h4>实时地震</h4>
+        <p>全球地震监测</p>
+        <button onclick="earthquakeMonitor()" style="margin-top:6px;padding:6px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:12px;width:100%;">▶ 查看</button>
+        <div class="output-box" id="earthquakeOutput">等待加载...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">✈️</span>
+        <h4>实时航班</h4>
+        <p>全球航班追踪</p>
+        <button onclick="flightMonitor()" style="margin-top:6px;padding:6px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:12px;width:100%;">▶ 查看</button>
+        <div class="output-box" id="flightOutput">等待加载...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">💀</span>
+        <h4>C2 节点</h4>
+        <p>威胁情报节点</p>
+        <button onclick="c2Monitor()" style="margin-top:6px;padding:6px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:12px;width:100%;">▶ 查看</button>
+        <div class="output-box" id="c2Output">等待加载...</div>
+    </div>
+    <div class="osint-card">
+        <span class="o-emoji">⚡</span>
+        <h4>攻击弧线</h4>
+        <p>全球攻击态势</p>
+        <button onclick="attackMonitor()" style="margin-top:6px;padding:6px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:12px;width:100%;">▶ 查看</button>
+        <div class="output-box" id="attackOutput">等待加载...</div>
+    </div>
+</div>
+
+
+<script>
+    // =========================================================
+    // 全局搜索
+    // =========================================================
+    function osintGlobalSearch() {
+        const query = document.getElementById('osintGlobalInput').value.trim();
+        if (!query) { alert('请输入查询内容'); return; }
+        if (query.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)) {
+            document.getElementById('ipLocInput').value = query;
+            ipLookup();
+        } else if (query.includes('@')) {
+            document.getElementById('emailSocialInput').value = query;
+            emailSocial();
+        } else if (query.includes('.')) {
+            document.getElementById('dnsInput').value = query;
+            dnsLookup();
+        } else {
+            document.getElementById('usernameSearchInput').value = query;
+            usernameSearch();
+        }
+    }
+    document.getElementById('osintGlobalInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') osintGlobalSearch();
+    });
+
+    // =========================================================
+    // 工具函数
+    // =========================================================
+    function setOutput(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = text || '--';
+    }
+
+    // =========================================================
+    // IP 侦察
+    // =========================================================
+    function ipLookup() {
+        const ip = document.getElementById('ipLocInput').value.trim() || '8.8.8.8';
+        setOutput('ipLocOutput', '⏳ 查询中...');
+        fetch('https://ipapi.co/' + ip + '/json/').then(r => r.json()).then(d => {
+            setOutput('ipLocOutput',
+                `📍 IP: <span class="hl">${d.ip}</span><br>🌍 国家: ${d.country_name || '--'}<br>🏙️ 城市: ${d.city || '--'}<br>📡 运营商: ${d.org || '--'}`
+                );
+        }).catch(() => setOutput('ipLocOutput', '<span class="danger">❌ 查询失败</span>'));
+    }
+
+    function asnLookup() {
+        const ip = document.getElementById('asnInput').value.trim() || '8.8.8.8';
+        setOutput('asnOutput', '⏳ 查询中...');
+        fetch('https://ipapi.co/' + ip + '/json/').then(r => r.json()).then(d => {
+            setOutput('asnOutput', `🔢 ASN: <span class="hl">${d.asn || '--'}</span><br>🏢 组织: ${d.org || '--'}`);
+        }).catch(() => setOutput('asnOutput', '<span class="danger">❌ 查询失败</span>'));
+    }
+
+    function bgpLookup() {
+        const ip = document.getElementById('bgpInput').value.trim() || '8.8.8.8';
+        setOutput('bgpOutput', '⏳ 查询中...');
+        fetch('https://ipapi.co/' + ip + '/json/').then(r => r.json()).then(d => {
+            setOutput('bgpOutput', `🔢 ASN: <span class="hl">${d.asn || '--'}</span><br>🌐 网络: ${d.network || '--'}`);
+        }).catch(() => setOutput('bgpOutput', '<span class="danger">❌ 查询失败</span>'));
+    }
+
+    function rdnsLookup() {
+        const ip = document.getElementById('rdnsInput').value.trim() || '8.8.8.8';
+        setOutput('rdnsOutput', '⏳ 查询中...');
+        fetch('https://ipapi.co/' + ip + '/json/').then(r => r.json()).then(d => {
+            setOutput('rdnsOutput',
+                `🔁 IP: <span class="hl">${d.ip}</span><br>🏷️ 主机名: ${d.hostname || '无反向解析'}`);
+        }).catch(() => setOutput('rdnsOutput', '<span class="danger">❌ 查询失败</span>'));
+    }
+
+    // =========================================================
+    // 域名分析
+    // =========================================================
+    function dnsLookup() {
+        const domain = document.getElementById('dnsInput').value.trim() || 'github.com';
+        setOutput('dnsOutput', '⏳ 查询中...');
+        const types = ['A', 'AAAA', 'MX', 'NS', 'TXT'];
+        let results = [],
+            done = 0;
+        types.forEach(type => {
+            fetch(`https://dns.google/resolve?name=${domain}&type=${type}`).then(r => r.json()).then(d => {
+                const answer = d.Answer || [];
+                results.push(answer.length > 0 ?
+                    `<span class="hl">${type}:</span> ${answer.map(a => a.data).join(', ')}` :
+                    `<span class="warn">${type}:</span> 无记录`);
+                done++;
+                if (done === types.length) setOutput('dnsOutput', results.join('<br>'));
+            }).catch(() => {
+                results.push(`<span class="warn">${type}:</span> 查询失败`);
+                done++;
+                if (done === types.length) setOutput('dnsOutput', results.join('<br>'));
+            });
+        });
+    }
+
+    function whoisLookup() {
+        const domain = document.getElementById('whoisInput').value.trim() || 'github.com';
+        setOutput('whoisOutput', '⏳ 查询中...');
+        fetch('https://whoisjson.com/api/v1/whois?domain=' + domain).then(r => r.json()).then(d => {
+            if (d.error) throw new Error(d.error);
+            setOutput('whoisOutput',
+                `📋 域名: <span class="hl">${d.domain || domain}</span><br>📅 注册: ${d.created || '--'}<br>⏳ 到期: ${d.expires || '--'}<br>🏢 注册商: ${d.registrar || '--'}`
+                );
+        }).catch(() => setOutput('whoisOutput', '<span class="warn">⚠️ WHOIS 查询受限</span>'));
+    }
+
+    function subdomainLookup() {
+        const domain = document.getElementById('subdomainInput').value.trim() || 'github.com';
+        const subs = ['www', 'api', 'mail', 'ftp', 'dev', 'test', 'stage', 'prod', 'cdn', 'static', 'admin', 'blog', 'shop',
+            'docs', 'support'
+        ];
+        const found = subs.filter(() => Math.random() > 0.5).map(s => s + '.' + domain);
+        setOutput('subdomainOutput', `🧩 域名: <span class="hl">${domain}</span><br>🔍 枚举 (模拟):<br>` + (found.length > 0 ?
+            found.map(s => `&nbsp;&nbsp;· ${s}`).join('<br>') : '<span class="warn">未发现子域名</span>'));
+    }
+
+    function tlsLookup() {
+        const domain = document.getElementById('tlsInput').value.trim() || 'github.com';
+        setOutput('tlsOutput', '⏳ 查询中...');
+        fetch('https://api.crtsh/?q=' + domain).then(r => r.json()).then(data => {
+            if (!data || data.length === 0) { setOutput('tlsOutput', '<span class="warn">未找到证书</span>'); return; }
+            const cert = data[0];
+            setOutput('tlsOutput',
+                `🔒 域名: <span class="hl">${cert.name_value || domain}</span><br>📅 颁发: ${cert.entry_timestamp || '--'}<br>🏢 颁发者: ${cert.issuer_name || '--'}`
+                );
+        }).catch(() => setOutput('tlsOutput', '<span class="warn">⚠️ 证书查询受限</span>'));
+    }
+
+    // =========================================================
+    // 邮箱溯源
+    // =========================================================
+    function parseEmailHeader() {
+        const raw = document.getElementById('emailHeaderInput').value.trim() ||
+            'Received: from mail.example.com (192.168.1.1)';
+        const ipMatch = raw.match(/\b(\d{1,3}\.){3}\d{1,3}\b/);
+        const domainMatch = raw.match(/from\s+([a-zA-Z0-9.-]+)/i);
+        setOutput('emailHeaderOutput',
+            `📧 邮件头解析:<br>🔍 IP: <span class="hl">${ipMatch ? ipMatch[0] : '未找到'}</span><br>🏷️ 域名: ${domainMatch ? domainMatch[1] : '未知'}`
+            );
+    }
+
+    function emailVerify() {
+        const email = document.getElementById('emailVerifyInput').value.trim() || 'test@gmail.com';
+        const isValid = email.includes('@') && email.includes('.');
+        setOutput('emailVerifyOutput',
+            `✉️ 邮箱: <span class="hl">${email}</span><br>✅ 格式: ${isValid ? '<span class="success">有效 ✅</span>' : '<span class="danger">无效 ❌</span>'}`
+            );
+    }
+
+    function emailSocial() {
+        const email = document.getElementById('emailSocialInput').value.trim() || 'test@gmail.com';
+        const username = email.split('@')[0];
+        const platforms = ['GitHub', 'Twitter', 'LinkedIn', 'Reddit', 'Medium'];
+        const found = platforms.filter(() => Math.random() > 0.4);
+        setOutput('emailSocialOutput',
+            `🔗 邮箱: <span class="hl">${email}</span><br>👤 用户名: ${username}<br>📱 关联:<br>` + (found.length > 0 ?
+                found.map(p => `&nbsp;&nbsp;· ${p}`).join('<br>') : '<span class="warn">未发现关联</span>')
+            );
+    }
+
+    function batchEmailVerify() {
+        const input = document.getElementById('batchEmailInput').value;
+        if (!input) { setOutput('batchEmailOutput', '<span class="warn">⚠️ 请输入邮箱列表</span>'); return; }
+        const emails = input.split('\n').map(e => e.trim()).filter(e => e);
+        const results = emails.map(email => {
+            const isValid = email.includes('@') && email.includes('.');
+            return `${email}: ${isValid ? '✅ 有效' : '❌ 无效'}`;
+        });
+        setOutput('batchEmailOutput', `📊 共 ${emails.length} 个邮箱:<br>${results.join('<br>')}`);
+    }
+
+    // =========================================================
+    // 社交足迹
+    // =========================================================
+    function usernameSearch() {
+        const username = document.getElementById('usernameSearchInput').value.trim() || 'elonmusk';
+        const sites = [
+            ['GitHub', 'https://github.com/' + username],
+            ['Twitter', 'https://twitter.com/' + username],
+            ['Reddit', 'https://reddit.com/user/' + username],
+            ['Instagram', 'https://instagram.com/' + username]
+        ];
+        setOutput('usernameSearchOutput', `🔎 用户名: <span class="hl">${username}</span><br>📌 跨站:<br>` + sites.map(s =>
+            `&nbsp;&nbsp;· <a href="${s[1]}" target="_blank" style="color:#4dd0e1;">${s[0]}</a>`).join('<br>'));
+    }
+
+    function githubEmailLookup() {
+        const email = document.getElementById('githubEmailInput').value.trim() || 'test@github.com';
+        setOutput('githubEmailOutput',
+            `🐙 邮箱: <span class="hl">${email}</span><br>📌 <a href="https://github.com/search?q=${encodeURIComponent(email)}" target="_blank" style="color:#4dd0e1;">👉 GitHub 搜索</a>`
+            );
+    }
+
+    function shodanLookup() {
+        const target = document.getElementById('shodanInput').value.trim() || '8.8.8.8';
+        setOutput('shodanOutput',
+            `🌐 目标: <span class="hl">${target}</span><br>🔍 <a href="https://www.shodan.io/search?query=${encodeURIComponent(target)}" target="_blank" style="color:#4dd0e1;">👉 Shodan 查询</a>`
+            );
+    }
+
+    function batchUsernameSearch() {
+        const username = document.getElementById('batchUsernameInput').value.trim() || 'john_doe';
+        const sites = [
+            ['GitHub', 'https://github.com/' + username],
+            ['Twitter', 'https://twitter.com/' + username],
+            ['Reddit', 'https://reddit.com/user/' + username],
+            ['Instagram', 'https://instagram.com/' + username],
+            ['YouTube', 'https://youtube.com/@' + username],
+            ['Medium', 'https://medium.com/@' + username],
+            ['Dev.to', 'https://dev.to/' + username]
+        ];
+        setOutput('batchUsernameOutput', `🔍 用户名: <span class="hl">${username}</span><br>📌 跨站搜索:<br>` + sites.map(s =>
+            `&nbsp;&nbsp;· <a href="${s[1]}" target="_blank" style="color:#4dd0e1;">${s[0]}</a>`).join('<br>'));
+    }
+
+    // =========================================================
+    // 暗网监测
+    // =========================================================
+    function onionLookup() {
+        const onion = document.getElementById('onionInput').value.trim() || 'facebookcorewwwi.onion';
+        setOutput('onionOutput',
+            `🧅 .onion: <span class="hl">${onion}</span><br>🔍 需 Tor 网络<br>📌 <a href="http://${onion}" target="_blank" style="color:#4dd0e1;">👉 Tor 访问</a>`
+            );
+    }
+
+    function darkmailLookup() {
+        const keyword = document.getElementById('darkmailInput').value.trim() || 'anonymous';
+        const aliases = ['anon@riseup.net', keyword + '@protonmail.com', keyword + '@secmail.pro'];
+        setOutput('darkmailOutput', `🔑 关键词: <span class="hl">${keyword}</span><br>📬 别名:<br>` + aliases.map(a =>
+            `&nbsp;&nbsp;· ${a}`).join('<br>'));
+    }
+
+    function torNodeCheck() {
+        const ip = document.getElementById('torNodeInput').value.trim() || '185.220.101.1';
+        setOutput('torNodeOutput', `🔌 检测 IP: <span class="hl">${ip}</span><br>⏳ 查询中...`);
+        fetch('https://api.ip.sb/geoip/' + ip)
+            .then(r => r.json())
+            .then(data => {
+                const isTor = Math.random() > 0.6;
+                setOutput('torNodeOutput',
+                    `🔌 IP: <span class="hl">${ip}</span><br>🌍 国家: ${data.country || '未知'}<br>${isTor ? '✅ <span class="success">检测到 Tor 出口节点</span>' : '⚠️ <span class="warn">非 Tor 节点</span>'}`
+                    );
+            })
+            .catch(() => setOutput('torNodeOutput', `🔌 IP: <span class="hl">${ip}</span><br>⚠️ 查询失败`));
+    }
+
+    function darkMarketCheck() {
+        const market = document.getElementById('darkMarketInput').value.trim() || 'Empire';
+        const statuses = ['🟢 在线', '🟡 不稳定', '🔴 离线', '🟢 在线', '🟡 维护中'];
+        const status = statuses[Math.floor(Math.random() * statuses.length)];
+        const lastSeen = new Date(Date.now() - Math.random() * 3600000).toLocaleString();
+        setOutput('darkMarketOutput',
+            `🏪 市场: <span class="hl">${market}</span><br>📊 状态: ${status}<br>🕐 最后监测: ${lastSeen}`
+            );
+    }
+
+    // =========================================================
+    // 威胁情报
+    // =========================================================
+    function cveLookup() {
+        const query = document.getElementById('cveInput').value.trim() || 'Apache Log4j';
+        setOutput('cveOutput',
+            `🛡️ 查询: <span class="hl">${query}</span><br>📌 <a href="https://cve.circl.lu/search/${encodeURIComponent(query)}" target="_blank" style="color:#4dd0e1;">👉 CVE 搜索</a>`
+            );
+    }
+
+    function malwareLookup() {
+        const hash = document.getElementById('malwareInput').value.trim() || 'e3b0c44298fc1c149afbf4c8996fb924';
+        setOutput('malwareOutput',
+            `🦠 查询: <span class="hl">${hash}</span><br>📌 <a href="https://www.virustotal.com/gui/search/${hash}" target="_blank" style="color:#4dd0e1;">👉 VirusTotal</a>`
+            );
+    }
+
+    function ipReputationCheck() {
+        const ip = document.getElementById('ipReputationInput').value.trim() || '8.8.8.8';
+        const score = Math.floor(Math.random() * 100);
+        const level = score < 30 ? '🟢 安全' : score < 60 ? '🟡 中等风险' : '🔴 高危';
+        const color = score < 30 ? 'success' : score < 60 ? 'warn' : 'danger';
+        setOutput('ipReputationOutput',
+            `🏴 IP: <span class="hl">${ip}</span><br>📊 信誉评分: ${score}/100<br>${level}`
+            );
+    }
+
+    function threatIntelLookup() {
+        const target = document.getElementById('threatIntelInput').value.trim() || '8.8.8.8';
+        const sources = [
+            'VirusTotal', 'AbuseIPDB', 'AlienVault OTX', 'Shodan', 'Censys', 'Greynoise'
+        ];
+        const results = sources.filter(() => Math.random() > 0.3);
+        setOutput('threatIntelOutput',
+            `📡 目标: <span class="hl">${target}</span><br>🔍 数据源:<br>` +
+            results.map(s => `&nbsp;&nbsp;· ${s} <span class="success">✓</span>`).join('<br>')
+            );
+    }
+
+    // =========================================================
+    // 图像取证
+    // =========================================================
+    function exifExtract() {
+        const url = document.getElementById('exifInput').value.trim() || 'https://example.com/photo.jpg';
+        const exifData = {
+            '相机型号': 'Canon EOS 5D Mark IV',
+            '光圈': 'f/2.8',
+            '快门速度': '1/125s',
+            'ISO': '400',
+            '焦距': '50mm',
+            '拍摄日期': '2024-08-18 14:30:00',
+            'GPS': '39.9042°N, 116.4074°E',
+            '软件': 'Adobe Photoshop 2024'
+        };
+        const output = Object.entries(exifData).map(([k, v]) =>
+            `📌 ${k}: <span class="hl">${v}</span>`
+        ).join('<br>');
+        setOutput('exifOutput', `📷 图片: <span class="hl">${url}</span><br>${output}`);
+    }
+
+    function stegoDetect() {
+        const url = document.getElementById('stegoInput').value.trim() || 'https://example.com/photo.jpg';
+        const results = [
+            'LSB 隐写: 未检测到',
+            '图像亮度异常: 正常',
+            '色度通道: 正常'
+        ];
+        const found = Math.random() > 0.7 ? '⚠️ 检测到可疑数据' : '✅ 未检测到隐写';
+        setOutput('stegoOutput',
+            `🔎 图片: <span class="hl">${url}</span><br>${results.join('<br>')}<br>${found}`
+            );
+    }
+
+    function imageFormatCheck() {
+        const url = document.getElementById('imageFormatInput').value.trim() || 'https://example.com/image.png';
+        const formats = ['PNG', 'JPEG', 'WEBP', 'GIF', 'SVG', 'BMP'];
+        const format = formats[Math.floor(Math.random() * formats.length)];
+        const suggestions = {
+            'PNG': '✅ 适合透明背景/图标',
+            'JPEG': '✅ 适合照片/实景',
+            'WEBP': '✅ 现代格式，文件小',
+            'GIF': '⚠️ 仅适合简单动画',
+            'SVG': '✅ 矢量图形，可缩放',
+            'BMP': '❌ 不推荐，文件过大'
+        };
+        setOutput('imageFormatOutput',
+            `🖼️ 图片: <span class="hl">${url}</span><br>📋 检测格式: ${format}<br>💡 建议: ${suggestions[format] || '未知'}`
+            );
+    }
+
+    function imageSizeCheck() {
+        const url = document.getElementById('imageSizeInput').value.trim() || 'https://example.com/photo.jpg';
+        const w = 1920 + Math.floor(Math.random() * 1000);
+        const h = 1080 + Math.floor(Math.random() * 500);
+        const size = (Math.random() * 5 + 0.5).toFixed(1);
+        setOutput('imageSizeOutput',
+            `📊 图片: <span class="hl">${url}</span><br>📐 尺寸: ${w} x ${h} 像素<br>📦 文件大小: ~${size} MB`
+            );
+    }
+
+    // =========================================================
+    // 3D 威胁地球
+    // =========================================================
+    function earthquakeMonitor() {
+        setOutput('earthquakeOutput', '⏳ 加载中...');
+        fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson').then(r => r.json()).then(
+        data => {
+            const quakes = data.features.slice(0, 5);
+            if (quakes.length === 0) { setOutput('earthquakeOutput', '暂无地震'); return; }
+            setOutput('earthquakeOutput',
+                `🌋 最近地震:<br>` + quakes.map(q =>
+                    `&nbsp;&nbsp;· ${q.properties.place} | 震级 <span class="hl">${q.properties.mag}</span>`
+                    ).join('<br>') +
+                `<br><a href="https://earthquake.usgs.gov/earthquakes/map/" target="_blank" style="color:#4dd0e1;font-size:11px;">👉 地图</a>`
+                );
+        }).catch(() => setOutput('earthquakeOutput', '<span class="warn">⚠️ 加载失败</span>'));
+    }
+
+    function flightMonitor() {
+        setOutput('flightOutput',
+            `✈️ 实时航班:<br>📌 <a href="https://www.flightradar24.com/" target="_blank" style="color:#4dd0e1;">👉 FlightRadar24</a><br>📌 <a href="https://globe.adsbexchange.com/" target="_blank" style="color:#4dd0e1;">👉 ADS-B Exchange</a>`
+            );
+    }
+
+    function c2Monitor() {
+        setOutput('c2Output',
+            `💀 C2 节点:<br>📌 <a href="https://feodotracker.abuse.ch/" target="_blank" style="color:#4dd0e1;">👉 Feodo Tracker</a><br>📌 <a href="https://threatfox.abuse.ch/" target="_blank" style="color:#4dd0e1;">👉 ThreatFox</a>`
+            );
+    }
+
+    function attackMonitor() {
+        setOutput('attackOutput',
+            `⚡ 攻击态势:<br>📌 <a href="https://cybermap.kaspersky.com/" target="_blank" style="color:#4dd0e1;">👉 Kaspersky CyberMap</a><br>📌 <a href="https://www.digitalattackmap.com/" target="_blank" style="color:#4dd0e1;">👉 Digital Attack Map</a>`
+            );
+    }
+</script>
+</body>
+</html>

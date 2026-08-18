@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<style>
+    .monitor-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 12px;
+        padding: 10px 14px;
+        background: #0d0d0d;
+        border: 1px solid #1a1a1a;
+        border-radius: 12px;
+    }
+    .monitor-topbar .left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+    .monitor-topbar .status-text {
+        font-size: 13px;
+        color: #888;
+        letter-spacing: 1px;
+    }
+    .monitor-topbar .status-text.on {
+        color: #4caf50;
+    }
+    .monitor-topbar .status-text.off {
+        color: #666;
+    }
+    .monitor-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+    }
+    .monitor-item {
+        background: #111;
+        border: 1px solid #1a1a1a;
+        border-radius: 10px;
+        padding: 12px 14px;
+    }
+    .monitor-item.full {
+        grid-column: 1 / -1;
+    }
+    .monitor-item .label {
+        font-size: 10px;
+        color: #555;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2px;
+    }
+    .monitor-item .value {
+        font-size: 14px;
+        color: #eee;
+        word-break: break-all;
+        font-family: 'Courier New', monospace;
+    }
+    .monitor-item .value.warn {
+        color: #ff9800;
+        font-size: 13px;
+    }
+    .monitor-item .value.success {
+        color: #4caf50;
+    }
+    .monitor-item .value.cyan {
+        color: #4dd0e1;
+    }
+    .monitor-btn {
+        margin: 0;
+        padding: 6px 22px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #ccc;
+        border-radius: 30px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: 0.2s;
+        letter-spacing: 1px;
+    }
+    .monitor-btn:hover {
+        border-color: #666;
+        color: #fff;
+    }
+    .monitor-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+    .monitor-status {
+        margin-top: 4px;
+        font-size: 13px;
+        color: #555;
+        letter-spacing: 1px;
+    }
+    .monitor-status.done {
+        color: #4caf50;
+    }
+    .monitor-status.error {
+        color: #f44336;
+    }
+    .monitor-status.skip {
+        color: #ffb74d;
+    }
+    .visitor-list {
+        margin-top: 12px;
+        max-height: 250px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .visitor-item {
+        background: #0d0d0d;
+        border: 1px solid #161616;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 12px;
+        color: #888;
+        font-family: 'Courier New', monospace;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 14px;
+        align-items: center;
+    }
+    .visitor-item .v-time {
+        color: #555;
+        font-size: 11px;
+    }
+    .visitor-item .v-device {
+        color: #64b5f6;
+    }
+    .visitor-item .v-local {
+        color: #ff8a65;
+        font-size: 11px;
+    }
+    .visitor-item .v-badge {
+        font-size: 9px;
+        padding: 1px 8px;
+        border-radius: 12px;
+        background: #1a1a2e;
+        color: #888;
+    }
+    .visitor-empty {
+        color: #333;
+        text-align: center;
+        padding: 20px 0;
+        font-size: 14px;
+        letter-spacing: 2px;
+    }
+
+    .toggle-btn {
+        background: transparent;
+        border: 1px solid #333;
+        color: #888;
+        padding: 5px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: 0.2s;
+        letter-spacing: 1px;
+    }
+    .toggle-btn:hover {
+        border-color: #666;
+        color: #ccc;
+    }
+    .toggle-btn.active {
+        border-color: #4caf50;
+        color: #4caf50;
+        background: #0d1a12;
+    }
+    .toggle-btn.inactive {
+        border-color: #444;
+        color: #555;
+    }
+    .visitor-list::-webkit-scrollbar {
+        width: 4px;
+    }
+    .visitor-list::-webkit-scrollbar-track {
+        background: #0a0a0a;
+    }
+    .visitor-list::-webkit-scrollbar-thumb {
+        background: #2a2a2a;
+        border-radius: 4px;
+    }
+
+    @media (max-width: 768px) {
+        .monitor-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .monitor-topbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .monitor-topbar .left {
+            justify-content: center;
+        }
+    }
+    @media (max-width: 500px) {
+        .monitor-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- ========================================================= -->
+<!-- 回响面板 -->
+<div class="monitor-topbar">
+    <div class="left">
+        <span style="font-weight:500;color:#aaa;letter-spacing:1px;">📡 回响</span>
+        <button class="toggle-btn active" id="toggleRecordBtn" onclick="toggleRecording()">● 开启</button>
+        <span class="status-text on" id="recordStatusText">记录中 · 扫码自动记录</span>
+    </div>
+    <div class="right" style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="monitor-btn" id="scanBtn">📡 手动扫描</button>
+        <button class="monitor-btn" onclick="clearVisitors()" style="color:#666;">清空</button>
+    </div>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px;">
+    <span class="monitor-status" id="scanStatus">● 就绪</span>
+    <span style="font-size:13px;color:#555;">👤 <span id="visitorCount">0</span> 条记录</span>
+</div>
+
+<div class="monitor-grid" id="monitorGrid">
+    <div class="monitor-item"><div class="label">🖥️ 设备</div><div class="value success" id="m_device">--</div></div>
+    <div class="monitor-item"><div class="label">💻 操作系统</div><div class="value" id="m_os">--</div></div>
+    <div class="monitor-item"><div class="label">🌍 浏览器</div><div class="value" id="m_browser">--</div></div>
+    <div class="monitor-item"><div class="label">📐 屏幕 · 语言</div><div class="value" id="m_extra">--</div></div>
+    <div class="monitor-item full"><div class="label">🔗 内网 IP (WebRTC)</div><div class="value warn" id="m_localip">点击"扫描"获取</div></div>
+</div>
+
+<div style="margin-top:16px;">
+    <div style="color:#555;font-size:12px;letter-spacing:1px;padding:0 4px 6px 4px;border-bottom:1px solid #111;">📋 扫码访客记录</div>
+    <div class="visitor-list" id="visitorList"><div class="visitor-empty">暂无记录</div></div>
+</div>
+
+
+<script>
+    // =========================================================
+    // 状态
+    // =========================================================
+    let visitors = [];
+    let recordingEnabled = true;
+
+    // =========================================================
+    // 本地IP判断（核心修复）
+    // =========================================================
+    function isLocalOrPrivateIP(ip) {
+        if (!ip) return true;
+        // 回环地址
+        if (ip === '127.0.0.1' || ip === '::1' || ip === 'localhost') return true;
+        // 私有 IPv4
+        if (/^10\./.test(ip)) return true;
+        if (/^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip)) return true;
+        if (/^192\.168\./.test(ip)) return true;
+        // 链路本地 IPv6 (fe80::)
+        if (/^fe80:/i.test(ip)) return true;
+        // 唯一本地 IPv6 (fc00::/7)
+        if (/^f[c-d][0-9a-f]{2}:/i.test(ip)) return true;
+        // 多播地址
+        if (/^ff([0-9a-f]{2}):/i.test(ip)) return true;
+        return false;
+    }
+
+    // =========================================================
+    // 记录开关
+    // =========================================================
+    function loadRecordingState() {
+        try {
+            const saved = localStorage.getItem('black_recording_enabled');
+            if (saved !== null) recordingEnabled = saved === 'true';
+        } catch {}
+        updateRecordingUI();
+    }
+
+    function saveRecordingState() {
+        try { localStorage.setItem('black_recording_enabled', String(recordingEnabled)); } catch {}
+    }
+
+    function toggleRecording() {
+        recordingEnabled = !recordingEnabled;
+        saveRecordingState();
+        updateRecordingUI();
+    }
+
+    function updateRecordingUI() {
+        const btn = document.getElementById('toggleRecordBtn');
+        const st = document.getElementById('recordStatusText');
+        if (recordingEnabled) {
+            btn.textContent = '● 开启';
+            btn.className = 'toggle-btn active';
+            st.textContent = '记录中 · 扫码自动记录';
+            st.className = 'status-text on';
+        } else {
+            btn.textContent = '○ 关闭';
+            btn.className = 'toggle-btn inactive';
+            st.textContent = '已暂停 · 不记录访客';
+            st.className = 'status-text off';
+        }
+    }
+
+    // =========================================================
+    // 数据管理
+    // =========================================================
+    function loadVisitors() {
+        try { visitors = JSON.parse(localStorage.getItem('black_visitors')) || []; } catch { visitors = []; }
+    }
+
+    function saveVisitors() {
+        localStorage.setItem('black_visitors', JSON.stringify(visitors));
+    }
+
+    function setVal(id, val) { document.getElementById(id).textContent = val || '--'; }
+
+    function setStatus(text, type) {
+        const el = document.getElementById('scanStatus');
+        el.textContent = text;
+        el.className = 'monitor-status ' + (type || '');
+    }
+
+    // =========================================================
+    // UA 解析
+    // =========================================================
+    function parseUA(ua) {
+        let device = '未知',
+            os = '未知',
+            browser = '未知';
+        if (/iPhone/.test(ua)) device = 'iPhone';
+        else if (/iPad/.test(ua)) device = 'iPad';
+        else if (/Android/.test(ua)) { const m = ua.match(/Android\s+([\d.]+)/);
+            device = 'Android' + (m ? ' ' + m[1] : ''); } else if (/Windows NT/.test(ua)) device = 'Windows PC';
+        else if (/Macintosh/.test(ua)) device = 'Mac';
+        else if (/Linux/.test(ua)) device = 'Linux';
+        if (/Windows NT 10.0/.test(ua)) os = 'Windows 10/11';
+        else if (/Windows NT 6.1/.test(ua)) os = 'Windows 7';
+        else if (/Mac OS X/.test(ua)) { const m = ua.match(/Mac OS X ([_\d]+)/);
+            os = 'macOS ' + (m ? m[1].replace(/_/g, '.') : ''); } else if (/Android/.test(ua)) { const m = ua.match(
+                /Android\s+([\d.]+)/);
+            os = 'Android ' + (m ? m[1] : ''); } else if (/iPhone OS/.test(ua)) { const m = ua.match(/iPhone OS ([\d_]+)/);
+            os = 'iOS ' + (m ? m[1].replace(/_/g, '.') : ''); } else if (/iPad/.test(ua)) { const m = ua.match(
+                /iPad OS ([\d_]+)/);
+            os = 'iPadOS ' + (m ? m[1].replace(/_/g, '.') : ''); } else if (/Linux/.test(ua)) os = 'Linux';
+        if (/Edg\//.test(ua)) { const m = ua.match(/Edg\/([\d.]+)/);
+            browser = 'Edge ' + (m ? m[1] : ''); } else if (/Firefox\//.test(ua)) { const m = ua.match(/Firefox\/([\d.]+)/);
+            browser = 'Firefox ' + (m ? m[1] : ''); } else if (/OPR\//.test(ua)) { const m = ua.match(/OPR\/([\d.]+)/);
+            browser = 'Opera ' + (m ? m[1] : ''); } else if (/Chrome\//.test(ua) && !/Edg/.test(ua)) { const m = ua.match(
+                /Chrome\/([\d.]+)/);
+            browser = 'Chrome ' + (m ? m[1] : ''); } else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) { const m = ua
+                .match(/Version\/([\d.]+)/);
+            browser = 'Safari ' + (m ? m[1] : ''); }
+        return { device, os, browser };
+    }
+
+    // =========================================================
+    // 内网 IP 获取
+    // =========================================================
+    function getLocalIPs() {
+        return new Promise((resolve) => {
+            const ips = [];
+            try {
+                const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+                pc.createDataChannel('test');
+                pc.createOffer().then(o => pc.setLocalDescription(o)).catch(() => {});
+                pc.onicecandidate = (e) => {
+                    if (!e.candidate) { pc.close();
+                        resolve(ips.length ? ips : ['未获取到']); return; }
+                    const ip = e.candidate.candidate.match(/(\d+\.\d+\.\d+\.\d+)/)?.[1];
+                    const ip6 = e.candidate.candidate.match(/([a-f0-9:]+:[a-f0-9:]+)/i)?.[1];
+                    if (ip && !ips.includes(ip) && !ip.startsWith('192.168.0.')) ips.push(ip);
+                    if (ip6 && !ips.includes(ip6)) ips.push(ip6);
+                };
+                setTimeout(() => { pc.close();
+                    resolve(ips.length ? ips : ['超时']); }, 5000);
+            } catch { resolve(['不支持']); }
+        });
+    }
+
+    // =========================================================
+    // 核心：记录访客（含本地IP过滤）
+    // =========================================================
+    function recordLocalVisitor() {
+        if (!recordingEnabled) {
+            console.log('⏸️ 回响已关闭，跳过记录');
+            return;
+        }
+
+        const ua = navigator.userAgent;
+        const parsed = parseUA(ua);
+        const now = new Date().toLocaleString('zh-CN');
+
+        getLocalIPs().then(localIPs => {
+            // ===== 本地IP过滤 =====
+            const localIP = localIPs.join(' | ') || '未获取到';
+            // 检查是否包含本地IP
+            const isLocal = localIPs.some(ip => isLocalOrPrivateIP(ip));
+
+            if (isLocal) {
+                console.log('⏭️ 本地IP，跳过记录:', localIPs);
+                // 仍然显示在面板上
+                setVal('m_device', parsed.device + ' (本地)');
+                setVal('m_os', parsed.os);
+                setVal('m_browser', parsed.browser);
+                setVal('m_extra', `${window.screen.width}x${window.screen.height} · ${navigator.language}`);
+                setVal('m_localip', localIP);
+                setStatus('⏭️ 本地设备，已跳过记录', 'skip');
+                return;
+            }
+
+            // ===== 正常访客：记录 =====
+            const record = {
+                id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+                time: now,
+                timestamp: Date.now(),
+                device: parsed.device,
+                os: parsed.os,
+                browser: parsed.browser,
+                screen: `${window.screen.width}x${window.screen.height}`,
+                language: navigator.language,
+                localIP: localIP
+            };
+
+            // 显示在面板上
+            setVal('m_device', record.device);
+            setVal('m_os', record.os);
+            setVal('m_browser', record.browser);
+            setVal('m_extra', `${record.screen} · ${record.language}`);
+            setVal('m_localip', record.localIP);
+
+            // 保存到列表
+            visitors.unshift(record);
+            if (visitors.length > 100) visitors.length = 100;
+            saveVisitors();
+            renderVisitors();
+            setStatus('✅ 已记录', 'done');
+            console.log('📡 访客已记录:', record.device, record.browser);
+        });
+    }
+
+    // =========================================================
+    // 手动扫描
+    // =========================================================
+    async function scanDevice() {
+        const btn = document.getElementById('scanBtn');
+        btn.disabled = true;
+        setStatus('⏳ 扫描中...', 'loading');
+
+        try {
+            const ua = navigator.userAgent;
+            const parsed = parseUA(ua);
+            const localIPs = await getLocalIPs();
+            const localIP = localIPs.join(' | ') || '未获取到';
+
+            // 检查是否本地IP
+            const isLocal = localIPs.some(ip => isLocalOrPrivateIP(ip));
+
+            if (isLocal) {
+                setVal('m_device', parsed.device + ' (本地)');
+                setVal('m_os', parsed.os);
+                setVal('m_browser', parsed.browser);
+                setVal('m_extra', `${window.screen.width}x${window.screen.height} · ${navigator.language}`);
+                setVal('m_localip', localIP);
+                setStatus('⏭️ 本地设备，不记录', 'skip');
+                btn.disabled = false;
+                return;
+            }
+
+            const record = {
+                id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+                time: new Date().toLocaleString('zh-CN'),
+                timestamp: Date.now(),
+                device: parsed.device,
+                os: parsed.os,
+                browser: parsed.browser,
+                screen: `${window.screen.width}x${window.screen.height}`,
+                language: navigator.language,
+                localIP: localIP
+            };
+
+            setVal('m_device', record.device);
+            setVal('m_os', record.os);
+            setVal('m_browser', record.browser);
+            setVal('m_extra', `${record.screen} · ${record.language}`);
+            setVal('m_localip', record.localIP);
+
+            if (recordingEnabled) {
+                visitors.unshift(record);
+                if (visitors.length > 100) visitors.length = 100;
+                saveVisitors();
+                renderVisitors();
+                setStatus('✅ 已记录', 'done');
+            } else {
+                setStatus('⏸️ 已关闭，未记录', 'skip');
+            }
+        } catch (e) {
+            setStatus('❌ 失败: ' + e.message, 'error');
+        }
+        btn.disabled = false;
+    }
+
+    // =========================================================
+    // 渲染访客列表
+    // =========================================================
+    function renderVisitors() {
+        const container = document.getElementById('visitorList');
+        const countEl = document.getElementById('visitorCount');
+        countEl.textContent = visitors.length;
+
+        if (visitors.length === 0) {
+            container.innerHTML = '<div class="visitor-empty">暂无记录</div>';
+            return;
+        }
+
+        container.innerHTML = visitors.map(v =>
+            `<div class="visitor-item">
+                <span class="v-time">${v.time}</span>
+                <span class="v-device">${v.device}</span>
+                ${v.localIP && v.localIP !== '未获取到' ? `<span class="v-local">🖧 ${v.localIP}</span>` : ''}
+                <span class="v-badge">${v.browser}</span>
+            </div>`
+        ).join('');
+    }
+
+    // =========================================================
+    // 清空
+    // =========================================================
+    function clearVisitors() {
+        if (!confirm('确定清空所有访客记录吗？')) return;
+        visitors = [];
+        saveVisitors();
+        renderVisitors();
+        ['m_device', 'm_os', 'm_browser', 'm_extra', 'm_localip']
+        .forEach(id => setVal(id, '--'));
+        setStatus('● 已清空', '');
+    }
+
+    // =========================================================
+    // 事件绑定 + 初始化
+    // =========================================================
+    document.getElementById('scanBtn').addEventListener('click', scanDevice);
+
+    loadVisitors();
+    renderVisitors();
+    loadRecordingState();
+
+    // 检测扫码参数 (source=qrcode)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('source') === 'qrcode') {
+        setTimeout(() => {
+            recordLocalVisitor();
+        }, 1500);
+    }
+
+    window.clearVisitors = clearVisitors;
+    window.toggleRecording = toggleRecording;
+
+    console.log('📡 回响已加载 (本地IP过滤已启用)');
+</script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<style>
+    .cam-platforms {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+    .cam-platform {
+        background: #111;
+        border: 1px solid #1e1e1e;
+        border-radius: 14px;
+        padding: 24px 20px;
+        text-align: center;
+        text-decoration: none;
+        color: inherit;
+        transition: 0.25s;
+        min-height: 180px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .cam-platform:hover {
+        border-color: #444;
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    }
+    .cam-platform .icon { font-size: 48px; }
+    .cam-platform h3 { margin-top: 8px; font-size: 20px; font-weight: 500; }
+    .cam-platform .count { font-size: 13px; color: #666; margin-top: 4px; }
+    .cam-platform .badge {
+        display: inline-block;
+        padding: 3px 18px;
+        border-radius: 20px;
+        font-size: 11px;
+        letter-spacing: 1px;
+        margin-top: 10px;
+    }
+    .badge.skyline { background: #1a2a3a; color: #4dd0e1; border: 1px solid #1a3a4a; }
+    .badge.worldcam { background: #1a3a2a; color: #4caf50; border: 1px solid #1a4a3a; }
+    .badge.earthcam { background: #3a2a1a; color: #ffb74d; border: 1px solid #4a3a1a; }
+
+    .cam-regions {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+        margin: 16px 0;
+    }
+    .cam-region {
+        background: #0d0d0d;
+        border: 1px solid #1a1a1a;
+        border-radius: 10px;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #ddd;
+        transition: 0.2s;
+        text-align: center;
+    }
+    .cam-region:hover {
+        border-color: #444;
+        transform: translateY(-2px);
+    }
+    .cam-region .r-emoji { font-size: 24px; display: block; }
+    .cam-region .r-name { font-size: 13px; font-weight: 500; margin-top: 4px; }
+    .cam-region .r-count { font-size: 10px; color: #555; }
+
+    .cam-note {
+        margin-top: 16px;
+        font-size: 11px;
+        color: #444;
+        border-top: 1px solid #1a1a1a;
+        padding-top: 12px;
+        letter-spacing: 1px;
+        text-align: center;
+    }
+    .cam-note a { color: #4dd0e1; text-decoration: none; }
+
+    .iframe-container {
+        width: 100%;
+        height: 500px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #1a1a1a;
+        background: #0a0a0a;
+        margin-top: 16px;
+    }
+    .iframe-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    @media (max-width: 768px) {
+        .cam-platforms { grid-template-columns: 1fr; }
+        .cam-platform { min-height: 140px; }
+        .cam-regions { grid-template-columns: 1fr 1fr; }
+        .iframe-container { height: 350px; }
+    }
+    @media (max-width: 500px) {
+        .cam-regions { grid-template-columns: 1fr; }
+        .iframe-container { height: 280px; }
+    }
+</style>
+
+<h2 style="font-weight:300;letter-spacing:2px;margin-bottom:4px;color:#aaa;">📷 全球摄像头 · 实时画面</h2>
+<p style="color:#666;margin-bottom:16px;font-size:13px;">🌍 直接访问三大平台 · 覆盖 22,000+ 实时摄像头</p>
+
+<!-- 三大平台入口 -->
+<div class="cam-platforms">
+    <a href="https://www.skylinewebcams.com/" target="_blank" class="cam-platform">
+        <span class="icon">🌐</span>
+        <h3 style="color:#4dd0e1;">SkylineWebcams</h3>
+        <div class="count">6,000+ 实时摄像头 · 全球地标/城市/海滩</div>
+        <span class="badge skyline">👉 访问平台</span>
+    </a>
+    <a href="https://www.worldcam.eu/" target="_blank" class="cam-platform">
+        <span class="icon">🌍</span>
+        <h3 style="color:#4caf50;">WorldCam</h3>
+        <div class="count">8,000+ 实时摄像头 · 欧洲最大平台</div>
+        <span class="badge worldcam">👉 访问平台</span>
+    </a>
+    <a href="https://www.earthcam.com/" target="_blank" class="cam-platform">
+        <span class="icon">📡</span>
+        <h3 style="color:#ffb74d;">EarthCam</h3>
+        <div class="count">8,000+ 实时摄像头 · 美国最大平台</div>
+        <span class="badge earthcam">👉 访问平台</span>
+    </a>
+</div>
+
+<!-- 快速直达 — 按大洲分类 -->
+<div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 8px;">
+    <span style="color:#888;font-size:13px;letter-spacing:1px;">🌎 按大洲快速直达</span>
+    <span style="color:#444;font-size:11px;">点击跳转对应区域</span>
+</div>
+<div class="cam-regions">
+    <a href="https://www.skylinewebcams.com/en/webcam/asia.html" target="_blank" class="cam-region">
+        <span class="r-emoji">🏯</span>
+        <span class="r-name">亚洲</span>
+        <span class="r-count">1,200+ 摄像头</span>
+    </a>
+    <a href="https://www.skylinewebcams.com/en/webcam/europe.html" target="_blank" class="cam-region">
+        <span class="r-emoji">🏰</span>
+        <span class="r-name">欧洲</span>
+        <span class="r-count">2,800+ 摄像头</span>
+    </a>
+    <a href="https://www.skylinewebcams.com/en/webcam/north-america.html" target="_blank" class="cam-region">
+        <span class="r-emoji">🗽</span>
+        <span class="r-name">北美洲</span>
+        <span class="r-count">1,500+ 摄像头</span>
+    </a>
+    <a href="https://www.skylinewebcams.com/en/webcam/south-america.html" target="_blank" class="cam-region">
+        <span class="r-emoji">🏝️</span>
+        <span class="r-name">南美洲</span>
+        <span class="r-count">400+ 摄像头</span>
+    </a>
+    <a href="https://www.skylinewebcams.com/en/webcam/africa.html" target="_blank" class="cam-region">
+        <span class="r-emoji">🦁</span>
+        <span class="r-name">非洲</span>
+        <span class="r-count">300+ 摄像头</span>
+    </a>
+    <a href="https://www.skylinewebcams.com/en/webcam/oceania.html" target="_blank" class="cam-region">
+        <span class="r-emoji">🏄</span>
+        <span class="r-name">大洋洲</span>
+        <span class="r-count">200+ 摄像头</span>
+    </a>
+</div>
+
+<!-- 嵌入 SkylineWebcams 全球地图 -->
+<div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 8px;">
+    <span style="color:#888;font-size:13px;letter-spacing:1px;">🗺️ 全球摄像头地图 (SkylineWebcams)</span>
+    <span style="color:#444;font-size:11px;">实时 · 交互式</span>
+</div>
+<div class="iframe-container">
+    <iframe src="https://www.skylinewebcams.com/en/map.html" allowfullscreen loading="lazy"></iframe>
+</div>
+
+<div class="cam-note">
+    📷 以上平台覆盖 <strong style="color:#aaa;">22,000+</strong> 全球实时摄像头 · 点击即可观看 · 无需注册<br>
+    <span style="color:#444;font-size:10px;">
+        数据来源: <a href="https://www.skylinewebcams.com/" target="_blank">SkylineWebcams</a> · 
+        <a href="https://www.worldcam.eu/" target="_blank">WorldCam</a> · 
+        <a href="https://www.earthcam.com/" target="_blank">EarthCam</a>
+    </span>
+</div>
+
+<script>
+    console.log('📷 全球摄像头已加载 (22,000+ 实时画面)');
+    console.log('📌 点击上方平台入口或大洲分类即可观看');
+</script>
+</body>
+</html>

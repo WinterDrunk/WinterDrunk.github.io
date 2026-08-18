@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<style>
+    .tools-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px;
+    }
+    .tool-card {
+        background: #111;
+        border: 1px solid #1e1e1e;
+        border-radius: 14px;
+        padding: 16px 18px;
+        transition: all 0.25s ease;
+    }
+    .tool-card:hover {
+        border-color: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .tool-card .emoji {
+        font-size: 24px;
+        display: block;
+        margin-bottom: 4px;
+    }
+    .tool-card h3 {
+        font-size: 15px;
+        font-weight: 500;
+        color: #eee;
+        margin-bottom: 2px;
+    }
+    .tool-card p {
+        font-size: 12px;
+        color: #666;
+        line-height: 1.5;
+    }
+    .tool-card .tag {
+        display: inline-block;
+        margin-top: 6px;
+        font-size: 10px;
+        color: #444;
+        border: 1px solid #222;
+        padding: 2px 12px;
+        border-radius: 20px;
+        letter-spacing: 1px;
+    }
+    .tool-card .input-group {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+    }
+    .tool-card .input-group input,
+    .tool-card .input-group textarea {
+        flex: 1;
+        padding: 8px 14px;
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        color: #e0e0e0;
+        font-size: 13px;
+        outline: none;
+        font-family: 'Courier New', monospace;
+        min-width: 100px;
+        resize: vertical;
+    }
+    .tool-card .input-group input:focus,
+    .tool-card .input-group textarea:focus {
+        border-color: #555;
+    }
+    .tool-card .input-group button {
+        padding: 8px 18px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #ccc;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: 0.2s;
+        white-space: nowrap;
+    }
+    .tool-card .input-group button:hover {
+        border-color: #666;
+        color: #fff;
+    }
+    .tool-card .output-box {
+        margin-top: 8px;
+        padding: 8px 12px;
+        background: #0a0a0a;
+        border: 1px solid #1a1a1a;
+        border-radius: 8px;
+        color: #aaa;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        max-height: 120px;
+        overflow-y: auto;
+        word-break: break-all;
+        line-height: 1.6;
+    }
+    .tool-card .output-box .hl {
+        color: #4dd0e1;
+    }
+    .tool-card .output-box .success {
+        color: #4caf50;
+    }
+    .tool-card .output-box .warn {
+        color: #ffb74d;
+    }
+    .tool-card .output-box .danger {
+        color: #f44336;
+    }
+    .tool-card .btn-group {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+    }
+    .tool-card .btn-group button {
+        padding: 6px 16px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #ccc;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: 0.2s;
+    }
+    .tool-card .btn-group button:hover {
+        border-color: #666;
+        color: #fff;
+    }
+
+    /* 二维码区域（保留原有） */
+    .qr-section {
+        background: #111;
+        border: 1px solid #1e1e1e;
+        border-radius: 14px;
+        padding: 16px 18px;
+        margin-bottom: 20px;
+        transition: all 0.25s ease;
+    }
+    .qr-section:hover {
+        border-color: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .qr-input-group {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0 8px;
+        flex-wrap: wrap;
+    }
+    .qr-input-group input {
+        flex: 1;
+        padding: 10px 16px;
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 30px;
+        color: #e0e0e0;
+        font-size: 14px;
+        outline: none;
+        min-width: 180px;
+    }
+    .qr-input-group input:focus {
+        border-color: #555;
+    }
+    .qr-input-group button {
+        padding: 10px 24px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #ccc;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: 0.2s;
+        white-space: nowrap;
+    }
+    .qr-input-group button:hover {
+        border-color: #666;
+        color: #fff;
+    }
+    #qrcode {
+        display: inline-block;
+        padding: 12px;
+        background: #fff;
+        border-radius: 12px;
+        margin: 8px auto 0;
+    }
+    .qr-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+    .qr-actions button {
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #ccc;
+        padding: 5px 18px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: 0.2s;
+    }
+    .qr-actions button:hover {
+        border-color: #666;
+        color: #fff;
+    }
+    .qr-hint {
+        color: #444;
+        font-size: 12px;
+        margin-top: 6px;
+        letter-spacing: 1px;
+    }
+    .tag {
+        display: inline-block;
+        margin-top: 6px;
+        font-size: 10px;
+        color: #444;
+        border: 1px solid #222;
+        padding: 2px 12px;
+        border-radius: 20px;
+        letter-spacing: 1px;
+    }
+
+    .downloader-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 14px;
+    }
+    .downloader-item {
+        background: #0d0d0d;
+        border: 1px solid #1a1a1a;
+        border-radius: 12px;
+        padding: 14px 16px;
+        transition: 0.2s;
+        text-decoration: none;
+        color: #ddd;
+        display: flex;
+        flex-direction: column;
+    }
+    .downloader-item:hover {
+        border-color: #444;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+    .downloader-item .d-emoji {
+        font-size: 22px;
+    }
+    .downloader-item .d-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #eee;
+    }
+    .downloader-item .d-desc {
+        font-size: 11px;
+        color: #666;
+        line-height: 1.4;
+        flex: 1;
+    }
+    .downloader-item .d-btn {
+        margin-top: 6px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #aaa;
+        padding: 3px 14px;
+        border-radius: 30px;
+        font-size: 11px;
+        text-align: center;
+        align-self: flex-start;
+        transition: 0.2s;
+    }
+    .downloader-item .d-btn:hover {
+        background: #2a2a2a;
+        border-color: #666;
+        color: #fff;
+    }
+    .downloader-note {
+        margin-top: 10px;
+        font-size: 11px;
+        color: #444;
+        border-top: 1px solid #1a1a1a;
+        padding-top: 10px;
+        letter-spacing: 1px;
+        text-align: center;
+    }
+
+    .section-title {
+        font-weight: 300;
+        letter-spacing: 2px;
+        color: #aaa;
+        margin: 20px 0 12px;
+        font-size: 18px;
+        border-bottom: 1px solid #1a1a1a;
+        padding-bottom: 8px;
+    }
+    .section-title .emoji {
+        margin-right: 6px;
+    }
+
+    @media (max-width: 900px) {
+        .downloader-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .tools-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    @media (max-width: 500px) {
+        .downloader-grid {
+            grid-template-columns: 1fr;
+        }
+        .tools-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- ========================================================= -->
+<!-- 二维码 -->
+<div class="section-title"><span class="emoji">📱</span>二维码生成器</div>
+<div class="qr-section">
+    <p style="margin-bottom:4px;color:#666;font-size:13px;">输入文字或链接，生成二维码</p>
+    <div class="qr-input-group">
+        <input type="text" id="qrInput" placeholder="输入文字或网址" value="https://winterdrunk.github.io">
+        <button id="qrBtn">生成</button>
+    </div>
+    <div id="qrcode"></div>
+    <div class="qr-actions">
+        <button id="copyQRBtn">📋 复制</button>
+        <button id="saveQRBtn">💾 保存</button>
+    </div>
+    <span class="tag">纯本地 · 不上传</span>
+</div>
+
+<!-- ========================================================= -->
+<!-- 万能下载器 -->
+<div class="section-title"><span class="emoji">⬇️</span>万能下载器</div>
+<p style="color:#666;margin-bottom:12px;font-size:13px;">点击直达在线解析服务 · 无需安装任何软件</p>
+<div class="downloader-grid">
+    <a href="https://www.y2mate.com/zh-cn" target="_blank" class="downloader-item">
+        <span class="d-emoji">🎬</span><span class="d-title">视频下载</span>
+        <span class="d-desc">YouTube、B站、抖音等</span>
+        <span class="d-btn">👉 去解析</span>
+    </a>
+    <a href="https://www.audiolover.com/zh-cn" target="_blank" class="downloader-item">
+        <span class="d-emoji">🎵</span><span class="d-title">音频下载</span>
+        <span class="d-desc">网易云、QQ音乐等</span>
+        <span class="d-btn">👉 去提取</span>
+    </a>
+    <a href="https://imagecyborg.com/" target="_blank" class="downloader-item">
+        <span class="d-emoji">🖼️</span><span class="d-title">图片批量</span>
+        <span class="d-desc">一键抓取所有图片</span>
+        <span class="d-btn">👉 去抓取</span>
+    </a>
+    <a href="https://www.baiduwp.com/" target="_blank" class="downloader-item">
+        <span class="d-emoji">📦</span><span class="d-title">网盘解析</span>
+        <span class="d-desc">百度/阿里云不限速</span>
+        <span class="d-btn">👉 去解析</span>
+    </a>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;justify-content:center;">
+    <a href="https://savefrom.net/" target="_blank" style="color:#555;font-size:11px;border:1px solid #1a1a1a;padding:2px 14px;border-radius:30px;text-decoration:none;">SaveFrom</a>
+    <a href="https://en.savefrom.net/1-youtube-video-downloader-7/" target="_blank" style="color:#555;font-size:11px;border:1px solid #1a1a1a;padding:2px 14px;border-radius:30px;text-decoration:none;">YouTube专用</a>
+    <a href="https://www.bilibili.com/video/download" target="_blank" style="color:#555;font-size:11px;border:1px solid #1a1a1a;padding:2px 14px;border-radius:30px;text-decoration:none;">B站解析</a>
+</div>
+<div class="downloader-note">⚠️ 仅供个人学习 · 请尊重版权</div>
+
+<!-- ========================================================= -->
+<!-- 实用小工具 (三个全部做成可用的) -->
+<div class="section-title"><span class="emoji">🧩</span>实用小工具</div>
+<div class="tools-grid">
+
+    <!-- 1. Base64 编解码 -->
+    <div class="tool-card">
+        <span class="emoji">📐</span>
+        <h3>Base64 编解码</h3>
+        <p>文本与 Base64 互转</p>
+        <div class="input-group">
+            <textarea id="base64Input" rows="2" placeholder="输入文本...">Hello, 黑域！</textarea>
+        </div>
+        <div class="btn-group">
+            <button onclick="base64Encode()">🔒 编码</button>
+            <button onclick="base64Decode()">🔓 解码</button>
+            <button onclick="document.getElementById('base64Input').value=''; document.getElementById('base64Output').innerHTML='等待操作...';">清空</button>
+        </div>
+        <div class="output-box" id="base64Output">等待操作...</div>
+    </div>
+
+    <!-- 2. 短链生成 -->
+    <div class="tool-card">
+        <span class="emoji">🔗</span>
+        <h3>短链生成</h3>
+        <p>长链接一键缩短 (调用 is.gd API)</p>
+        <div class="input-group">
+            <input type="text" id="shortenInput" placeholder="输入长链接" value="https://github.com/WinterDrunk/WinterDrunk.github.io">
+        </div>
+        <div class="btn-group">
+            <button onclick="shortenUrl()">⚡ 生成短链</button>
+            <button onclick="document.getElementById('shortenInput').value=''; document.getElementById('shortenOutput').innerHTML='等待操作...';">清空</button>
+        </div>
+        <div class="output-box" id="shortenOutput">等待操作...</div>
+    </div>
+
+    <!-- 3. 时间戳转换 -->
+    <div class="tool-card">
+        <span class="emoji">🕐</span>
+        <h3>时间戳转换</h3>
+        <p>时间戳 ↔ 日期时间 互转</p>
+        <div class="input-group">
+            <input type="text" id="timestampInput" placeholder="时间戳 (秒/毫秒)" value="1724000000">
+        </div>
+        <div class="btn-group">
+            <button onclick="tsToDate()">→ 转日期</button>
+            <button onclick="dateToTs()">← 转时间戳</button>
+            <button onclick="document.getElementById('timestampInput').value=''; document.getElementById('timestampOutput').innerHTML='等待操作...';">清空</button>
+        </div>
+        <div class="output-box" id="timestampOutput">等待操作...</div>
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js">
+</script>
+<script>
+    // =========================================================
+    // 二维码
+    // =========================================================
+    let qrInstance = null;
+
+    function generateQR() {
+        const input = document.getElementById('qrInput');
+        const container = document.getElementById('qrcode');
+        let text = input.value.trim() || 'https://winterdrunk.github.io';
+        container.innerHTML = '';
+        try {
+            qrInstance = new QRCode(container, {
+                text: text,
+                width: 180,
+                height: 180,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        } catch {
+            container.innerHTML = '<span style="color:#f44336;font-size:14px;">❌ 生成失败</span>';
+        }
+    }
+
+    document.getElementById('qrBtn').addEventListener('click', generateQR);
+    document.getElementById('qrInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') generateQR(); });
+
+    document.getElementById('copyQRBtn').addEventListener('click', function() {
+        const canvas = document.querySelector('#qrcode canvas');
+        if (!canvas) { alert('请先生成二维码！'); return; }
+        canvas.toBlob(function(blob) {
+            navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]).then(() => {
+                alert('✅ 二维码已复制到剪贴板！');
+            }).catch(() => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL();
+                link.download = 'qrcode.png';
+                link.click();
+                alert('💾 复制失败，已自动下载图片');
+            });
+        });
+    });
+
+    document.getElementById('saveQRBtn').addEventListener('click', function() {
+        const canvas = document.querySelector('#qrcode canvas');
+        if (!canvas) { alert('请先生成二维码！'); return; }
+        const link = document.createElement('a');
+        link.download = 'qrcode.png';
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    window.addEventListener('load', () => setTimeout(generateQR, 300));
+
+    // =========================================================
+    // Base64 编解码
+    // =========================================================
+    function base64Encode() {
+        const input = document.getElementById('base64Input').value;
+        if (!input) { document.getElementById('base64Output').innerHTML = '<span class="warn">⚠️ 请输入要编码的文本</span>'; return; }
+        try {
+            const encoded = btoa(unescape(encodeURIComponent(input)));
+            document.getElementById('base64Output').innerHTML = '✅ 编码结果: <span class="hl">' + encoded + '</span>';
+        } catch (e) {
+            document.getElementById('base64Output').innerHTML = '<span class="danger">❌ 编码失败: ' + e.message + '</span>';
+        }
+    }
+
+    function base64Decode() {
+        const input = document.getElementById('base64Input').value;
+        if (!input) { document.getElementById('base64Output').innerHTML = '<span class="warn">⚠️ 请输入要解码的 Base64 字符串</span>'; return; }
+        try {
+            const decoded = decodeURIComponent(escape(atob(input)));
+            document.getElementById('base64Output').innerHTML = '✅ 解码结果: <span class="hl">' + decoded + '</span>';
+        } catch (e) {
+            document.getElementById('base64Output').innerHTML = '<span class="danger">❌ 解码失败: 无效的 Base64 字符串</span>';
+        }
+    }
+
+    // =========================================================
+    // 短链生成 (调用 is.gd API)
+    // =========================================================
+    function shortenUrl() {
+        const url = document.getElementById('shortenInput').value.trim();
+        if (!url) { document.getElementById('shortenOutput').innerHTML = '<span class="warn">⚠️ 请输入要缩短的链接</span>'; return; }
+        document.getElementById('shortenOutput').innerHTML = '⏳ 生成中...';
+        fetch('https://is.gd/create.php?format=json&url=' + encodeURIComponent(url))
+            .then(r => r.json())
+            .then(data => {
+                if (data.errorcode) {
+                    document.getElementById('shortenOutput').innerHTML = '<span class="danger">❌ 生成失败: ' + data
+                        .errormessage + '</span>';
+                } else {
+                    document.getElementById('shortenOutput').innerHTML =
+                        '✅ 短链: <span class="hl"><a href="' + data.shorturl + '" target="_blank" style="color:#4dd0e1;">' +
+                        data.shorturl + '</a></span>';
+                }
+            })
+            .catch(() => {
+                document.getElementById('shortenOutput').innerHTML = '<span class="danger">❌ 请求失败，请检查网络</span>';
+            });
+    }
+
+    // =========================================================
+    // 时间戳转换
+    // =========================================================
+    function tsToDate() {
+        const input = document.getElementById('timestampInput').value.trim();
+        if (!input) { document.getElementById('timestampOutput').innerHTML = '<span class="warn">⚠️ 请输入时间戳</span>'; return; }
+        let ts = parseInt(input);
+        if (isNaN(ts)) { document.getElementById('timestampOutput').innerHTML = '<span class="danger">❌ 无效的时间戳</span>'; return; }
+        // 判断是秒还是毫秒 (10位是秒，13位是毫秒)
+        if (ts < 10000000000) ts = ts * 1000;
+        const date = new Date(ts);
+        if (isNaN(date.getTime())) { document.getElementById('timestampOutput').innerHTML = '<span class="danger">❌ 无效的时间戳</span>'; return; }
+        document.getElementById('timestampOutput').innerHTML =
+            '✅ 日期时间: <span class="hl">' + date.toLocaleString('zh-CN') + '</span><br>' +
+            '📅 UTC: ' + date.toUTCString() + '<br>' +
+            '🕐 原始输入: ' + input;
+    }
+
+    function dateToTs() {
+        const input = document.getElementById('timestampInput').value.trim();
+        if (!input) { document.getElementById('timestampOutput').innerHTML = '<span class="warn">⚠️ 请输入日期时间 (如: 2024-08-18 12:00:00)</span>'; return; }
+        const date = new Date(input);
+        if (isNaN(date.getTime())) { document.getElementById('timestampOutput').innerHTML = '<span class="danger">❌ 无效的日期格式</span>'; return; }
+        const tsSec = Math.floor(date.getTime() / 1000);
+        const tsMs = date.getTime();
+        document.getElementById('timestampOutput').innerHTML =
+            '✅ 时间戳 (秒): <span class="hl">' + tsSec + '</span><br>' +
+            '📌 时间戳 (毫秒): <span class="hl">' + tsMs + '</span>';
+    }
+
+    // 回车触发时间戳转换（智能判断）
+    document.getElementById('timestampInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const val = this.value.trim();
+            if (/^\d+$/.test(val)) {
+                tsToDate();
+            } else {
+                dateToTs();
+            }
+        }
+    });
+
+    console.log('🛠 工具面板已加载 (全部功能可用)');
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drunk on Winter</title>
+    <title>Drunk on Winter · 黑域</title>
     <style>
         * {
             margin: 0;
@@ -13,98 +13,266 @@
         body {
             background: #0a0a0a;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
             color: #e0e0e0;
-            padding: 20px;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
         }
-        .card {
-            background: #141414;
-            border: 1px solid #2a2a2a;
-            border-radius: 24px;
-            padding: 50px 40px;
-            max-width: 600px;
+        .container {
+            max-width: 1000px;
             width: 100%;
+        }
+        .header {
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            transition: all 0.2s ease;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 30px;
         }
-        .card:hover {
-            border-color: #3a3a3a;
-        }
-        .icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-            display: block;
-        }
-        h1 {
-            font-size: 28px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, #f0f0f0 0%, #a0a0a0 100%);
+        .header h1 {
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 6px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #888 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 12px;
         }
-        .sub {
-            font-size: 16px;
+        .header .sub {
+            font-size: 14px;
+            color: #555;
+            letter-spacing: 4px;
+            margin-top: 6px;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+        .tabs button {
+            background: transparent;
+            border: 1px solid #2a2a2a;
             color: #888;
-            margin-bottom: 6px;
+            padding: 10px 32px;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
             letter-spacing: 2px;
         }
-        .divider {
-            width: 60px;
-            height: 2px;
-            background: #2a2a2a;
-            margin: 20px auto;
-            border-radius: 4px;
+        .tabs button:hover {
+            border-color: #444;
+            color: #ccc;
         }
-        .user {
-            font-size: 18px;
-            color: #aaa;
+        .tabs button.active {
             background: #1a1a1a;
+            border-color: #555;
+            color: #fff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.02);
+        }
+        .panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .panel.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .tool-card {
+            background: #111;
+            border: 1px solid #1e1e1e;
+            border-radius: 16px;
+            padding: 28px 22px;
+            transition: all 0.25s ease;
+            cursor: default;
+        }
+        .tool-card:hover {
+            border-color: #333;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+        }
+        .tool-card .emoji {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .tool-card h3 {
+            font-size: 18px;
+            font-weight: 500;
+            color: #eee;
+            margin-bottom: 4px;
+        }
+        .tool-card p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+        .tool-card .tag {
             display: inline-block;
-            padding: 6px 20px;
-            border-radius: 40px;
-            border: 1px solid #2a2a2a;
+            margin-top: 12px;
+            font-size: 11px;
+            color: #444;
+            border: 1px solid #222;
+            padding: 2px 14px;
+            border-radius: 20px;
             letter-spacing: 1px;
-            margin-top: 4px;
+        }
+        .blog-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .blog-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 24px;
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: #ddd;
+        }
+        .blog-item:hover {
+            border-color: #333;
+            background: #161616;
+            transform: translateX(4px);
+        }
+        .blog-item .title {
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+        .blog-item .meta {
+            font-size: 13px;
+            color: #555;
+            white-space: nowrap;
+        }
+        .blog-placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: #333;
+            font-size: 14px;
+            letter-spacing: 2px;
+            border: 1px dashed #1a1a1a;
+            border-radius: 16px;
         }
         .footer {
-            margin-top: 28px;
-            font-size: 13px;
-            color: #444;
-            letter-spacing: 1px;
+            margin-top: 60px;
+            text-align: center;
+            font-size: 12px;
+            color: #222;
+            border-top: 1px solid #111;
+            padding-top: 24px;
+            letter-spacing: 2px;
         }
-        .footer span {
-            color: #2a6b5a;
-        }
-        @media (max-width: 480px) {
-            .card {
-                padding: 32px 20px;
-            }
-            h1 {
-                font-size: 22px;
-            }
-            .icon {
-                font-size: 48px;
-            }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 24px; letter-spacing: 4px; }
+            .tabs button { padding: 8px 20px; font-size: 13px; }
+            .tool-grid { grid-template-columns: 1fr; }
+            .blog-item { flex-direction: column; align-items: flex-start; gap: 4px; }
+            .blog-item .meta { font-size: 12px; }
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <span class="icon">🌙</span>
-        <h1>Drunk on Winter</h1>
-        <div class="sub">by the Water</div>
-        <div class="divider"></div>
-        <div class="user">@WinterDrunk</div>
-        <div class="footer">
-            <span>✦</span> 第一个黑色网站 <span>✦</span>
+
+<div class="container">
+
+    <div class="header">
+        <h1>⬛ 黑 域</h1>
+        <div class="sub">Drunk on Winter · by the Water</div>
+    </div>
+
+    <div class="tabs">
+        <button class="active" data-tab="tools">🛠 工具</button>
+        <button data-tab="blog">📝 博客</button>
+    </div>
+
+    <div id="tools" class="panel active">
+        <div class="tool-grid">
+            <div class="tool-card">
+                <span class="emoji">📐</span>
+                <h3>Base64 编解码</h3>
+                <p>文本与 Base64 互转，轻量小工具</p>
+                <span class="tag">占位 · 待开发</span>
+            </div>
+            <div class="tool-card">
+                <span class="emoji">⏱</span>
+                <h3>倒计时 · 专注</h3>
+                <p>25 分钟番茄钟，保持专注</p>
+                <span class="tag">占位 · 待开发</span>
+            </div>
+            <div class="tool-card">
+                <span class="emoji">🌦</span>
+                <h3>天气卡片</h3>
+                <p>输入城市，显示实时天气</p>
+                <span class="tag">占位 · 待开发</span>
+            </div>
+            <div class="tool-card">
+                <span class="emoji">🔗</span>
+                <h3>短链生成</h3>
+                <p>长链接一键缩短</p>
+                <span class="tag">占位 · 待开发</span>
+            </div>
         </div>
     </div>
+
+    <div id="blog" class="panel">
+        <div class="blog-list">
+            <a href="#" class="blog-item">
+                <span class="title">🌱 为什么我要在黑域写博客</span>
+                <span class="meta">2026-08-18</span>
+            </a>
+            <a href="#" class="blog-item">
+                <span class="title">⚙️ 用 GitHub Pages 搭建网站的零碎记录</span>
+                <span class="meta">2026-08-17</span>
+            </a>
+            <a href="#" class="blog-item">
+                <span class="title">🎧 冬日听歌 · 与水边的寂静</span>
+                <span class="meta">2026-08-16</span>
+            </a>
+            <div class="blog-placeholder">
+                ✦ 更多文章正在来的路上 ✦
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        ⬛ 黑域 · 自留地
+    </div>
+
+</div>
+
+<script>
+    const tabs = document.querySelectorAll('.tabs button');
+    const panels = {
+        tools: document.getElementById('tools'),
+        blog: document.getElementById('blog')
+    };
+
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabs.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const target = btn.dataset.tab;
+            Object.keys(panels).forEach(key => {
+                panels[key].classList.toggle('active', key === target);
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

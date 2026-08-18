@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js">
     </script>
     <style>
+        /* ===== 全局 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -22,7 +23,7 @@
             justify-content: center;
         }
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             width: 100%;
         }
         .header {
@@ -103,6 +104,7 @@
                 transform: translateY(0);
             }
         }
+        /* ===== 工具卡片 ===== */
         .tool-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -209,47 +211,78 @@
             border-color: #666;
             color: #fff;
         }
-        .blog-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+        /* ===== 下载器专用 ===== */
+        .downloader-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
         }
-        .blog-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 24px;
-            background: #111;
+        .downloader-item {
+            background: #0d0d0d;
             border: 1px solid #1a1a1a;
-            border-radius: 12px;
-            transition: all 0.2s ease;
+            border-radius: 14px;
+            padding: 20px 22px;
+            transition: 0.2s;
             text-decoration: none;
             color: #ddd;
+            display: flex;
+            flex-direction: column;
         }
-        .blog-item:hover {
-            border-color: #333;
-            background: #161616;
-            transform: translateX(4px);
+        .downloader-item:hover {
+            border-color: #444;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
         }
-        .blog-item .title {
-            font-size: 16px;
-            font-weight: 400;
-            letter-spacing: 0.5px;
+        .downloader-item .d-emoji {
+            font-size: 28px;
+            margin-bottom: 6px;
         }
-        .blog-item .meta {
+        .downloader-item .d-title {
+            font-size: 17px;
+            font-weight: 500;
+            color: #eee;
+            margin-bottom: 2px;
+        }
+        .downloader-item .d-desc {
             font-size: 13px;
-            color: #555;
-            white-space: nowrap;
+            color: #666;
+            line-height: 1.5;
+            flex: 1;
         }
-        .blog-placeholder {
+        .downloader-item .d-btn {
+            margin-top: 12px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #aaa;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 13px;
             text-align: center;
-            padding: 60px 20px;
-            color: #333;
-            font-size: 14px;
-            letter-spacing: 2px;
-            border: 1px dashed #1a1a1a;
-            border-radius: 16px;
+            transition: 0.2s;
+            align-self: flex-start;
         }
+        .downloader-item .d-btn:hover {
+            background: #2a2a2a;
+            border-color: #666;
+            color: #fff;
+        }
+        .downloader-note {
+            margin-top: 18px;
+            font-size: 12px;
+            color: #444;
+            border-top: 1px solid #1a1a1a;
+            padding-top: 14px;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        .downloader-note a {
+            color: #4dd0e1;
+            text-decoration: none;
+        }
+        .downloader-note a:hover {
+            text-decoration: underline;
+        }
+        /* ===== 监控面板 ===== */
         .monitor-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -280,9 +313,6 @@
         .monitor-item .value.warn {
             color: #ff9800;
             font-size: 13px;
-        }
-        .monitor-item .value.danger {
-            color: #f44336;
         }
         .monitor-item .value.success {
             color: #4caf50;
@@ -390,6 +420,9 @@
             .monitor-grid {
                 grid-template-columns: 1fr 1fr;
             }
+            .downloader-grid {
+                grid-template-columns: 1fr;
+            }
         }
         @media (max-width: 500px) {
             .monitor-grid {
@@ -406,14 +439,6 @@
             .tool-grid {
                 grid-template-columns: 1fr;
             }
-            .blog-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
-            }
-            .blog-item .meta {
-                font-size: 12px;
-            }
             .qr-actions button {
                 font-size: 12px;
                 padding: 4px 14px;
@@ -429,11 +454,6 @@
             background: #2a2a2a;
             border-radius: 4px;
         }
-        .count-badge {
-            color: #555;
-            font-size: 13px;
-            margin-left: 8px;
-        }
     </style>
 </head>
 <body>
@@ -445,9 +465,12 @@
         </div>
         <div class="tabs">
             <button class="active" data-tab="tools">🛠 工具</button>
-            <button data-tab="blog">📝 博客</button>
+            <button data-tab="downloader">⬇️ 下载器</button>
             <button data-tab="monitor">📡 回响</button>
         </div>
+
+        <!-- ========================================================= -->
+        <!-- 面板：工具 -->
         <div id="tools" class="panel active">
             <div class="tool-grid">
                 <div class="tool-card" style="grid-column:1/-1;">
@@ -458,7 +481,7 @@
                         <input type="text" id="qrInput" placeholder="输入文字或网址" value="https://winterdrunk.github.io">
                         <button id="qrBtn">生成</button>
                     </div>
-                    <div id="qrcode" style="display:inline-block;padding:12px;background:#fff;border-radius:12px;margin:12px auto 0;"></div>
+                    <div id="qrcode"></div>
                     <div class="qr-actions">
                         <button id="copyQRBtn">📋 复制</button>
                         <button id="saveQRBtn">💾 保存</button>
@@ -467,35 +490,76 @@
                 </div>
                 <div class="tool-card">
                     <span class="emoji">📐</span>
-                    <h3>Base64</h3>
+                    <h3>Base64 编解码</h3>
                     <p>文本与Base64互转</p>
                     <span class="tag">待开发</span>
                 </div>
                 <div class="tool-card">
                     <span class="emoji">🔗</span>
                     <h3>短链生成</h3>
-                    <p>长链接缩短</p>
+                    <p>长链接一键缩短</p>
                     <span class="tag">待开发</span>
                 </div>
             </div>
         </div>
-        <div id="blog" class="panel">
-            <div class="blog-list">
-                <a href="#" class="blog-item">
-                    <span class="title">🌱 为什么我要在黑域写博客</span>
-                    <span class="meta">2026-08-18</span>
+
+        <!-- ========================================================= -->
+        <!-- 面板：下载器（全新） -->
+        <div id="downloader" class="panel">
+            <h2 style="font-weight:300;letter-spacing:2px;margin-bottom:16px;color:#aaa;">⬇️ 万能下载工具箱</h2>
+            <p style="color:#666;margin-bottom:20px;font-size:14px;">点击下方卡片，直达在线解析服务 · 无需安装任何软件</p>
+
+            <div class="downloader-grid">
+
+                <!-- 1. 视频下载 -->
+                <a href="https://www.y2mate.com/zh-cn" target="_blank" class="downloader-item">
+                    <span class="d-emoji">🎬</span>
+                    <span class="d-title">视频下载</span>
+                    <span class="d-desc">支持 YouTube、B站、抖音、快手、Twitter 等主流平台</span>
+                    <span class="d-btn">👉 去解析视频</span>
                 </a>
-                <a href="#" class="blog-item">
-                    <span class="title">⚙️ 用 GitHub Pages 搭建网站的零碎记录</span>
-                    <span class="meta">2026-08-17</span>
+
+                <!-- 2. 音频下载 -->
+                <a href="https://www.audiolover.com/zh-cn" target="_blank" class="downloader-item">
+                    <span class="d-emoji">🎵</span>
+                    <span class="d-title">音频下载</span>
+                    <span class="d-desc">网易云、QQ音乐、Spotify 等平台的试听音频提取</span>
+                    <span class="d-btn">👉 去提取音频</span>
                 </a>
-                <a href="#" class="blog-item">
-                    <span class="title">🎧 冬日听歌 · 与水边的寂静</span>
-                    <span class="meta">2026-08-16</span>
+
+                <!-- 3. 图片批量下载 -->
+                <a href="https://imagecyborg.com/" target="_blank" class="downloader-item">
+                    <span class="d-emoji">🖼️</span>
+                    <span class="d-title">图片批量下载</span>
+                    <span class="d-desc">一键抓取网页中的所有图片，支持全尺寸原图</span>
+                    <span class="d-btn">👉 去抓取图片</span>
                 </a>
-                <div class="blog-placeholder">✦ 更多文章正在来的路上 ✦</div>
+
+                <!-- 4. 文件/网盘直链解析 -->
+                <a href="https://www.baiduwp.com/" target="_blank" class="downloader-item">
+                    <span class="d-emoji">📦</span>
+                    <span class="d-title">网盘直链解析</span>
+                    <span class="d-desc">百度网盘、阿里云盘等不限速下载（需登录）</span>
+                    <span class="d-btn">👉 去解析直链</span>
+                </a>
+
+            </div>
+
+            <!-- 额外备用工具 -->
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;justify-content:center;">
+                <a href="https://savefrom.net/" target="_blank" style="color:#888;font-size:13px;border:1px solid #1a1a1a;padding:4px 18px;border-radius:30px;text-decoration:none;">SaveFrom</a>
+                <a href="https://en.savefrom.net/1-youtube-video-downloader-7/" target="_blank" style="color:#888;font-size:13px;border:1px solid #1a1a1a;padding:4px 18px;border-radius:30px;text-decoration:none;">YouTube 专用</a>
+                <a href="https://www.bilibili.com/video/download" target="_blank" style="color:#888;font-size:13px;border:1px solid #1a1a1a;padding:4px 18px;border-radius:30px;text-decoration:none;">B站解析</a>
+            </div>
+
+            <div class="downloader-note">
+                ⚠️ 以上工具均为第三方在线服务，仅供个人学习使用，请尊重版权。<br>
+                部分工具需要粘贴链接后手动选择画质/格式。
             </div>
         </div>
+
+        <!-- ========================================================= -->
+        <!-- 面板：监控（保留） -->
         <div id="monitor" class="panel">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
                 <div>
@@ -546,22 +610,21 @@
                 </div>
             </div>
             <div style="margin-top:20px;">
-                <div style="color:#555;font-size:12px;letter-spacing:1px;padding:0 4px 6px 4px;border-bottom:1px solid #111;">
-                    📋 访客记录
-                </div>
-                <div class="visitor-list" id="visitorList">
-                    <div class="visitor-empty">暂无记录</div>
-                </div>
+                <div style="color:#555;font-size:12px;letter-spacing:1px;padding:0 4px 6px 4px;border-bottom:1px solid #111;">📋 访客记录</div>
+                <div class="visitor-list" id="visitorList"><div class="visitor-empty">暂无记录</div></div>
             </div>
         </div>
+
         <div class="footer">⬛ Drunk·Winter · 自留地</div>
     </div>
+
+    <!-- ========================================================= -->
     <script>
         // ===== 标签切换 =====
         const tabs = document.querySelectorAll('.tabs button');
         const panels = {
             tools: document.getElementById('tools'),
-            blog: document.getElementById('blog'),
+            downloader: document.getElementById('downloader'),
             monitor: document.getElementById('monitor')
         };
         tabs.forEach(btn => {
@@ -599,22 +662,13 @@
         document.getElementById('qrBtn').addEventListener('click', generateQR);
         document.getElementById('qrInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') generateQR(); });
 
-        // ===== 复制二维码 =====
         document.getElementById('copyQRBtn').addEventListener('click', function() {
             const canvas = document.querySelector('#qrcode canvas');
-            if (!canvas) {
-                alert('请先生成二维码！');
-                return;
-            }
+            if (!canvas) { alert('请先生成二维码！'); return; }
             canvas.toBlob(function(blob) {
-                navigator.clipboard.write([
-                    new ClipboardItem({
-                        [blob.type]: blob
-                    })
-                ]).then(() => {
+                navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]).then(() => {
                     alert('✅ 二维码已复制到剪贴板！');
                 }).catch(() => {
-                    // 降级方案
                     const link = document.createElement('a');
                     link.href = canvas.toDataURL();
                     link.download = 'qrcode.png';
@@ -624,13 +678,9 @@
             });
         });
 
-        // ===== 保存二维码 =====
         document.getElementById('saveQRBtn').addEventListener('click', function() {
             const canvas = document.querySelector('#qrcode canvas');
-            if (!canvas) {
-                alert('请先生成二维码！');
-                return;
-            }
+            if (!canvas) { alert('请先生成二维码！'); return; }
             const link = document.createElement('a');
             link.download = 'qrcode.png';
             link.href = canvas.toDataURL('image/png');
@@ -641,28 +691,18 @@
 
         window.addEventListener('load', () => setTimeout(generateQR, 300));
 
-        // ===== 监控（保留完整功能） =====
+        // ===== 监控 =====
         let visitors = [];
 
         function loadVisitors() {
-            try {
-                const data = localStorage.getItem('black_visitors');
-                visitors = data ? JSON.parse(data) : [];
-            } catch {
-                visitors = [];
-            }
+            try { visitors = JSON.parse(localStorage.getItem('black_visitors')) || []; } catch { visitors = []; }
         }
 
         function saveVisitors() {
-            try {
-                localStorage.setItem('black_visitors', JSON.stringify(visitors));
-            } catch {}
+            localStorage.setItem('black_visitors', JSON.stringify(visitors));
         }
 
-        function setVal(id, val) {
-            const el = document.getElementById(id);
-            if (el) el.textContent = val || '--';
-        }
+        function setVal(id, val) { document.getElementById(id).textContent = val || '--'; }
 
         function setStatus(text, type) {
             const el = document.getElementById('scanStatus');
@@ -676,43 +716,27 @@
                 browser = '未知';
             if (/iPhone/.test(ua)) device = 'iPhone';
             else if (/iPad/.test(ua)) device = 'iPad';
-            else if (/Android/.test(ua)) {
-                const m = ua.match(/Android\s+([\d.]+)/);
-                device = 'Android' + (m ? ' ' + m[1] : '');
-            } else if (/Windows NT/.test(ua)) device = 'Windows PC';
+            else if (/Android/.test(ua)) { const m = ua.match(/Android\s+([\d.]+)/);
+                device = 'Android' + (m ? ' ' + m[1] : ''); } else if (/Windows NT/.test(ua)) device = 'Windows PC';
             else if (/Macintosh/.test(ua)) device = 'Mac';
             else if (/Linux/.test(ua)) device = 'Linux';
             if (/Windows NT 10.0/.test(ua)) os = 'Windows 10/11';
             else if (/Windows NT 6.1/.test(ua)) os = 'Windows 7';
-            else if (/Mac OS X/.test(ua)) {
-                const m = ua.match(/Mac OS X ([_\d]+)/);
-                os = 'macOS ' + (m ? m[1].replace(/_/g, '.') : '');
-            } else if (/Android/.test(ua)) {
-                const m = ua.match(/Android\s+([\d.]+)/);
-                os = 'Android ' + (m ? m[1] : '');
-            } else if (/iPhone OS/.test(ua)) {
-                const m = ua.match(/iPhone OS ([\d_]+)/);
-                os = 'iOS ' + (m ? m[1].replace(/_/g, '.') : '');
-            } else if (/iPad/.test(ua)) {
-                const m = ua.match(/iPad OS ([\d_]+)/);
-                os = 'iPadOS ' + (m ? m[1].replace(/_/g, '.') : '');
-            } else if (/Linux/.test(ua)) os = 'Linux';
-            if (/Edg\//.test(ua)) {
-                const m = ua.match(/Edg\/([\d.]+)/);
-                browser = 'Edge ' + (m ? m[1] : '');
-            } else if (/Firefox\//.test(ua)) {
-                const m = ua.match(/Firefox\/([\d.]+)/);
-                browser = 'Firefox ' + (m ? m[1] : '');
-            } else if (/OPR\//.test(ua)) {
-                const m = ua.match(/OPR\/([\d.]+)/);
-                browser = 'Opera ' + (m ? m[1] : '');
-            } else if (/Chrome\//.test(ua) && !/Edg/.test(ua)) {
-                const m = ua.match(/Chrome\/([\d.]+)/);
-                browser = 'Chrome ' + (m ? m[1] : '');
-            } else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) {
-                const m = ua.match(/Version\/([\d.]+)/);
-                browser = 'Safari ' + (m ? m[1] : '');
-            }
+            else if (/Mac OS X/.test(ua)) { const m = ua.match(/Mac OS X ([_\d]+)/);
+                os = 'macOS ' + (m ? m[1].replace(/_/g, '.') : ''); } else if (/Android/.test(ua)) { const m = ua.match(
+                    /Android\s+([\d.]+)/);
+                os = 'Android ' + (m ? m[1] : ''); } else if (/iPhone OS/.test(ua)) { const m = ua.match(/iPhone OS ([\d_]+)/);
+                os = 'iOS ' + (m ? m[1].replace(/_/g, '.') : ''); } else if (/iPad/.test(ua)) { const m = ua.match(
+                    /iPad OS ([\d_]+)/);
+                os = 'iPadOS ' + (m ? m[1].replace(/_/g, '.') : ''); } else if (/Linux/.test(ua)) os = 'Linux';
+            if (/Edg\//.test(ua)) { const m = ua.match(/Edg\/([\d.]+)/);
+                browser = 'Edge ' + (m ? m[1] : ''); } else if (/Firefox\//.test(ua)) { const m = ua.match(/Firefox\/([\d.]+)/);
+                browser = 'Firefox ' + (m ? m[1] : ''); } else if (/OPR\//.test(ua)) { const m = ua.match(/OPR\/([\d.]+)/);
+                browser = 'Opera ' + (m ? m[1] : ''); } else if (/Chrome\//.test(ua) && !/Edg/.test(ua)) { const m = ua
+                    .match(/Chrome\/([\d.]+)/);
+                browser = 'Chrome ' + (m ? m[1] : ''); } else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) { const m =
+                    ua.match(/Version\/([\d.]+)/);
+                browser = 'Safari ' + (m ? m[1] : ''); }
             return { device, os, browser };
         }
 
@@ -724,11 +748,8 @@
                     pc.createDataChannel('test');
                     pc.createOffer().then(o => pc.setLocalDescription(o)).catch(() => {});
                     pc.onicecandidate = (e) => {
-                        if (!e.candidate) {
-                            pc.close();
-                            resolve(ips.length ? ips : ['未获取到']);
-                            return;
-                        }
+                        if (!e.candidate) { pc.close();
+                            resolve(ips.length ? ips : ['未获取到']); return; }
                         const ip = e.candidate.candidate.match(/(\d+\.\d+\.\d+\.\d+)/)?.[1];
                         const ip6 = e.candidate.candidate.match(/([a-f0-9:]+:[a-f0-9:]+)/i)?.[1];
                         if (ip && !ips.includes(ip) && !ip.startsWith('192.168.0.')) ips.push(ip);
@@ -736,9 +757,7 @@
                     };
                     setTimeout(() => { pc.close();
                         resolve(ips.length ? ips : ['超时']); }, 5000);
-                } catch {
-                    resolve(['不支持']);
-                }
+                } catch { resolve(['不支持']); }
             });
         }
 
@@ -791,10 +810,7 @@
             const container = document.getElementById('visitorList');
             const countEl = document.getElementById('visitorCount');
             countEl.textContent = visitors.length;
-            if (visitors.length === 0) {
-                container.innerHTML = '<div class="visitor-empty">暂无记录</div>';
-                return;
-            }
+            if (visitors.length === 0) { container.innerHTML = '<div class="visitor-empty">暂无记录</div>'; return; }
             container.innerHTML = visitors.map(v => `
                 <div class="visitor-item">
                     <span class="v-time">${v.time}</span>
@@ -820,9 +836,7 @@
         document.getElementById('scanBtn').addEventListener('click', scanDevice);
         loadVisitors();
         renderVisitors();
-        window.addEventListener('load', () => {
-            setTimeout(scanDevice, 800);
-        });
+        window.addEventListener('load', () => { setTimeout(scanDevice, 800); });
         window.clearVisitors = clearVisitors;
         console.log('⬛ Drunk·Winter 星空暗流 · 已加载');
     </script>

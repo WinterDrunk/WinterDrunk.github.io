@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>卫星实时追踪</title>
+    <style>
+        body { margin: 0; padding: 0; background: #0a0a0a; font-family: 'JetBrains Mono', monospace; }
+        .header {
+            background: #111927;
+            padding: 12px 20px;
+            border-bottom: 1px solid #00e87a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .header h2 {
+            color: #00e87a;
+            margin: 0;
+            font-size: 16px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        .header a {
+            color: #00c8ff;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        .header a:hover { text-decoration: underline; }
+        .lang-btn {
+            background: transparent;
+            color: #5a7a8a;
+            border: 1px solid #1a2a3a;
+            padding: 2px 12px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .lang-btn.active {
+            background: #00e87a;
+            color: #0a0e17;
+            border-color: #00e87a;
+        }
+        .lang-btn:hover:not(.active) {
+            border-color: #00e87a;
+            color: #00e87a;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .header-right .status {
+            color: #5a7a8a;
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+        .iframe-container {
+            height: calc(100vh - 80px);
+            min-height: 500px;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #0a0e17;
+        }
+        @media (max-width: 600px) {
+            .header h2 { font-size: 14px; }
+            .header-right .status { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2 id="page-title">🛰️ 卫星实时追踪</h2>
+        <div class="header-right">
+            <span class="status" id="status-text">数据源: CelesTrak</span>
+            <button class="lang-btn active" id="btn-zh" onclick="setLang('zh')">中文</button>
+            <button class="lang-btn" id="btn-en" onclick="setLang('en')">English</button>
+            <a href="javascript:history.back()">← 返回</a>
+        </div>
+    </div>
+    <div class="iframe-container">
+        <iframe src="https://azmth.space/" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <script>
+        const texts = {
+            'zh': { title: '🛰️ 卫星实时追踪', status: '数据源: CelesTrak' },
+            'en': { title: '🛰️ Satellite Tracking', status: 'Source: CelesTrak' }
+        };
+        function setLang(lang) {
+            document.getElementById('page-title').textContent = texts[lang].title;
+            document.getElementById('status-text').textContent = texts[lang].status;
+            document.getElementById('btn-zh').className = 'lang-btn' + (lang === 'zh' ? ' active' : '');
+            document.getElementById('btn-en').className = 'lang-btn' + (lang === 'en' ? ' active' : '');
+            document.documentElement.lang = lang;
+        }
+    </script>
+</body>
+</html>

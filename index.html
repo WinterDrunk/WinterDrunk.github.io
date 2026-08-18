@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js">
     </script>
     <style>
-        /* ===== 全局黑色主题 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -26,8 +25,6 @@
             max-width: 1100px;
             width: 100%;
         }
-
-        /* ===== 头部 ===== */
         .header {
             text-align: center;
             margin-bottom: 40px;
@@ -60,8 +57,6 @@
             letter-spacing: 2px;
             background: #0d1a12;
         }
-
-        /* ===== 导航标签 ===== */
         .tabs {
             display: flex;
             justify-content: center;
@@ -91,7 +86,6 @@
             color: #fff;
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.02);
         }
-
         .panel {
             display: none;
             animation: fadeIn 0.4s ease;
@@ -109,8 +103,6 @@
                 transform: translateY(0);
             }
         }
-
-        /* ===== 工具卡片 ===== */
         .tool-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -196,8 +188,6 @@
             background: #fff;
             border-radius: 12px;
         }
-
-        /* ===== 博客列表 ===== */
         .blog-list {
             display: flex;
             flex-direction: column;
@@ -239,8 +229,6 @@
             border: 1px dashed #1a1a1a;
             border-radius: 16px;
         }
-
-        /* ===== 监控面板（核心） ===== */
         .monitor-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -281,7 +269,6 @@
         .monitor-item .value.cyan {
             color: #4dd0e1;
         }
-
         .monitor-btn {
             margin: 16px 0 8px;
             padding: 10px 32px;
@@ -317,8 +304,6 @@
         .monitor-status.loading {
             color: #ff9800;
         }
-
-        /* 访客列表 */
         .visitor-list {
             margin-top: 16px;
             max-height: 350px;
@@ -371,7 +356,6 @@
             font-size: 14px;
             letter-spacing: 2px;
         }
-
         .footer {
             margin-top: 60px;
             text-align: center;
@@ -381,8 +365,6 @@
             padding-top: 24px;
             letter-spacing: 2px;
         }
-
-        /* ===== 响应式 ===== */
         @media (max-width: 768px) {
             .monitor-grid {
                 grid-template-columns: 1fr 1fr;
@@ -412,7 +394,6 @@
                 font-size: 12px;
             }
         }
-
         .visitor-list::-webkit-scrollbar {
             width: 4px;
         }
@@ -423,7 +404,6 @@
             background: #2a2a2a;
             border-radius: 4px;
         }
-
         .count-badge {
             color: #555;
             font-size: 13px;
@@ -432,25 +412,17 @@
     </style>
 </head>
 <body>
-
     <div class="container">
-
-        <!-- ===== 头部 ===== -->
         <div class="header">
             <h1>⬛ 黑 域</h1>
             <div class="sub">Drunk on Winter · by the Water</div>
             <div class="badge">● 监听中</div>
         </div>
-
-        <!-- ===== 导航 ===== -->
         <div class="tabs">
             <button data-tab="tools">🛠 工具</button>
             <button data-tab="blog">📝 博客</button>
             <button class="active" data-tab="monitor">📡 监控</button>
         </div>
-
-        <!-- ========================================================= -->
-        <!-- 面板：工具 -->
         <div id="tools" class="panel">
             <div class="tool-grid">
                 <div class="tool-card" style="grid-column:1/-1;">
@@ -478,9 +450,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- ========================================================= -->
-        <!-- 面板：博客 -->
         <div id="blog" class="panel">
             <div class="blog-list">
                 <a href="#" class="blog-item">
@@ -498,12 +467,7 @@
                 <div class="blog-placeholder">✦ 更多文章正在来的路上 ✦</div>
             </div>
         </div>
-
-        <!-- ========================================================= -->
-        <!-- 面板：监控（默认显示） -->
         <div id="monitor" class="panel active">
-
-            <!-- 控制栏 -->
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
                 <div>
                     <button class="monitor-btn" id="scanBtn">📡 扫描当前设备</button>
@@ -514,8 +478,6 @@
                     <button onclick="clearVisitors()" style="background:transparent;border:1px solid #2a2a2a;color:#666;padding:4px 16px;border-radius:16px;cursor:pointer;font-size:12px;">清空</button>
                 </div>
             </div>
-
-            <!-- 当前设备信息卡片 -->
             <div class="monitor-grid" id="monitorGrid">
                 <div class="monitor-item">
                     <div class="label">🌐 公网 IPv4</div>
@@ -554,8 +516,6 @@
                     <div class="value warn" id="m_localip">点击"扫描"获取</div>
                 </div>
             </div>
-
-            <!-- 访客记录列表 -->
             <div style="margin-top:20px;">
                 <div style="color:#555;font-size:12px;letter-spacing:1px;padding:0 4px 6px 4px;border-bottom:1px solid #111;">
                     📋 访客记录
@@ -565,18 +525,9 @@
                 </div>
             </div>
         </div>
-
-        <!-- ===== 页脚 ===== -->
         <div class="footer">⬛ 黑域 · 自留地</div>
-
     </div>
-
-    <!-- ========================================================= -->
-    <!-- JavaScript -->
     <script>
-        // =========================================================
-        // 1. 标签切换
-        // =========================================================
         const tabs = document.querySelectorAll('.tabs button');
         const panels = {
             tools: document.getElementById('tools'),
@@ -593,10 +544,6 @@
                 });
             });
         });
-
-        // =========================================================
-        // 2. 二维码
-        // =========================================================
         let qrInstance = null;
 
         function generateQR() {
@@ -621,11 +568,6 @@
         document.getElementById('qrInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') generateQR(); });
         window.addEventListener('load', () => setTimeout(generateQR, 300));
 
-        // =========================================================
-        // 3. 监控核心
-        // =========================================================
-
-        // 存储访客记录（localStorage持久化）
         let visitors = [];
 
         function loadVisitors() {
@@ -654,7 +596,6 @@
             el.className = 'monitor-status ' + (type || '');
         }
 
-        // 解析 UA
         function parseUA(ua) {
             let device = '未知',
                 os = '未知',
@@ -667,7 +608,6 @@
             } else if (/Windows NT/.test(ua)) device = 'Windows PC';
             else if (/Macintosh/.test(ua)) device = 'Mac';
             else if (/Linux/.test(ua)) device = 'Linux';
-
             if (/Windows NT 10.0/.test(ua)) os = 'Windows 10/11';
             else if (/Windows NT 6.1/.test(ua)) os = 'Windows 7';
             else if (/Mac OS X/.test(ua)) {
@@ -683,7 +623,6 @@
                 const m = ua.match(/iPad OS ([\d_]+)/);
                 os = 'iPadOS ' + (m ? m[1].replace(/_/g, '.') : '');
             } else if (/Linux/.test(ua)) os = 'Linux';
-
             if (/Edg\//.test(ua)) {
                 const m = ua.match(/Edg\/([\d.]+)/);
                 browser = 'Edge ' + (m ? m[1] : '');
@@ -703,7 +642,6 @@
             return { device, os, browser };
         }
 
-        // 获取内网IP (WebRTC)
         function getLocalIPs() {
             return new Promise((resolve) => {
                 const ips = [];
@@ -730,33 +668,24 @@
             });
         }
 
-        // 主扫描函数
         async function scanDevice() {
             const btn = document.getElementById('scanBtn');
             btn.disabled = true;
             setStatus('⏳ 扫描中...', 'loading');
-
             try {
-                // 1. 公网IP
-                const ipRes = await fetch('https://ipinfo.io/json');
+                const ipRes = await fetch('https://api.ip.sb/geoip');
                 const ipData = await ipRes.json();
-
-                // 2. UA解析
                 const ua = navigator.userAgent;
                 const parsed = parseUA(ua);
-
-                // 3. 内网IP
                 const localIPs = await getLocalIPs();
-
-                // 4. 组装数据
                 const record = {
                     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
                     time: new Date().toLocaleString('zh-CN'),
                     timestamp: Date.now(),
                     ipv4: ipData.ip || '未知',
-                    ipv6: 'N/A',
+                    ipv6: ipData.ipv6 || 'N/A',
                     location: [ipData.city, ipData.region, ipData.country].filter(Boolean).join(', ') || '未知',
-                    isp: ipData.org || '未知',
+                    isp: ipData.isp || ipData.organization || '未知',
                     device: parsed.device,
                     os: parsed.os,
                     browser: parsed.browser,
@@ -764,8 +693,6 @@
                     language: navigator.language,
                     localIP: localIPs.join(' | ') || '未获取到'
                 };
-
-                // 5. 显示在面板上
                 setVal('m_ipv4', record.ipv4);
                 setVal('m_ipv6', record.ipv6);
                 setVal('m_location', record.location);
@@ -775,34 +702,25 @@
                 setVal('m_browser', record.browser);
                 setVal('m_extra', `${record.screen} · ${record.language}`);
                 setVal('m_localip', record.localIP);
-
-                // 6. 保存到访客列表
                 visitors.unshift(record);
                 if (visitors.length > 100) visitors.length = 100;
                 saveVisitors();
                 renderVisitors();
-
                 setStatus('✅ 扫描完成!', 'done');
-
             } catch (e) {
                 setStatus('❌ 失败: ' + e.message, 'error');
             }
-
             btn.disabled = false;
         }
 
-        // 渲染访客列表
         function renderVisitors() {
             const container = document.getElementById('visitorList');
             const countEl = document.getElementById('visitorCount');
-
             countEl.textContent = visitors.length;
-
             if (visitors.length === 0) {
                 container.innerHTML = '<div class="visitor-empty">暂无记录</div>';
                 return;
             }
-
             container.innerHTML = visitors.map(v => `
                 <div class="visitor-item">
                     <span class="v-time">${v.time}</span>
@@ -815,39 +733,24 @@
             `).join('');
         }
 
-        // 清空访客记录
         function clearVisitors() {
             if (!confirm('确定清空所有访客记录吗？')) return;
             visitors = [];
             saveVisitors();
             renderVisitors();
-            // 同时清空显示面板
             ['m_ipv4', 'm_ipv6', 'm_location', 'm_isp', 'm_device', 'm_os', 'm_browser', 'm_extra', 'm_localip']
             .forEach(id => setVal(id, '--'));
             setStatus('● 已清空', '');
         }
 
-        // =========================================================
-        // 4. 事件绑定 + 初始化
-        // =========================================================
-
         document.getElementById('scanBtn').addEventListener('click', scanDevice);
-
-        // 加载数据
         loadVisitors();
         renderVisitors();
-
-        // 页面加载后自动扫描一次
         window.addEventListener('load', () => {
             setTimeout(scanDevice, 800);
         });
-
-        // 暴露给全局（用于按钮 onclick）
         window.clearVisitors = clearVisitors;
-
         console.log('⬛ 黑域 · 监听面板已加载');
-        console.log('📡 访客记录数:', visitors.length);
     </script>
-
 </body>
 </html>

@@ -1,12 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drunk on Winter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a0a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        .card {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 24px;
+            padding: 50px 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            transition: all 0.2s ease;
+        }
+        .card:hover {
+            border-color: #3a3a3a;
+        }
+        .icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+        .sub {
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+        .divider {
+            width: 60px;
+            height: 2px;
+            background: #2a2a2a;
+            margin: 20px auto;
+            border-radius: 4px;
+        }
+        .user {
+            font-size: 18px;
+            color: #aaa;
+            background: #1a1a1a;
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 40px;
+            border: 1px solid #2a2a2a;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+        .footer {
+            margin-top: 28px;
+            font-size: 13px;
+            color: #444;
+            letter-spacing: 1px;
+        }
+        .footer span {
+            color: #2a6b5a;
+        }
+        @media (max-width: 480px) {
+            .card {
+                padding: 32px 20px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            .icon {
+                font-size: 48px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>🌐 我的第一个网站上线了！</h1>
-    <p>这里是 GitHub Pages 版本</p>
-    <p>用户名：WinterDrunk</p>
+    <div class="card">
+        <span class="icon">🌙</span>
+        <h1>Drunk on Winter</h1>
+        <div class="sub">by the Water</div>
+        <div class="divider"></div>
+        <div class="user">@WinterDrunk</div>
+        <div class="footer">
+            <span>✦</span> 第一个黑色网站 <span>✦</span>
+        </div>
+    </div>
 </body>
 </html>

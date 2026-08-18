@@ -3,180 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drunk·Winter 星空暗流</title>
+    <title>Drunk·Winter 暗域</title>
     <style>
+        /* ============================================================
+           暗色主题 · 专业级界面
+           配色：主背景 #0a0e17 | 面板 #111927 | 主色 #00e87a
+           强调 #00c8ff | 警示 #ff6a00 | 危险 #ff2200
+           ============================================================ */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0e17;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a2a3a;
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2a3a4a;
+        }
+
         body {
-            background: #0a0a0a;
+            background: #0a0e17;
             min-height: 100vh;
-            font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
-            color: #e0e0e0;
-            padding: 40px 20px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            color: #c8d8e8;
+            padding: 32px 24px;
             display: flex;
             justify-content: center;
+            line-height: 1.6;
         }
+
         .container {
             max-width: 1400px;
             width: 100%;
         }
+
+        /* ===== 头部 ===== */
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #1a1a1a;
-            padding-bottom: 20px;
+            margin-bottom: 28px;
+            border-bottom: 1px solid #1a2a3a;
+            padding-bottom: 18px;
         }
         .header h1 {
-            font-size: 34px;
+            font-size: 28px;
             font-weight: 300;
-            letter-spacing: 6px;
-            background: linear-gradient(135deg, #f0f0f0 0%, #888 100%);
+            letter-spacing: 8px;
+            background: linear-gradient(135deg, #00e87a 0%, #00c8ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-transform: uppercase;
         }
         .header .sub {
-            font-size: 14px;
-            color: #555;
-            letter-spacing: 4px;
+            font-size: 12px;
+            color: #5a7a8a;
+            letter-spacing: 6px;
             margin-top: 4px;
+            font-weight: 300;
         }
         .header .badge {
             display: inline-block;
             margin-top: 8px;
-            font-size: 11px;
-            color: #4caf50;
-            border: 1px solid #1a3a2a;
-            padding: 4px 18px;
-            border-radius: 20px;
-            letter-spacing: 2px;
-            background: #0d1a12;
+            font-size: 10px;
+            color: #00e87a;
+            border: 1px solid #0a2a1a;
+            padding: 2px 16px;
+            border-radius: 2px;
+            letter-spacing: 3px;
+            background: #0a1a12;
         }
+
+        /* ===== 导航栏 ===== */
         .tabs {
             display: flex;
             justify-content: center;
-            gap: 4px;
-            margin-bottom: 30px;
+            gap: 2px;
+            margin-bottom: 28px;
             flex-wrap: wrap;
+            border-bottom: 1px solid #1a2a3a;
+            padding-bottom: 2px;
         }
         .tabs button {
             background: transparent;
-            border: 1px solid #2a2a2a;
-            color: #888;
-            padding: 5px 14px;
-            border-radius: 40px;
+            border: none;
+            color: #5a7a8a;
+            padding: 8px 20px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 400;
             cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 0.5px;
+            transition: all 0.25s ease;
+            letter-spacing: 1.5px;
+            font-family: inherit;
+            border-bottom: 2px solid transparent;
+            text-transform: uppercase;
         }
         .tabs button:hover {
-            border-color: #444;
-            color: #ccc;
+            color: #c8d8e8;
+            background: rgba(0, 232, 122, 0.04);
         }
         .tabs button.active {
-            background: #1a1a1a;
-            border-color: #555;
-            color: #fff;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.02);
+            color: #00e87a;
+            border-bottom-color: #00e87a;
+            background: rgba(0, 232, 122, 0.06);
         }
+
+        /* ===== 内容容器 ===== */
         .panel-container {
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.25s ease;
             min-height: 400px;
         }
         @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            0% { opacity: 0; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
+
+        /* ===== 页脚 ===== */
         .footer {
             margin-top: 40px;
             text-align: center;
-            font-size: 12px;
-            color: #222;
-            border-top: 1px solid #111;
-            padding-top: 20px;
-            letter-spacing: 2px;
+            font-size: 10px;
+            color: #1a2a3a;
+            border-top: 1px solid #0a1a1a;
+            padding-top: 16px;
+            letter-spacing: 4px;
+            font-weight: 300;
         }
+
+        /* ===== 加载状态 ===== */
         .loading {
-            color: #555;
+            color: #5a7a8a;
             text-align: center;
             padding: 60px 0;
-            font-size: 14px;
-            letter-spacing: 2px;
+            font-size: 13px;
+            letter-spacing: 3px;
+            font-weight: 300;
         }
-        @media (max-width: 500px) {
-            .header h1 {
-                font-size: 24px;
-                letter-spacing: 4px;
-            }
-            .tabs button {
-                padding: 4px 10px;
-                font-size: 10px;
-                letter-spacing: 0.5px;
-            }
+        .loading::after {
+            content: '...';
+            animation: dots 1.2s steps(4) infinite;
+        }
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 768px) {
+            body { padding: 20px 12px; }
+            .header h1 { font-size: 22px; letter-spacing: 4px; }
+            .tabs button { font-size: 10px; padding: 6px 12px; letter-spacing: 0.5px; }
+        }
+        @media (max-width: 480px) {
+            .header h1 { font-size: 18px; letter-spacing: 2px; }
+            .tabs button { font-size: 9px; padding: 4px 8px; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <!-- 头部 -->
         <div class="header">
-            <h1>⬛ Drunk·Winter 星空暗流</h1>
-            <div class="sub">by the Water · 聚合工具平台</div>
+            <h1>⧩ 暗 域</h1>
+            <div class="sub">DRUNK · WINTER · 星空暗流</div>
             <div class="badge">● 运行中</div>
         </div>
 
+        <!-- 导航 -->
         <div class="tabs" id="navTabs">
             <button class="active" data-page="tools">🛠 工具</button>
             <button data-page="monitor">📡 回响</button>
-            <button data-page="osint">🕵️ 情报引擎</button>
-            <button data-page="recon">🚀 自动侦查</button>
-            <button data-page="space">🛰️ 太空域</button>
-            <button data-page="star">🔭 专业星图</button>
-            <button data-page="camera">📷 全球摄像头</button>
+            <button data-page="osint">🕵️ 情报</button>
+            <button data-page="recon">🚀 侦查</button>
+            <button data-page="space">🛰️ 太空</button>
+            <button data-page="star">🔭 星图</button>
+            <button data-page="camera">📷 全球眼</button>
         </div>
 
+        <!-- 内容 -->
         <div class="panel-container" id="panelContainer">
-            <div class="loading">⏳ 加载中...</div>
+            <div class="loading">⏳ 加载</div>
         </div>
 
-        <div class="footer">⬛ Drunk·Winter · 自留地</div>
+        <!-- 页脚 -->
+        <div class="footer">⧩ 暗域 · 自留地</div>
     </div>
 
     <script>
-        const container = document.getElementById('panelContainer');
-        const tabs = document.querySelectorAll('#navTabs button');
+        var container = document.getElementById('panelContainer');
+        var tabs = document.querySelectorAll('#navTabs button');
+        var currentPage = '';
 
         function loadPage(page) {
-            const url = page + '.html';
-            container.innerHTML = '<div class="loading">⏳ 加载 ' + page + ' ...</div>';
-            fetch(url)
+            if (page === currentPage) return;
+            currentPage = page;
+            var fileName = page + '.html';
+            container.innerHTML = '<div class="loading">⏳ 加载 ' + page + '</div>';
+
+            // 清除旧脚本
+            var oldScripts = document.querySelectorAll('.dynamic-script');
+            oldScripts.forEach(function(s) { s.remove(); });
+
+            fetch(fileName)
                 .then(function(res) {
-                    if (!res.ok) throw new Error('页面不存在 (404)');
+                    if (!res.ok) throw new Error('404');
                     return res.text();
                 })
                 .then(function(html) {
                     container.innerHTML = html;
-                    var scripts = container.querySelectorAll('script');
-                    scripts.forEach(function(oldScript) {
-                        var newScript = document.createElement('script');
-                        newScript.textContent = oldScript.textContent;
-                        document.body.appendChild(newScript);
-                        oldScript.remove();
-                    });
+                    // 提取脚本
+                    var match = html.match(/<script>([\s\S]*?)<\/script>/);
+                    if (match) {
+                        var script = document.createElement('script');
+                        script.className = 'dynamic-script';
+                        script.textContent = match[1];
+                        document.body.appendChild(script);
+                    }
                 })
                 .catch(function(err) {
-                    container.innerHTML = '<div style="color:#ffb74d;text-align:center;padding:60px 0;">⚠️ 加载失败: ' + err.message + '<br><br><span style="color:#555;font-size:13px;">请检查文件是否存在</span></div>';
+                    container.innerHTML = '<div style="color:#ff6a00;text-align:center;padding:60px 0;font-size:14px;letter-spacing:2px;">⚠️ 加载失败: ' + err.message + '<br><span style="color:#5a7a8a;font-size:12px;">文件不存在</span></div>';
                 });
         }
 

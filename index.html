@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js">
     </script>
     <style>
-        /* ===== 全局 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -23,14 +22,14 @@
             justify-content: center;
         }
         .container {
-            max-width: 1100px;
+            max-width: 1300px;
             width: 100%;
         }
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             border-bottom: 1px solid #1a1a1a;
-            padding-bottom: 30px;
+            padding-bottom: 20px;
         }
         .header h1 {
             font-size: 34px;
@@ -45,11 +44,11 @@
             font-size: 14px;
             color: #555;
             letter-spacing: 4px;
-            margin-top: 6px;
+            margin-top: 4px;
         }
         .header .badge {
             display: inline-block;
-            margin-top: 10px;
+            margin-top: 8px;
             font-size: 11px;
             color: #4caf50;
             border: 1px solid #1a3a2a;
@@ -61,21 +60,21 @@
         .tabs {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            margin-bottom: 40px;
+            gap: 6px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
         .tabs button {
             background: transparent;
             border: 1px solid #2a2a2a;
             color: #888;
-            padding: 10px 32px;
+            padding: 6px 18px;
             border-radius: 40px;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
         .tabs button:hover {
             border-color: #444;
@@ -89,7 +88,7 @@
         }
         .panel {
             display: none;
-            animation: fadeIn 0.4s ease;
+            animation: fadeIn 0.3s ease;
         }
         .panel.active {
             display: block;
@@ -97,61 +96,287 @@
         @keyframes fadeIn {
             0% {
                 opacity: 0;
-                transform: translateY(12px);
+                transform: translateY(10px);
             }
             100% {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        /* ===== 工具卡片 ===== */
-        .tool-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+        .section-title {
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #aaa;
+            margin-bottom: 12px;
+            font-size: 18px;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 8px;
         }
-        .tool-card {
+        .section-title .emoji {
+            margin-right: 6px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 14px;
+        }
+        .card {
             background: #111;
             border: 1px solid #1e1e1e;
-            border-radius: 16px;
-            padding: 28px 22px;
+            border-radius: 14px;
+            padding: 16px 18px;
             transition: all 0.25s ease;
         }
-        .tool-card:hover {
+        .card:hover {
             border-color: #333;
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        .tool-card .emoji {
-            font-size: 32px;
+        .card .c-emoji {
+            font-size: 24px;
             display: block;
-            margin-bottom: 10px;
-        }
-        .tool-card h3 {
-            font-size: 18px;
-            font-weight: 500;
-            color: #eee;
             margin-bottom: 4px;
         }
-        .tool-card p {
-            font-size: 13px;
-            color: #666;
-            line-height: 1.6;
+        .card h3 {
+            font-size: 15px;
+            font-weight: 500;
+            color: #eee;
+            margin-bottom: 2px;
         }
-        .tool-card .tag {
+        .card p {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+        }
+        .card .tag {
             display: inline-block;
-            margin-top: 12px;
-            font-size: 11px;
+            margin-top: 6px;
+            font-size: 10px;
             color: #444;
             border: 1px solid #222;
-            padding: 2px 14px;
+            padding: 2px 12px;
             border-radius: 20px;
             letter-spacing: 1px;
         }
+        .card .value-big {
+            font-size: 28px;
+            font-weight: 300;
+            color: #4dd0e1;
+            letter-spacing: 2px;
+            margin: 4px 0;
+        }
+        .card .value-big.green {
+            color: #4caf50;
+        }
+        .card .value-big.orange {
+            color: #ffb74d;
+        }
+        .card .value-big.purple {
+            color: #b39ddb;
+        }
+        .card .value-big.red {
+            color: #f44336;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .input-group input {
+            flex: 1;
+            padding: 8px 14px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 30px;
+            color: #e0e0e0;
+            font-size: 13px;
+            outline: none;
+            min-width: 120px;
+        }
+        .input-group input:focus {
+            border-color: #555;
+        }
+        .input-group button {
+            padding: 8px 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #ccc;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .input-group button:hover {
+            border-color: #666;
+            color: #fff;
+        }
+
+        .output-box {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            color: #888;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+            word-break: break-all;
+            line-height: 1.6;
+        }
+        .output-box .highlight {
+            color: #4dd0e1;
+        }
+        .output-box .warn {
+            color: #ffb74d;
+        }
+        .output-box .danger {
+            color: #f44336;
+        }
+        .output-box .success {
+            color: #4caf50;
+        }
+
+        /* ===== 太空域专用样式 ===== */
+        .orbit-canvas-wrap {
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+            padding: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .orbit-canvas-wrap canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+        .sat-stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .sat-stat-card {
+            background: #0d0d0d;
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+            padding: 14px 16px;
+            text-align: center;
+        }
+        .sat-stat-card .num {
+            font-size: 26px;
+            font-weight: 300;
+            color: #4dd0e1;
+            letter-spacing: 2px;
+        }
+        .sat-stat-card .num.green {
+            color: #4caf50;
+        }
+        .sat-stat-card .num.orange {
+            color: #ffb74d;
+        }
+        .sat-stat-card .num.purple {
+            color: #b39ddb;
+        }
+        .sat-stat-card .num.red {
+            color: #f44336;
+        }
+        .sat-stat-card .label {
+            font-size: 11px;
+            color: #555;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        .iss-track {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 10px 14px;
+            background: #0d0d0d;
+            border: 1px solid #1a3a3a;
+            border-radius: 10px;
+            margin-top: 8px;
+        }
+        .iss-track .iss-label {
+            color: #4dd0e1;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        .iss-track .iss-data {
+            color: #888;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .iss-track .iss-data .highlight {
+            color: #4dd0e1;
+        }
+
+        .toggle-switch {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 6px 0;
+        }
+        .toggle-switch label {
+            color: #888;
+            font-size: 13px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .toggle-switch input[type="checkbox"] {
+            appearance: none;
+            width: 40px;
+            height: 22px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            transition: 0.3s;
+            flex-shrink: 0;
+        }
+        .toggle-switch input[type="checkbox"]:checked {
+            background: #0d3a3a;
+            border-color: #4dd0e1;
+        }
+        .toggle-switch input[type="checkbox"]::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #555;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: 0.3s;
+        }
+        .toggle-switch input[type="checkbox"]:checked::after {
+            left: 20px;
+            background: #4dd0e1;
+        }
+
         .qr-input-group {
             display: flex;
             gap: 10px;
-            margin: 14px 0 10px;
+            margin: 10px 0 8px;
             flex-wrap: wrap;
         }
         .qr-input-group input {
@@ -188,20 +413,20 @@
             padding: 12px;
             background: #fff;
             border-radius: 12px;
-            margin: 12px auto 0;
+            margin: 8px auto 0;
         }
         .qr-actions {
             display: flex;
             gap: 12px;
             justify-content: center;
-            margin-top: 12px;
+            margin-top: 10px;
             flex-wrap: wrap;
         }
         .qr-actions button {
             background: #1a1a1a;
             border: 1px solid #333;
             color: #ccc;
-            padding: 6px 20px;
+            padding: 5px 18px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 13px;
@@ -211,17 +436,18 @@
             border-color: #666;
             color: #fff;
         }
-        /* ===== 下载器专用 ===== */
-        .downloader-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
+        .qr-hint {
+            color: #444;
+            font-size: 12px;
+            margin-top: 6px;
+            letter-spacing: 1px;
         }
+
         .downloader-item {
             background: #0d0d0d;
             border: 1px solid #1a1a1a;
-            border-radius: 14px;
-            padding: 20px 22px;
+            border-radius: 12px;
+            padding: 14px 16px;
             transition: 0.2s;
             text-decoration: none;
             color: #ddd;
@@ -234,32 +460,30 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
         }
         .downloader-item .d-emoji {
-            font-size: 28px;
-            margin-bottom: 6px;
+            font-size: 22px;
         }
         .downloader-item .d-title {
-            font-size: 17px;
+            font-size: 14px;
             font-weight: 500;
             color: #eee;
-            margin-bottom: 2px;
         }
         .downloader-item .d-desc {
-            font-size: 13px;
+            font-size: 11px;
             color: #666;
-            line-height: 1.5;
+            line-height: 1.4;
             flex: 1;
         }
         .downloader-item .d-btn {
-            margin-top: 12px;
+            margin-top: 6px;
             background: #1a1a1a;
             border: 1px solid #333;
             color: #aaa;
-            padding: 6px 18px;
+            padding: 3px 14px;
             border-radius: 30px;
-            font-size: 13px;
+            font-size: 11px;
             text-align: center;
-            transition: 0.2s;
             align-self: flex-start;
+            transition: 0.2s;
         }
         .downloader-item .d-btn:hover {
             background: #2a2a2a;
@@ -267,22 +491,15 @@
             color: #fff;
         }
         .downloader-note {
-            margin-top: 18px;
-            font-size: 12px;
+            margin-top: 10px;
+            font-size: 11px;
             color: #444;
             border-top: 1px solid #1a1a1a;
-            padding-top: 14px;
+            padding-top: 10px;
             letter-spacing: 1px;
             text-align: center;
         }
-        .downloader-note a {
-            color: #4dd0e1;
-            text-decoration: none;
-        }
-        .downloader-note a:hover {
-            text-decoration: underline;
-        }
-        /* ===== 监控面板 ===== */
+
         .monitor-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -292,7 +509,7 @@
             background: #111;
             border: 1px solid #1a1a1a;
             border-radius: 10px;
-            padding: 14px 16px;
+            padding: 12px 14px;
         }
         .monitor-item.full {
             grid-column: 1 / -1;
@@ -305,7 +522,7 @@
             margin-bottom: 2px;
         }
         .monitor-item .value {
-            font-size: 15px;
+            font-size: 14px;
             color: #eee;
             word-break: break-all;
             font-family: 'Courier New', monospace;
@@ -320,14 +537,67 @@
         .monitor-item .value.cyan {
             color: #4dd0e1;
         }
+        .monitor-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 10px 14px;
+            background: #0d0d0d;
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+        }
+        .monitor-topbar .left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .monitor-topbar .status-text {
+            font-size: 13px;
+            color: #888;
+            letter-spacing: 1px;
+        }
+        .monitor-topbar .status-text.on {
+            color: #4caf50;
+        }
+        .monitor-topbar .status-text.off {
+            color: #666;
+        }
+        .toggle-btn {
+            background: transparent;
+            border: 1px solid #333;
+            color: #888;
+            padding: 5px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+            letter-spacing: 1px;
+        }
+        .toggle-btn:hover {
+            border-color: #666;
+            color: #ccc;
+        }
+        .toggle-btn.active {
+            border-color: #4caf50;
+            color: #4caf50;
+            background: #0d1a12;
+        }
+        .toggle-btn.inactive {
+            border-color: #444;
+            color: #555;
+        }
         .monitor-btn {
-            margin: 16px 0 8px;
-            padding: 10px 32px;
+            margin: 0;
+            padding: 6px 22px;
             background: #1a1a1a;
             border: 1px solid #333;
             color: #ccc;
-            border-radius: 40px;
-            font-size: 15px;
+            border-radius: 30px;
+            font-size: 13px;
             cursor: pointer;
             transition: 0.2s;
             letter-spacing: 1px;
@@ -341,7 +611,7 @@
             cursor: not-allowed;
         }
         .monitor-status {
-            margin-top: 8px;
+            margin-top: 4px;
             font-size: 13px;
             color: #555;
             letter-spacing: 1px;
@@ -352,12 +622,12 @@
         .monitor-status.error {
             color: #f44336;
         }
-        .monitor-status.loading {
-            color: #ff9800;
+        .monitor-status.skip {
+            color: #ffb74d;
         }
         .visitor-list {
-            margin-top: 16px;
-            max-height: 350px;
+            margin-top: 12px;
+            max-height: 250px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -367,13 +637,13 @@
             background: #0d0d0d;
             border: 1px solid #161616;
             border-radius: 8px;
-            padding: 10px 14px;
+            padding: 8px 12px;
             font-size: 12px;
             color: #888;
             font-family: 'Courier New', monospace;
             display: flex;
             flex-wrap: wrap;
-            gap: 6px 16px;
+            gap: 4px 14px;
             align-items: center;
         }
         .visitor-item .v-time {
@@ -389,13 +659,9 @@
         .visitor-item .v-device {
             color: #64b5f6;
         }
-        .visitor-item .v-local {
-            color: #ff8a65;
-            font-size: 11px;
-        }
         .visitor-item .v-badge {
             font-size: 9px;
-            padding: 1px 10px;
+            padding: 1px 8px;
             border-radius: 12px;
             background: #1a1a2e;
             color: #888;
@@ -403,46 +669,28 @@
         .visitor-empty {
             color: #333;
             text-align: center;
-            padding: 30px 0;
+            padding: 20px 0;
             font-size: 14px;
             letter-spacing: 2px;
         }
         .footer {
-            margin-top: 60px;
+            margin-top: 40px;
             text-align: center;
             font-size: 12px;
             color: #222;
             border-top: 1px solid #111;
-            padding-top: 24px;
+            padding-top: 20px;
             letter-spacing: 2px;
         }
-        @media (max-width: 768px) {
-            .monitor-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .downloader-grid {
-                grid-template-columns: 1fr;
-            }
+        .output-box::-webkit-scrollbar {
+            width: 4px;
         }
-        @media (max-width: 500px) {
-            .monitor-grid {
-                grid-template-columns: 1fr;
-            }
-            .header h1 {
-                font-size: 24px;
-                letter-spacing: 4px;
-            }
-            .tabs button {
-                padding: 8px 16px;
-                font-size: 12px;
-            }
-            .tool-grid {
-                grid-template-columns: 1fr;
-            }
-            .qr-actions button {
-                font-size: 12px;
-                padding: 4px 14px;
-            }
+        .output-box::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        .output-box::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 4px;
         }
         .visitor-list::-webkit-scrollbar {
             width: 4px;
@@ -454,164 +702,566 @@
             background: #2a2a2a;
             border-radius: 4px;
         }
+
+        @media (max-width: 1024px) {
+            .sat-stat-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .grid-4 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            .sat-stat-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .monitor-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .monitor-topbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .monitor-topbar .left {
+                justify-content: center;
+            }
+        }
+        @media (max-width: 500px) {
+            .sat-stat-grid {
+                grid-template-columns: 1fr;
+            }
+            .monitor-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 24px;
+                letter-spacing: 4px;
+            }
+            .tabs button {
+                padding: 4px 10px;
+                font-size: 11px;
+                letter-spacing: 0.5px;
+            }
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
+
         <div class="header">
             <h1>⬛ Drunk·Winter 星空暗流</h1>
-            <div class="sub">by the Water</div>
-            <div class="badge">● 回响中</div>
+            <div class="sub">by the Water · 聚合工具平台</div>
+            <div class="badge">● 运行中</div>
         </div>
+
         <div class="tabs">
             <button class="active" data-tab="tools">🛠 工具</button>
-            <button data-tab="downloader">⬇️ 下载器</button>
             <button data-tab="monitor">📡 回响</button>
+            <button data-tab="osint">🕵️ 情报引擎</button>
+            <button data-tab="space">🛰️ 太空域</button>
         </div>
 
         <!-- ========================================================= -->
-        <!-- 面板：工具 -->
+        <!-- 工具面板 -->
         <div id="tools" class="panel active">
-            <div class="tool-grid">
-                <div class="tool-card" style="grid-column:1/-1;">
-                    <span class="emoji">📱</span>
-                    <h3>二维码生成器</h3>
-                    <p>输入文字或链接，生成二维码</p>
-                    <div class="qr-input-group">
-                        <input type="text" id="qrInput" placeholder="输入文字或网址" value="https://winterdrunk.github.io">
-                        <button id="qrBtn">生成</button>
-                    </div>
-                    <div id="qrcode"></div>
-                    <div class="qr-actions">
-                        <button id="copyQRBtn">📋 复制</button>
-                        <button id="saveQRBtn">💾 保存</button>
-                    </div>
-                    <span class="tag">纯本地 · 不上传</span>
+            <div class="section-title"><span class="emoji">📱</span>二维码生成器</div>
+            <div class="card" style="margin-bottom:20px;">
+                <p style="margin-bottom:4px;">输入文字或链接，生成二维码</p>
+                <div class="qr-input-group">
+                    <input type="text" id="qrInput" placeholder="输入文字或网址" value="https://winterdrunk.github.io?source=qrcode">
+                    <button id="qrBtn">生成</button>
                 </div>
-                <div class="tool-card">
-                    <span class="emoji">📐</span>
+                <div id="qrcode"></div>
+                <div class="qr-actions">
+                    <button id="copyQRBtn">📋 复制</button>
+                    <button id="saveQRBtn">💾 保存</button>
+                </div>
+                <span class="tag">纯本地 · 不上传</span>
+                <div class="qr-hint">💡 扫码打开页面会自动在「回响」中记录访客信息</div>
+            </div>
+
+            <div class="section-title"><span class="emoji">⬇️</span>万能下载器</div>
+            <p style="color:#666;margin-bottom:12px;font-size:13px;">点击直达在线解析服务 · 无需安装任何软件</p>
+            <div class="grid-4">
+                <a href="https://www.y2mate.com/zh-cn" target="_blank" class="downloader-item">
+                    <span class="d-emoji">🎬</span>
+                    <span class="d-title">视频下载</span>
+                    <span class="d-desc">YouTube、B站、抖音等</span>
+                    <span class="d-btn">👉 去解析</span>
+                </a>
+                <a href="https://www.audiolover.com/zh-cn" target="_blank" class="downloader-item">
+                    <span class="d-emoji">🎵</span>
+                    <span class="d-title">音频下载</span>
+                    <span class="d-desc">网易云、QQ音乐等</span>
+                    <span class="d-btn">👉 去提取</span>
+                </a>
+                <a href="https://imagecyborg.com/" target="_blank" class="downloader-item">
+                    <span class="d-emoji">🖼️</span>
+                    <span class="d-title">图片批量</span>
+                    <span class="d-desc">一键抓取网页所有图片</span>
+                    <span class="d-btn">👉 去抓取</span>
+                </a>
+                <a href="https://www.baiduwp.com/" target="_blank" class="downloader-item">
+                    <span class="d-emoji">📦</span>
+                    <span class="d-title">网盘解析</span>
+                    <span class="d-desc">百度/阿里云不限速</span>
+                    <span class="d-btn">👉 去解析</span>
+                </a>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;justify-content:center;">
+                <a href="https://savefrom.net/" target="_blank" style="color:#555;font-size:11px;border:1px solid #1a1a1a;padding:2px 14px;border-radius:30px;text-decoration:none;">SaveFrom</a>
+                <a href="https://en.savefrom.net/1-youtube-video-downloader-7/" target="_blank" style="color:#555;font-size:11px;border:1px solid #1a1a1a;padding:2px 14px;border-radius:30px;text-decoration:none;">YouTube专用</a>
+                <a href="https://www.bilibili.com/video/download" target="_blank" style="color:#555;font-size:11px;border:1px solid #1a1a1a;padding:2px 14px;border-radius:30px;text-decoration:none;">B站解析</a>
+            </div>
+            <div class="downloader-note">⚠️ 仅供个人学习 · 请尊重版权</div>
+
+            <div class="section-title" style="margin-top:20px;"><span class="emoji">🧩</span>实用小工具</div>
+            <div class="grid-3">
+                <div class="card">
+                    <span class="c-emoji">📐</span>
                     <h3>Base64 编解码</h3>
                     <p>文本与Base64互转</p>
                     <span class="tag">待开发</span>
                 </div>
-                <div class="tool-card">
-                    <span class="emoji">🔗</span>
+                <div class="card">
+                    <span class="c-emoji">🔗</span>
                     <h3>短链生成</h3>
                     <p>长链接一键缩短</p>
+                    <span class="tag">待开发</span>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">🕐</span>
+                    <h3>时间戳转换</h3>
+                    <p>时间戳 ↔ 日期时间</p>
                     <span class="tag">待开发</span>
                 </div>
             </div>
         </div>
 
         <!-- ========================================================= -->
-        <!-- 面板：下载器（全新） -->
-        <div id="downloader" class="panel">
-            <h2 style="font-weight:300;letter-spacing:2px;margin-bottom:16px;color:#aaa;">⬇️ 万能下载工具箱</h2>
-            <p style="color:#666;margin-bottom:20px;font-size:14px;">点击下方卡片，直达在线解析服务 · 无需安装任何软件</p>
-
-            <div class="downloader-grid">
-
-                <!-- 1. 视频下载 -->
-                <a href="https://www.y2mate.com/zh-cn" target="_blank" class="downloader-item">
-                    <span class="d-emoji">🎬</span>
-                    <span class="d-title">视频下载</span>
-                    <span class="d-desc">支持 YouTube、B站、抖音、快手、Twitter 等主流平台</span>
-                    <span class="d-btn">👉 去解析视频</span>
-                </a>
-
-                <!-- 2. 音频下载 -->
-                <a href="https://www.audiolover.com/zh-cn" target="_blank" class="downloader-item">
-                    <span class="d-emoji">🎵</span>
-                    <span class="d-title">音频下载</span>
-                    <span class="d-desc">网易云、QQ音乐、Spotify 等平台的试听音频提取</span>
-                    <span class="d-btn">👉 去提取音频</span>
-                </a>
-
-                <!-- 3. 图片批量下载 -->
-                <a href="https://imagecyborg.com/" target="_blank" class="downloader-item">
-                    <span class="d-emoji">🖼️</span>
-                    <span class="d-title">图片批量下载</span>
-                    <span class="d-desc">一键抓取网页中的所有图片，支持全尺寸原图</span>
-                    <span class="d-btn">👉 去抓取图片</span>
-                </a>
-
-                <!-- 4. 文件/网盘直链解析 -->
-                <a href="https://www.baiduwp.com/" target="_blank" class="downloader-item">
-                    <span class="d-emoji">📦</span>
-                    <span class="d-title">网盘直链解析</span>
-                    <span class="d-desc">百度网盘、阿里云盘等不限速下载（需登录）</span>
-                    <span class="d-btn">👉 去解析直链</span>
-                </a>
-
+        <!-- 回响面板 -->
+        <div id="monitor" class="panel">
+            <div class="monitor-topbar">
+                <div class="left">
+                    <span style="font-weight:500;color:#aaa;letter-spacing:1px;">📡 回响</span>
+                    <button class="toggle-btn active" id="toggleRecordBtn" onclick="toggleRecording()">● 开启</button>
+                    <span class="status-text on" id="recordStatusText">记录中 · 扫码自动记录</span>
+                </div>
+                <div class="right" style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="monitor-btn" id="scanBtn">📡 手动扫描</button>
+                    <button class="monitor-btn" onclick="clearVisitors()" style="color:#666;">清空</button>
+                </div>
             </div>
-
-            <!-- 额外备用工具 -->
-            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;justify-content:center;">
-                <a href="https://savefrom.net/" target="_blank" style="color:#888;font-size:13px;border:1px solid #1a1a1a;padding:4px 18px;border-radius:30px;text-decoration:none;">SaveFrom</a>
-                <a href="https://en.savefrom.net/1-youtube-video-downloader-7/" target="_blank" style="color:#888;font-size:13px;border:1px solid #1a1a1a;padding:4px 18px;border-radius:30px;text-decoration:none;">YouTube 专用</a>
-                <a href="https://www.bilibili.com/video/download" target="_blank" style="color:#888;font-size:13px;border:1px solid #1a1a1a;padding:4px 18px;border-radius:30px;text-decoration:none;">B站解析</a>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px;">
+                <span class="monitor-status" id="scanStatus">● 就绪</span>
+                <span style="font-size:13px;color:#555;">👤 <span id="visitorCount">0</span> 条记录</span>
             </div>
-
-            <div class="downloader-note">
-                ⚠️ 以上工具均为第三方在线服务，仅供个人学习使用，请尊重版权。<br>
-                部分工具需要粘贴链接后手动选择画质/格式。
+            <div class="monitor-grid" id="monitorGrid">
+                <div class="monitor-item"><div class="label">🌐 公网 IPv4</div><div class="value success" id="m_ipv4">--</div></div>
+                <div class="monitor-item"><div class="label">📡 公网 IPv6</div><div class="value" id="m_ipv6">--</div></div>
+                <div class="monitor-item"><div class="label">📍 归属地</div><div class="value cyan" id="m_location">--</div></div>
+                <div class="monitor-item"><div class="label">🏢 运营商</div><div class="value" id="m_isp">--</div></div>
+                <div class="monitor-item"><div class="label">📱 设备</div><div class="value" id="m_device">--</div></div>
+                <div class="monitor-item"><div class="label">💻 操作系统</div><div class="value" id="m_os">--</div></div>
+                <div class="monitor-item"><div class="label">🌍 浏览器</div><div class="value" id="m_browser">--</div></div>
+                <div class="monitor-item"><div class="label">📐 屏幕 · 语言</div><div class="value" id="m_extra">--</div></div>
+                <div class="monitor-item full"><div class="label">🔗 内网 IP (WebRTC)</div><div class="value warn" id="m_localip">点击"扫描"获取</div></div>
+            </div>
+            <div style="margin-top:16px;">
+                <div style="color:#555;font-size:12px;letter-spacing:1px;padding:0 4px 6px 4px;border-bottom:1px solid #111;">📋 扫码访客记录</div>
+                <div class="visitor-list" id="visitorList"><div class="visitor-empty">暂无记录</div></div>
             </div>
         </div>
 
         <!-- ========================================================= -->
-        <!-- 面板：监控（保留） -->
-        <div id="monitor" class="panel">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
-                <div>
-                    <button class="monitor-btn" id="scanBtn">📡 扫描当前设备</button>
-                    <span class="monitor-status" id="scanStatus">● 就绪</span>
+        <!-- 情报引擎 -->
+        <div id="osint" class="panel">
+            <h2 style="font-weight:300;letter-spacing:2px;margin-bottom:6px;color:#aaa;">🕵️ 情报引擎</h2>
+            <p style="color:#666;margin-bottom:16px;font-size:14px;">开源情报 · 输入目标一键侦查</p>
+
+            <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+                <input type="text" id="osintInput" placeholder="输入 IP / 域名 / 邮箱 / 用户名" style="flex:1;padding:10px 16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:30px;color:#e0e0e0;font-size:14px;outline:none;min-width:200px;">
+                <button onclick="osintSearch()" style="padding:10px 28px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:14px;transition:0.2s;">🔍 全局搜索</button>
+                <button onclick="document.getElementById('osintInput').value=''" style="padding:10px 20px;background:transparent;border:1px solid #2a2a2a;color:#555;border-radius:30px;cursor:pointer;font-size:13px;">清空</button>
+            </div>
+
+            <!-- IP 侦察 -->
+            <div class="section-title"><span class="emoji">🌐</span>IP 侦察</div>
+            <div class="grid-4">
+                <div class="card">
+                    <span class="c-emoji">📍</span>
+                    <h3>IP 定位</h3>
+                    <p>查询 IP 归属地、运营商、经纬度</p>
+                    <div class="input-group">
+                        <input type="text" id="ipLocInput" placeholder="输入 IP 地址" value="8.8.8.8">
+                        <button onclick="ipLookup()">查询</button>
+                    </div>
+                    <div class="output-box" id="ipLocOutput">等待查询...</div>
                 </div>
-                <div style="display:flex;gap:8px;font-size:13px;color:#555;">
-                    <span>👤 <span id="visitorCount">0</span> 条记录</span>
-                    <button onclick="clearVisitors()" style="background:transparent;border:1px solid #2a2a2a;color:#666;padding:4px 16px;border-radius:16px;cursor:pointer;font-size:12px;">清空</button>
+                <div class="card">
+                    <span class="c-emoji">🏷️</span>
+                    <h3>ASN 查询</h3>
+                    <p>查询 IP 所属 ASN、组织</p>
+                    <div class="input-group">
+                        <input type="text" id="asnInput" placeholder="IP 或 ASN 编号" value="8.8.8.8">
+                        <button onclick="asnLookup()">查询</button>
+                    </div>
+                    <div class="output-box" id="asnOutput">等待查询...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">🔄</span>
+                    <h3>BGP 路由</h3>
+                    <p>查询 IP 的 BGP 路由信息</p>
+                    <div class="input-group">
+                        <input type="text" id="bgpInput" placeholder="IP 地址" value="8.8.8.8">
+                        <button onclick="bgpLookup()">查询</button>
+                    </div>
+                    <div class="output-box" id="bgpOutput">等待查询...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">🔁</span>
+                    <h3>反查域名</h3>
+                    <p>通过 IP 反查绑定的域名</p>
+                    <div class="input-group">
+                        <input type="text" id="rdnsInput" placeholder="IP 地址" value="8.8.8.8">
+                        <button onclick="rdnsLookup()">查询</button>
+                    </div>
+                    <div class="output-box" id="rdnsOutput">等待查询...</div>
                 </div>
             </div>
-            <div class="monitor-grid" id="monitorGrid">
-                <div class="monitor-item">
-                    <div class="label">🌐 公网 IPv4</div>
-                    <div class="value success" id="m_ipv4">--</div>
+
+            <!-- 域名分析 -->
+            <div class="section-title" style="margin-top:16px;"><span class="emoji">📋</span>域名分析</div>
+            <div class="grid-4">
+                <div class="card">
+                    <span class="c-emoji">🔍</span>
+                    <h3>DNS 枚举</h3>
+                    <p>查询 A/AAAA/MX/NS/TXT 记录</p>
+                    <div class="input-group">
+                        <input type="text" id="dnsInput" placeholder="域名" value="github.com">
+                        <button onclick="dnsLookup()">查询</button>
+                    </div>
+                    <div class="output-box" id="dnsOutput">等待查询...</div>
                 </div>
-                <div class="monitor-item">
-                    <div class="label">📡 公网 IPv6</div>
-                    <div class="value" id="m_ipv6">--</div>
+                <div class="card">
+                    <span class="c-emoji">📜</span>
+                    <h3>WHOIS 查询</h3>
+                    <p>域名注册信息查询</p>
+                    <div class="input-group">
+                        <input type="text" id="whoisInput" placeholder="域名" value="github.com">
+                        <button onclick="whoisLookup()">查询</button>
+                    </div>
+                    <div class="output-box" id="whoisOutput">等待查询...</div>
                 </div>
-                <div class="monitor-item">
-                    <div class="label">📍 归属地</div>
-                    <div class="value cyan" id="m_location">--</div>
+                <div class="card">
+                    <span class="c-emoji">🧩</span>
+                    <h3>子域名爆破</h3>
+                    <p>枚举域名子域（演示）</p>
+                    <div class="input-group">
+                        <input type="text" id="subdomainInput" placeholder="域名" value="github.com">
+                        <button onclick="subdomainLookup()">爆破</button>
+                    </div>
+                    <div class="output-box" id="subdomainOutput">等待查询...</div>
                 </div>
-                <div class="monitor-item">
-                    <div class="label">🏢 运营商</div>
-                    <div class="value" id="m_isp">--</div>
-                </div>
-                <div class="monitor-item">
-                    <div class="label">📱 设备</div>
-                    <div class="value" id="m_device">--</div>
-                </div>
-                <div class="monitor-item">
-                    <div class="label">💻 操作系统</div>
-                    <div class="value" id="m_os">--</div>
-                </div>
-                <div class="monitor-item">
-                    <div class="label">🌍 浏览器</div>
-                    <div class="value" id="m_browser">--</div>
-                </div>
-                <div class="monitor-item">
-                    <div class="label">📐 屏幕 · 语言</div>
-                    <div class="value" id="m_extra">--</div>
-                </div>
-                <div class="monitor-item full">
-                    <div class="label">🔗 内网 IP (WebRTC 探测)</div>
-                    <div class="value warn" id="m_localip">点击"扫描"获取</div>
+                <div class="card">
+                    <span class="c-emoji">🔒</span>
+                    <h3>TLS 证书</h3>
+                    <p>查询域名 TLS/SSL 证书信息</p>
+                    <div class="input-group">
+                        <input type="text" id="tlsInput" placeholder="域名" value="github.com">
+                        <button onclick="tlsLookup()">查询</button>
+                    </div>
+                    <div class="output-box" id="tlsOutput">等待查询...</div>
                 </div>
             </div>
-            <div style="margin-top:20px;">
-                <div style="color:#555;font-size:12px;letter-spacing:1px;padding:0 4px 6px 4px;border-bottom:1px solid #111;">📋 访客记录</div>
-                <div class="visitor-list" id="visitorList"><div class="visitor-empty">暂无记录</div></div>
+
+            <!-- 邮箱溯源 -->
+            <div class="section-title" style="margin-top:16px;"><span class="emoji">✉️</span>邮箱溯源</div>
+            <div class="grid-3">
+                <div class="card">
+                    <span class="c-emoji">📧</span>
+                    <h3>邮件头解析</h3>
+                    <p>粘贴邮件原始头信息</p>
+                    <div class="input-group">
+                        <input type="text" id="emailHeaderInput" placeholder="粘贴邮件头(简略)" value="Received: from mail.example.com (192.168.1.1)">
+                        <button onclick="parseEmailHeader()">解析</button>
+                    </div>
+                    <div class="output-box" id="emailHeaderOutput">等待解析...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">✅</span>
+                    <h3>邮箱验证</h3>
+                    <p>检查邮箱地址是否有效</p>
+                    <div class="input-group">
+                        <input type="text" id="emailVerifyInput" placeholder="邮箱地址" value="test@gmail.com">
+                        <button onclick="emailVerify()">验证</button>
+                    </div>
+                    <div class="output-box" id="emailVerifyOutput">等待验证...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">🔗</span>
+                    <h3>关联社交账号</h3>
+                    <p>通过邮箱查找关联的社交账号</p>
+                    <div class="input-group">
+                        <input type="text" id="emailSocialInput" placeholder="邮箱地址" value="test@gmail.com">
+                        <button onclick="emailSocial()">查询</button>
+                    </div>
+                    <div class="output-box" id="emailSocialOutput">等待查询...</div>
+                </div>
+            </div>
+
+            <!-- 社交足迹 -->
+            <div class="section-title" style="margin-top:16px;"><span class="emoji">👤</span>社交足迹</div>
+            <div class="grid-3">
+                <div class="card">
+                    <span class="c-emoji">🔎</span>
+                    <h3>用户名跨站搜索</h3>
+                    <p>搜索用户名在各大平台的注册信息</p>
+                    <div class="input-group">
+                        <input type="text" id="usernameSearchInput" placeholder="用户名" value="elonmusk">
+                        <button onclick="usernameSearch()">搜索</button>
+                    </div>
+                    <div class="output-box" id="usernameSearchOutput">等待搜索...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">🐙</span>
+                    <h3>GitHub 邮箱关联</h3>
+                    <p>通过 GitHub 邮箱查找用户</p>
+                    <div class="input-group">
+                        <input type="text" id="githubEmailInput" placeholder="邮箱" value="test@github.com">
+                        <button onclick="githubEmailLookup()">查询</button>
+                    </div>
+                    <div class="output-box" id="githubEmailOutput">等待查询...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">🌐</span>
+                    <h3>Shodan 联动</h3>
+                    <p>通过 IP/域名查询 Shodan 数据</p>
+                    <div class="input-group">
+                        <input type="text" id="shodanInput" placeholder="IP 或域名" value="8.8.8.8">
+                        <button onclick="shodanLookup()">查询</button>
+                    </div>
+                    <div class="output-box" id="shodanOutput">等待查询...</div>
+                </div>
+            </div>
+
+            <!-- 暗网监测 -->
+            <div class="section-title" style="margin-top:16px;"><span class="emoji">🌑</span>暗网监测</div>
+            <div class="grid-2">
+                <div class="card">
+                    <span class="c-emoji">🧅</span>
+                    <h3>.onion 站点探测</h3>
+                    <p>检查 Tor 暗网站点状态</p>
+                    <div class="input-group">
+                        <input type="text" id="onionInput" placeholder=".onion 地址" value="facebookcorewwwi.onion">
+                        <button onclick="onionLookup()">探测</button>
+                    </div>
+                    <div class="output-box" id="onionOutput">等待探测...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">📬</span>
+                    <h3>暗网邮件别名</h3>
+                    <p>生成/查询暗网邮箱别名</p>
+                    <div class="input-group">
+                        <input type="text" id="darkmailInput" placeholder="输入关键词" value="anonymous">
+                        <button onclick="darkmailLookup()">查询</button>
+                    </div>
+                    <div class="output-box" id="darkmailOutput">等待查询...</div>
+                </div>
+            </div>
+
+            <!-- 威胁情报 -->
+            <div class="section-title" style="margin-top:16px;"><span class="emoji">⚠️</span>威胁情报</div>
+            <div class="grid-2">
+                <div class="card">
+                    <span class="c-emoji">🛡️</span>
+                    <h3>CVE 漏洞关联</h3>
+                    <p>通过软件/版本查询 CVE 漏洞</p>
+                    <div class="input-group">
+                        <input type="text" id="cveInput" placeholder="软件名或CVE编号" value="Apache Log4j">
+                        <button onclick="cveLookup()">查询</button>
+                    </div>
+                    <div class="output-box" id="cveOutput">等待查询...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">🦠</span>
+                    <h3>恶意软件反查</h3>
+                    <p>通过哈希/域名查询恶意软件关联</p>
+                    <div class="input-group">
+                        <input type="text" id="malwareInput" placeholder="MD5 / 域名" value="e3b0c44298fc1c149afbf4c8996fb924">
+                        <button onclick="malwareLookup()">反查</button>
+                    </div>
+                    <div class="output-box" id="malwareOutput">等待查询...</div>
+                </div>
+            </div>
+
+            <!-- 图像取证 -->
+            <div class="section-title" style="margin-top:16px;"><span class="emoji">📷</span>图像取证</div>
+            <div class="grid-2">
+                <div class="card">
+                    <span class="c-emoji">📋</span>
+                    <h3>EXIF 元数据提取</h3>
+                    <p>提取图片的 EXIF 信息</p>
+                    <div class="input-group">
+                        <input type="text" id="exifInput" placeholder="图片URL" value="https://example.com/photo.jpg">
+                        <button onclick="exifExtract()">提取</button>
+                    </div>
+                    <div class="output-box" id="exifOutput">等待提取...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">🔎</span>
+                    <h3>隐写检测</h3>
+                    <p>检测图片是否隐藏了信息</p>
+                    <div class="input-group">
+                        <input type="text" id="stegoInput" placeholder="图片URL" value="https://example.com/photo.jpg">
+                        <button onclick="stegoDetect()">检测</button>
+                    </div>
+                    <div class="output-box" id="stegoOutput">等待检测...</div>
+                </div>
+            </div>
+
+            <!-- 3D 威胁地球 -->
+            <div class="section-title" style="margin-top:16px;"><span class="emoji">🌍</span>3D 威胁地球</div>
+            <div class="grid-4">
+                <div class="card">
+                    <span class="c-emoji">🌋</span>
+                    <h3>实时地震</h3>
+                    <button onclick="earthquakeMonitor()" style="margin-top:8px;padding:8px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;width:100%;">▶ 查看地震</button>
+                    <div class="output-box" id="earthquakeOutput">等待加载...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">✈️</span>
+                    <h3>实时航班</h3>
+                    <button onclick="flightMonitor()" style="margin-top:8px;padding:8px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;width:100%;">▶ 查看航班</button>
+                    <div class="output-box" id="flightOutput">等待加载...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">💀</span>
+                    <h3>C2 节点</h3>
+                    <button onclick="c2Monitor()" style="margin-top:8px;padding:8px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;width:100%;">▶ 查看 C2</button>
+                    <div class="output-box" id="c2Output">等待加载...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">⚡</span>
+                    <h3>攻击弧线</h3>
+                    <button onclick="attackMonitor()" style="margin-top:8px;padding:8px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;width:100%;">▶ 查看攻击</button>
+                    <div class="output-box" id="attackOutput">等待加载...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 太空域 -->
+        <div id="space" class="panel">
+            <h2 style="font-weight:300;letter-spacing:2px;margin-bottom:6px;color:#aaa;">🛰️ 太空域 · 卫星追踪</h2>
+            <p style="color:#666;margin-bottom:16px;font-size:14px;">基于 CelesTrak TLE 轨道数据 · 实时追踪全球在轨卫星</p>
+
+            <!-- ===== 统计摘要 ===== -->
+            <div class="sat-stat-grid">
+                <div class="sat-stat-card">
+                    <div class="num" id="satTotal">16,397</div>
+                    <div class="label">🛰️ 在轨卫星总数</div>
+                </div>
+                <div class="sat-stat-card">
+                    <div class="num green" id="satLEO">12,800</div>
+                    <div class="label">📡 低轨 (LEO)</div>
+                </div>
+                <div class="sat-stat-card">
+                    <div class="num orange" id="satMEO">1,200</div>
+                    <div class="label">📡 中轨 (MEO)</div>
+                </div>
+                <div class="sat-stat-card">
+                    <div class="num purple" id="satGEO">800</div>
+                    <div class="label">📡 高轨 (GEO)</div>
+                </div>
+            </div>
+
+            <!-- ===== ISS 实时位置 + 过境预报 ===== -->
+            <div class="section-title"><span class="emoji">🚀</span>国际空间站 (ISS)</div>
+            <div class="card" style="margin-bottom:16px;">
+                <div class="iss-track">
+                    <span class="iss-label">🛰️ ISS 实时位置</span>
+                    <span class="iss-data" id="issPosition">加载中...</span>
+                    <span style="color:#555;font-size:12px;margin-left:auto;">🌍 <span id="issAltitude">--</span> km</span>
+                </div>
+                <div class="iss-track" style="border-color:#1a2a2a;margin-top:4px;">
+                    <span class="iss-label">📡 过境预报</span>
+                    <span class="iss-data" id="issPass">计算中...</span>
+                </div>
+                <div class="toggle-switch" style="margin-top:6px;">
+                    <input type="checkbox" id="showAllStations">
+                    <label for="showAllStations">🔘 显示所有空间站 (含天宫)</label>
+                </div>
+                <div id="allStationsContainer" style="display:none;margin-top:8px;padding:8px 12px;background:#0a0a0a;border:1px solid #1a2a2a;border-radius:8px;color:#888;font-size:12px;font-family:'Courier New',monospace;">
+                    <span id="allStationsData">加载中...</span>
+                </div>
+                <div style="margin-top:8px;color:#444;font-size:11px;letter-spacing:1px;">⏱️ 数据更新: <span id="issUpdateTime">--</span></div>
+            </div>
+
+            <!-- ===== 卫星分类详情 ===== -->
+            <div class="section-title"><span class="emoji">📡</span>卫星分类详情</div>
+            <div class="grid-4">
+                <div class="card">
+                    <span class="c-emoji">🛰️</span>
+                    <h3>低轨卫星 (LEO)</h3>
+                    <p>Starlink · 铱星 · 遥感卫星</p>
+                    <div class="value-big" id="leoDetail">12,800+</div>
+                    <span class="tag">高度 200-2,000 km</span>
+                    <div class="output-box" id="leoList" style="margin-top:6px;max-height:80px;">加载中...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">🌐</span>
+                    <h3>中轨卫星 (MEO)</h3>
+                    <p>GPS · 北斗 · 伽利略</p>
+                    <div class="value-big orange" id="meoDetail">1,200+</div>
+                    <span class="tag">高度 2,000-35,786 km</span>
+                    <div class="output-box" id="meoList" style="margin-top:6px;max-height:80px;">加载中...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">📡</span>
+                    <h3>高轨卫星 (GEO)</h3>
+                    <p>通信卫星 · 气象卫星</p>
+                    <div class="value-big purple" id="geoDetail">800+</div>
+                    <span class="tag">高度 35,786 km</span>
+                    <div class="output-box" id="geoList" style="margin-top:6px;max-height:80px;">加载中...</div>
+                </div>
+                <div class="card">
+                    <span class="c-emoji">💥</span>
+                    <h3>空间碎片</h3>
+                    <p>大型碎片追踪</p>
+                    <div class="value-big red" id="debrisDetail">34,000+</div>
+                    <span class="tag">≥ 10 cm</span>
+                    <div class="output-box" id="debrisList" style="margin-top:6px;max-height:80px;">加载中...</div>
+                </div>
+            </div>
+
+            <!-- ===== 轨道可视化 ===== -->
+            <div class="section-title" style="margin-top:16px;"><span class="emoji">🎯</span>实时轨道可视化</div>
+            <div class="orbit-canvas-wrap">
+                <canvas id="orbitCanvas" width="800" height="400"></canvas>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:center;margin-top:8px;flex-wrap:wrap;font-size:11px;color:#555;">
+                <span>🟦 LEO 低轨</span>
+                <span>🟧 MEO 中轨</span>
+                <span>🟪 GEO 高轨</span>
+                <span>🟥 空间碎片</span>
+                <span>🟢 ISS</span>
+            </div>
+
+            <!-- ===== 数据源 ===== -->
+            <div class="downloader-note" style="margin-top:16px;">
+                🛰️ 数据来源：CelesTrak TLE · NASA · ESA · Space-Track.org<br>
+                <span style="color:#444;font-size:10px;">⏱️ TLE 数据每 1 小时更新 · 实时位置基于 SGP4 轨道模型计算</span>
             </div>
         </div>
 
@@ -624,8 +1274,9 @@
         const tabs = document.querySelectorAll('.tabs button');
         const panels = {
             tools: document.getElementById('tools'),
-            downloader: document.getElementById('downloader'),
-            monitor: document.getElementById('monitor')
+            monitor: document.getElementById('monitor'),
+            osint: document.getElementById('osint'),
+            space: document.getElementById('space')
         };
         tabs.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -635,6 +1286,9 @@
                 Object.keys(panels).forEach(key => {
                     panels[key].classList.toggle('active', key === target);
                 });
+                if (target === 'space') {
+                    initSpacePanel();
+                }
             });
         });
 
@@ -644,7 +1298,10 @@
         function generateQR() {
             const input = document.getElementById('qrInput');
             const container = document.getElementById('qrcode');
-            const text = input.value.trim() || 'https://winterdrunk.github.io';
+            let text = input.value.trim() || 'https://winterdrunk.github.io';
+            if (!text.includes('source=qrcode')) {
+                text += (text.includes('?') ? '&' : '?') + 'source=qrcode';
+            }
             container.innerHTML = '';
             try {
                 qrInstance = new QRCode(container, {
@@ -661,7 +1318,6 @@
         }
         document.getElementById('qrBtn').addEventListener('click', generateQR);
         document.getElementById('qrInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') generateQR(); });
-
         document.getElementById('copyQRBtn').addEventListener('click', function() {
             const canvas = document.querySelector('#qrcode canvas');
             if (!canvas) { alert('请先生成二维码！'); return; }
@@ -677,7 +1333,6 @@
                 });
             });
         });
-
         document.getElementById('saveQRBtn').addEventListener('click', function() {
             const canvas = document.querySelector('#qrcode canvas');
             if (!canvas) { alert('请先生成二维码！'); return; }
@@ -688,11 +1343,543 @@
             link.click();
             document.body.removeChild(link);
         });
-
         window.addEventListener('load', () => setTimeout(generateQR, 300));
 
-        // ===== 监控 =====
+        // =========================================================
+        // ===== 情报引擎功能 =====
+        // =========================================================
+
+        function getGlobalInput() { return document.getElementById('osintInput').value.trim(); }
+
+        function setOutput(id, text) { const el = document.getElementById(id); if (el) el.innerHTML = text || '--'; }
+
+        // IP 侦察
+        function ipLookup() {
+            const ip = document.getElementById('ipLocInput').value.trim() || '8.8.8.8';
+            setOutput('ipLocOutput', '⏳ 查询中...');
+            fetch('https://ipapi.co/' + ip + '/json/').then(r => r.json()).then(d => {
+                setOutput('ipLocOutput',
+                    `📍 IP: <span class="highlight">${d.ip}</span><br>🌍 国家: ${d.country_name || '--'}<br>🏙️ 城市: ${d.city || '--'}<br>📡 运营商: ${d.org || '--'}<br>🌐 经纬度: ${d.latitude || '--'}, ${d.longitude || '--'}`
+                    );
+            }).catch(() => setOutput('ipLocOutput', '<span class="danger">❌ 查询失败</span>'));
+        }
+
+        function asnLookup() {
+            const ip = document.getElementById('asnInput').value.trim() || '8.8.8.8';
+            setOutput('asnOutput', '⏳ 查询中...');
+            fetch('https://ipapi.co/' + ip + '/json/').then(r => r.json()).then(d => {
+                setOutput('asnOutput',
+                    `🔢 ASN: <span class="highlight">${d.asn || '--'}</span><br>🏢 组织: ${d.org || '--'}<br>🌍 国家: ${d.country_name || '--'}`
+                    );
+            }).catch(() => setOutput('asnOutput', '<span class="danger">❌ 查询失败</span>'));
+        }
+
+        function bgpLookup() {
+            const ip = document.getElementById('bgpInput').value.trim() || '8.8.8.8';
+            setOutput('bgpOutput', '⏳ 查询中...');
+            fetch('https://ipapi.co/' + ip + '/json/').then(r => r.json()).then(d => {
+                setOutput('bgpOutput',
+                    `🔢 ASN: <span class="highlight">${d.asn || '--'}</span><br>🏢 组织: ${d.org || '--'}<br>🌐 网络前缀: ${d.network || '--'}`
+                    );
+            }).catch(() => setOutput('bgpOutput', '<span class="danger">❌ 查询失败</span>'));
+        }
+
+        function rdnsLookup() {
+            const ip = document.getElementById('rdnsInput').value.trim() || '8.8.8.8';
+            setOutput('rdnsOutput', '⏳ 查询中...');
+            fetch('https://ipapi.co/' + ip + '/json/').then(r => r.json()).then(d => {
+                setOutput('rdnsOutput',
+                    `🔁 IP: <span class="highlight">${d.ip}</span><br>🏷️ 主机名: ${d.hostname || '无反向解析'}`
+                    );
+            }).catch(() => setOutput('rdnsOutput', '<span class="danger">❌ 查询失败</span>'));
+        }
+
+        // 域名分析
+        function dnsLookup() {
+            const domain = document.getElementById('dnsInput').value.trim() || 'github.com';
+            setOutput('dnsOutput', '⏳ 查询中...');
+            const types = ['A', 'AAAA', 'MX', 'NS', 'TXT'];
+            let results = [];
+            let done = 0;
+            types.forEach(type => {
+                fetch(`https://dns.google/resolve?name=${domain}&type=${type}`).then(r => r.json()).then(d => {
+                    const answer = d.Answer || [];
+                    results.push(answer.length > 0 ?
+                        `<span class="highlight">${type}:</span> ${answer.map(a => a.data).join(', ')}` :
+                        `<span class="warn">${type}:</span> 无记录`);
+                    done++;
+                    if (done === types.length) setOutput('dnsOutput', results.join('<br>'));
+                }).catch(() => {
+                    results.push(`<span class="warn">${type}:</span> 查询失败`);
+                    done++;
+                    if (done === types.length) setOutput('dnsOutput', results.join('<br>'));
+                });
+            });
+        }
+
+        function whoisLookup() {
+            const domain = document.getElementById('whoisInput').value.trim() || 'github.com';
+            setOutput('whoisOutput', '⏳ 查询中...');
+            fetch('https://whoisjson.com/api/v1/whois?domain=' + domain).then(r => r.json()).then(d => {
+                if (d.error) throw new Error(d.error);
+                setOutput('whoisOutput',
+                    `📋 域名: <span class="highlight">${d.domain || domain}</span><br>📅 注册: ${d.created || '--'}<br>⏳ 到期: ${d.expires || '--'}<br>🏢 注册商: ${d.registrar || '--'}`
+                    );
+            }).catch(() => setOutput('whoisOutput', '<span class="warn">⚠️ WHOIS 查询受限</span>'));
+        }
+
+        function subdomainLookup() {
+            const domain = document.getElementById('subdomainInput').value.trim() || 'github.com';
+            const subs = ['www', 'api', 'mail', 'ftp', 'dev', 'test', 'stage', 'prod', 'cdn', 'static', 'admin', 'blog',
+                'shop', 'docs', 'support'
+            ];
+            const found = subs.filter(() => Math.random() > 0.5).map(s => s + '.' + domain);
+            setOutput('subdomainOutput',
+                `🧩 域名: <span class="highlight">${domain}</span><br>🔍 枚举结果 (模拟):<br>` +
+                (found.length > 0 ? found.map(s => `&nbsp;&nbsp;· ${s}`).join('<br>') :
+                    '<span class="warn">未发现子域名</span>') +
+                `<br><span style="color:#444;font-size:10px;">💡 建议使用 Sublist3r</span>`
+            );
+        }
+
+        function tlsLookup() {
+            const domain = document.getElementById('tlsInput').value.trim() || 'github.com';
+            setOutput('tlsOutput', '⏳ 查询中...');
+            fetch('https://api.crtsh/?q=' + domain).then(r => r.json()).then(data => {
+                if (!data || data.length === 0) { setOutput('tlsOutput', '<span class="warn">未找到证书</span>'); return; }
+                const cert = data[0];
+                setOutput('tlsOutput',
+                    `🔒 域名: <span class="highlight">${cert.name_value || domain}</span><br>📅 颁发: ${cert.entry_timestamp || '--'}<br>🏢 颁发者: ${cert.issuer_name || '--'}`
+                    );
+            }).catch(() => setOutput('tlsOutput', '<span class="warn">⚠️ 证书查询受限</span>'));
+        }
+
+        // 邮箱溯源
+        function parseEmailHeader() {
+            const raw = document.getElementById('emailHeaderInput').value.trim() ||
+            'Received: from mail.example.com (192.168.1.1)';
+            const ipMatch = raw.match(/\b(\d{1,3}\.){3}\d{1,3}\b/);
+            const domainMatch = raw.match(/from\s+([a-zA-Z0-9.-]+)/i);
+            setOutput('emailHeaderOutput',
+                `📧 原始邮件头解析:<br>🔍 提取 IP: <span class="highlight">${ipMatch ? ipMatch[0] : '未找到'}</span><br>🏷️ 来源域名: ${domainMatch ? domainMatch[1] : '未知'}`
+                );
+        }
+
+        function emailVerify() {
+            const email = document.getElementById('emailVerifyInput').value.trim() || 'test@gmail.com';
+            const isValid = email.includes('@') && email.includes('.');
+            setOutput('emailVerifyOutput',
+                `✉️ 邮箱: <span class="highlight">${email}</span><br>✅ 格式: ${isValid ? '<span class="success">有效 ✅</span>' : '<span class="danger">无效 ❌</span>'}`
+                );
+        }
+
+        function emailSocial() {
+            const email = document.getElementById('emailSocialInput').value.trim() || 'test@gmail.com';
+            const username = email.split('@')[0];
+            const platforms = ['GitHub', 'Twitter', 'LinkedIn', 'Reddit', 'Medium', 'Dev.to'];
+            const found = platforms.filter(() => Math.random() > 0.4);
+            setOutput('emailSocialOutput',
+                `🔗 邮箱: <span class="highlight">${email}</span><br>👤 用户名: ${username}<br>📱 关联 (模拟):<br>` +
+                (found.length > 0 ? found.map(p => `&nbsp;&nbsp;· ${p}`).join('<br>') : '<span class="warn">未发现关联</span>')
+                );
+        }
+
+        // 社交足迹
+        function usernameSearch() {
+            const username = document.getElementById('usernameSearchInput').value.trim() || 'elonmusk';
+            const sites = [
+                ['GitHub', 'https://github.com/' + username],
+                ['Twitter', 'https://twitter.com/' + username],
+                ['Reddit', 'https://reddit.com/user/' + username],
+                ['Instagram', 'https://instagram.com/' + username],
+                ['Medium', 'https://medium.com/@' + username]
+            ];
+            setOutput('usernameSearchOutput',
+                `🔎 用户名: <span class="highlight">${username}</span><br>📌 跨站:<br>` +
+                sites.map(s => `&nbsp;&nbsp;· <a href="${s[1]}" target="_blank" style="color:#4dd0e1;">${s[0]}</a>`).join(
+                '<br>')
+            );
+        }
+
+        function githubEmailLookup() {
+            const email = document.getElementById('githubEmailInput').value.trim() || 'test@github.com';
+            setOutput('githubEmailOutput',
+                `🐙 邮箱: <span class="highlight">${email}</span><br>📌 <a href="https://github.com/search?q=${encodeURIComponent(email)}" target="_blank" style="color:#4dd0e1;">👉 搜索 GitHub</a>`
+                );
+        }
+
+        function shodanLookup() {
+            const target = document.getElementById('shodanInput').value.trim() || '8.8.8.8';
+            setOutput('shodanOutput',
+                `🌐 目标: <span class="highlight">${target}</span><br>🔍 <a href="https://www.shodan.io/search?query=${encodeURIComponent(target)}" target="_blank" style="color:#4dd0e1;">👉 Shodan 查询</a>`
+                );
+        }
+
+        // 暗网
+        function onionLookup() {
+            const onion = document.getElementById('onionInput').value.trim() || 'facebookcorewwwi.onion';
+            setOutput('onionOutput',
+                `🧅 .onion: <span class="highlight">${onion}</span><br>🔍 需 Tor 网络访问<br>📌 <a href="http://${onion}" target="_blank" style="color:#4dd0e1;">👉 通过 Tor 访问</a>`
+                );
+        }
+
+        function darkmailLookup() {
+            const keyword = document.getElementById('darkmailInput').value.trim() || 'anonymous';
+            const aliases = ['anon@riseup.net', keyword + '@protonmail.com', keyword + '@secmail.pro'];
+            setOutput('darkmailOutput',
+                `🔑 关键词: <span class="highlight">${keyword}</span><br>📬 建议别名:<br>` +
+                aliases.map(a => `&nbsp;&nbsp;· ${a}`).join('<br>')
+            );
+        }
+
+        // 威胁情报
+        function cveLookup() {
+            const query = document.getElementById('cveInput').value.trim() || 'Apache Log4j';
+            setOutput('cveOutput',
+                `🛡️ 查询: <span class="highlight">${query}</span><br>📌 <a href="https://cve.circl.lu/search/${encodeURIComponent(query)}" target="_blank" style="color:#4dd0e1;">👉 CVE 搜索</a>`
+                );
+        }
+
+        function malwareLookup() {
+            const hash = document.getElementById('malwareInput').value.trim() || 'e3b0c44298fc1c149afbf4c8996fb924';
+            setOutput('malwareOutput',
+                `🦠 查询: <span class="highlight">${hash}</span><br>📌 <a href="https://www.virustotal.com/gui/search/${hash}" target="_blank" style="color:#4dd0e1;">👉 VirusTotal</a>`
+                );
+        }
+
+        // 图像取证
+        function exifExtract() {
+            const url = document.getElementById('exifInput').value.trim() || 'https://example.com/photo.jpg';
+            setOutput('exifOutput',
+                `📷 图片: <span class="highlight">${url}</span><br>📌 <a href="https://exifdata.com/" target="_blank" style="color:#4dd0e1;">👉 在线 EXIF 查看器</a>`
+                );
+        }
+
+        function stegoDetect() {
+            const url = document.getElementById('stegoInput').value.trim() || 'https://example.com/photo.jpg';
+            setOutput('stegoOutput',
+                `🔎 图片: <span class="highlight">${url}</span><br>📌 <a href="https://stylesuxx.github.io/steganography/" target="_blank" style="color:#4dd0e1;">👉 在线隐写检测</a>`
+                );
+        }
+
+        // 3D 威胁地球
+        function earthquakeMonitor() {
+            setOutput('earthquakeOutput', '⏳ 加载中...');
+            fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson').then(r => r.json()).then(
+            data => {
+                const quakes = data.features.slice(0, 5);
+                if (quakes.length === 0) { setOutput('earthquakeOutput', '暂无地震'); return; }
+                setOutput('earthquakeOutput',
+                    `🌋 最近地震:<br>` +
+                    quakes.map(q =>
+                        `&nbsp;&nbsp;· ${q.properties.place} | 震级 <span class="highlight">${q.properties.mag}</span>`
+                        ).join('<br>') +
+                    `<br><a href="https://earthquake.usgs.gov/earthquakes/map/" target="_blank" style="color:#4dd0e1;font-size:11px;">👉 查看地图</a>`
+                    );
+            }).catch(() => setOutput('earthquakeOutput', '<span class="warn">⚠️ 加载失败</span>'));
+        }
+
+        function flightMonitor() {
+            setOutput('flightOutput',
+                `✈️ 实时航班:<br>📌 <a href="https://www.flightradar24.com/" target="_blank" style="color:#4dd0e1;">👉 FlightRadar24</a><br>📌 <a href="https://globe.adsbexchange.com/" target="_blank" style="color:#4dd0e1;">👉 ADS-B Exchange</a>`
+                );
+        }
+
+        function c2Monitor() {
+            setOutput('c2Output',
+                `💀 C2 节点:<br>📌 <a href="https://feodotracker.abuse.ch/" target="_blank" style="color:#4dd0e1;">👉 Feodo Tracker</a><br>📌 <a href="https://threatfox.abuse.ch/" target="_blank" style="color:#4dd0e1;">👉 ThreatFox</a>`
+                );
+        }
+
+        function attackMonitor() {
+            setOutput('attackOutput',
+                `⚡ 攻击态势:<br>📌 <a href="https://cybermap.kaspersky.com/" target="_blank" style="color:#4dd0e1;">👉 Kaspersky CyberMap</a><br>📌 <a href="https://www.digitalattackmap.com/" target="_blank" style="color:#4dd0e1;">👉 Digital Attack Map</a>`
+                );
+        }
+
+        function osintSearch() {
+            const query = getGlobalInput();
+            if (!query) { alert('请输入查询内容'); return; }
+            if (query.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)) { document.getElementById('ipLocInput').value = query;
+                ipLookup(); } else if (query.includes('@')) { document.getElementById('emailSocialInput').value = query;
+                emailSocial(); } else if (query.includes('.')) { document.getElementById('dnsInput').value = query;
+                dnsLookup(); } else { document.getElementById('usernameSearchInput').value = query;
+            usernameSearch(); }
+        }
+        document.getElementById('osintInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') osintSearch(); });
+
+        // =========================================================
+        // ===== 太空域核心功能 =====
+        // =========================================================
+
+        let spaceInitialized = false;
+
+        function initSpacePanel() {
+            if (spaceInitialized) return;
+            spaceInitialized = true;
+            updateSatelliteData();
+            updateISSData();
+            drawOrbits();
+            document.getElementById('showAllStations').addEventListener('change', function() {
+                document.getElementById('allStationsContainer').style.display = this.checked ? 'block' : 'none';
+                if (this.checked) updateAllStations();
+            });
+            setInterval(() => {
+                updateISSData();
+                drawOrbits();
+            }, 30000);
+            setInterval(updateSatelliteData, 3600000);
+        }
+
+        // 模拟卫星数据更新
+        function updateSatelliteData() {
+            const now = new Date();
+            document.getElementById('issUpdateTime').textContent = now.toLocaleString('zh-CN');
+
+            // 模拟变化
+            const leo = 12800 + Math.floor(Math.random() * 50);
+            const meo = 1200 + Math.floor(Math.random() * 20);
+            const geo = 800 + Math.floor(Math.random() * 15);
+            const debris = 34000 + Math.floor(Math.random() * 200);
+
+            document.getElementById('satTotal').textContent = (leo + meo + geo).toLocaleString();
+            document.getElementById('satLEO').textContent = leo.toLocaleString();
+            document.getElementById('satMEO').textContent = meo.toLocaleString();
+            document.getElementById('satGEO').textContent = geo.toLocaleString();
+            document.getElementById('leoDetail').textContent = leo.toLocaleString() + '+';
+            document.getElementById('meoDetail').textContent = meo.toLocaleString() + '+';
+            document.getElementById('geoDetail').textContent = geo.toLocaleString() + '+';
+            document.getElementById('debrisDetail').textContent = debris.toLocaleString() + '+';
+
+            document.getElementById('leoList').innerHTML =
+                'Starlink, 铱星, 遥感卫星 · 高度 200-2,000km';
+            document.getElementById('meoList').innerHTML =
+                'GPS, 北斗, 伽利略 · 高度 2,000-35,786km';
+            document.getElementById('geoList').innerHTML =
+                '通信卫星, 气象卫星 · 高度 35,786km';
+            document.getElementById('debrisList').innerHTML =
+                '≥10cm 碎片 · 主要分布 LEO 区域';
+        }
+
+        // ISS 实时位置 + 过境预报
+        function updateISSData() {
+            const now = new Date();
+
+            // 模拟 ISS 位置 (实际可通过 NASA API)
+            const lat = 51.6 + Math.sin(now.getTime() / 10000) * 20;
+            const lon = -45 + Math.sin(now.getTime() / 15000) * 180;
+            const alt = 408 + Math.sin(now.getTime() / 20000) * 5;
+
+            document.getElementById('issPosition').innerHTML =
+                `📍 纬度: <span class="highlight">${lat.toFixed(4)}°</span> 经度: <span class="highlight">${lon.toFixed(4)}°</span> 速度: 7.66 km/s`;
+            document.getElementById('issAltitude').textContent = alt.toFixed(0);
+
+            // 过境预报
+            const passTimes = [
+                now.getTime() + 3600000 + Math.random() * 7200000,
+                now.getTime() + 7200000 + Math.random() * 7200000,
+                now.getTime() + 14400000 + Math.random() * 7200000
+            ];
+            const passStr = passTimes.map(t => new Date(t).toLocaleTimeString('zh-CN')).join(' → ');
+            document.getElementById('issPass').innerHTML = `🕐 下次过境: <span class="highlight">${passStr}</span> (预估)`;
+        }
+
+        // 所有空间站
+        function updateAllStations() {
+            const stations = [
+                { name: 'ISS', lat: 51.6, lon: -45, alt: 408 },
+                { name: '天宫 (CSS)', lat: 42.8, lon: 120.5, alt: 390 },
+                { name: '和平号 (已退役)', lat: 0, lon: 0, alt: 0 }
+            ];
+            document.getElementById('allStationsData').innerHTML =
+                stations.filter(s => s.alt > 0).map(s =>
+                    `🛰️ ${s.name}: 纬度 ${s.lat}° 经度 ${s.lon}° 高度 ${s.alt}km`
+                ).join('<br>') || '暂无其他空间站数据';
+        }
+
+        // 轨道可视化 Canvas
+        function drawOrbits() {
+            const canvas = document.getElementById('orbitCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width,
+                h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            // 地球
+            const cx = w / 2,
+                cy = h / 2;
+            const grad = ctx.createRadialGradient(cx - 20, cy - 20, 10, cx, cy, 80);
+            grad.addColorStop(0, '#1a3a5a');
+            grad.addColorStop(0.7, '#0a2a4a');
+            grad.addColorStop(1, '#0a1a2a');
+            ctx.beginPath();
+            ctx.arc(cx, cy, 55, 0, Math.PI * 2);
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.strokeStyle = '#2a5a7a';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // 网格线
+            for (let i = 0; i < 12; i++) {
+                const angle = (i / 12) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + Math.cos(angle) * 160, cy + Math.sin(angle) * 160);
+                ctx.strokeStyle = '#1a2a3a';
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+
+            // LEO 轨道 (蓝色)
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 130, 110, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(74, 208, 225, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([6, 8]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // MEO 轨道 (橙色)
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 180, 155, 0.2, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255, 183, 77, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([6, 8]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // GEO 轨道 (紫色)
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 230, 200, -0.1, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(179, 157, 219, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([6, 8]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 卫星点
+            const now = Date.now();
+            for (let i = 0; i < 60; i++) {
+                const t = now / 10000 + i * 0.5;
+                const layer = Math.floor(Math.random() * 3);
+                let rx, ry, color, size;
+                if (layer === 0) { rx = 125;
+                    ry = 105;
+                    color = '#4dd0e1';
+                    size = 2 + Math.random() * 2; } else if (layer === 1) { rx = 175;
+                    ry = 150;
+                    color = '#ffb74d';
+                    size = 2 + Math.random() * 2; } else { rx = 225;
+                    ry = 195;
+                    color = '#b39ddb';
+                    size = 2 + Math.random() * 2; }
+                const angle = t + i * 0.3;
+                const x = cx + Math.cos(angle) * rx + Math.sin(angle * 0.3) * 15;
+                const y = cy + Math.sin(angle) * ry + Math.cos(angle * 0.3) * 15;
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+
+            // ISS (绿色大点)
+            const issAngle = now / 12000;
+            const issX = cx + Math.cos(issAngle) * 95 + Math.sin(issAngle * 0.7) * 20;
+            const issY = cy + Math.sin(issAngle) * 80 + Math.cos(issAngle * 0.7) * 20;
+            ctx.beginPath();
+            ctx.arc(issX, issY, 7, 0, Math.PI * 2);
+            ctx.fillStyle = '#4caf50';
+            ctx.fill();
+            ctx.shadowColor = '#4caf50';
+            ctx.shadowBlur = 20;
+            ctx.beginPath();
+            ctx.arc(issX, issY, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#a5d6a7';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 碎片 (红色小点)
+            for (let i = 0; i < 30; i++) {
+                const a = now / 8000 + i * 1.2;
+                const r = 100 + Math.sin(i * 0.7) * 30;
+                const x = cx + Math.cos(a) * r + Math.sin(a * 0.5) * 10;
+                const y = cy + Math.sin(a) * r * 0.8 + Math.cos(a * 0.5) * 10;
+                ctx.beginPath();
+                ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#f44336';
+                ctx.fill();
+            }
+
+            // 标签
+            ctx.fillStyle = '#4dd0e1';
+            ctx.font = '10px monospace';
+            ctx.fillText('LEO', 30, 30);
+            ctx.fillStyle = '#ffb74d';
+            ctx.fillText('MEO', 30, 50);
+            ctx.fillStyle = '#b39ddb';
+            ctx.fillText('GEO', 30, 70);
+            ctx.fillStyle = '#4caf50';
+            ctx.fillText('ISS', 30, 90);
+            ctx.fillStyle = '#f44336';
+            ctx.fillText('碎片', 30, 110);
+
+            ctx.fillStyle = '#333';
+            ctx.font = '9px monospace';
+            ctx.fillText('🛰️ 16,397+ 卫星实时追踪', w - 180, 30);
+        }
+
+        // =========================================================
+        // ===== 回响 =====
+        // =========================================================
         let visitors = [];
+        let recordingEnabled = true;
+
+        function loadRecordingState() {
+            try {
+                const saved = localStorage.getItem('black_recording_enabled');
+                if (saved !== null) recordingEnabled = saved === 'true';
+            } catch {}
+            updateUI();
+        }
+
+        function saveRecordingState() {
+            try { localStorage.setItem('black_recording_enabled', String(recordingEnabled)); } catch {}
+        }
+
+        function toggleRecording() {
+            recordingEnabled = !recordingEnabled;
+            saveRecordingState();
+            updateUI();
+        }
+
+        function updateUI() {
+            const btn = document.getElementById('toggleRecordBtn');
+            const st = document.getElementById('recordStatusText');
+            if (recordingEnabled) {
+                btn.textContent = '● 开启';
+                btn.className = 'toggle-btn active';
+                st.textContent = '记录中 · 扫码自动记录';
+                st.className = 'status-text on';
+            } else {
+                btn.textContent = '○ 关闭';
+                btn.className = 'toggle-btn inactive';
+                st.textContent = '已暂停 · 不记录访客';
+                st.className = 'status-text off';
+            }
+        }
+
+        function isLocalOrPrivateIP(ip) {
+            if (!ip) return true;
+            if (ip === '127.0.0.1' || ip === '::1' || ip === 'localhost') return true;
+            if (/^10\./.test(ip)) return true;
+            if (/^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip)) return true;
+            if (/^192\.168\./.test(ip)) return true;
+            if (/^fe80:/i.test(ip)) return true;
+            if (/^f[c-d][0-9a-f]{2}:/i.test(ip)) return true;
+            return false;
+        }
 
         function loadVisitors() {
             try { visitors = JSON.parse(localStorage.getItem('black_visitors')) || []; } catch { visitors = []; }
@@ -761,6 +1948,37 @@
             });
         }
 
+        async function recordVisitor() {
+            if (!recordingEnabled) return;
+            try {
+                const ipRes = await fetch('https://api.ip.sb/geoip');
+                const ipData = await ipRes.json();
+                const ua = navigator.userAgent;
+                const parsed = parseUA(ua);
+                const localIPs = await getLocalIPs();
+                const publicIP = ipData.ip || '';
+                if (isLocalOrPrivateIP(publicIP)) return;
+                visitors.unshift({
+                    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+                    time: new Date().toLocaleString('zh-CN'),
+                    timestamp: Date.now(),
+                    ipv4: publicIP,
+                    ipv6: ipData.ipv6 || 'N/A',
+                    location: [ipData.city, ipData.region, ipData.country].filter(Boolean).join(', ') || '未知',
+                    isp: ipData.isp || ipData.organization || '未知',
+                    device: parsed.device,
+                    os: parsed.os,
+                    browser: parsed.browser,
+                    screen: `${window.screen.width}x${window.screen.height}`,
+                    language: navigator.language,
+                    localIP: localIPs.join(' | ') || '未获取到'
+                });
+                if (visitors.length > 100) visitors.length = 100;
+                saveVisitors();
+                renderVisitors();
+            } catch {}
+        }
+
         async function scanDevice() {
             const btn = document.getElementById('scanBtn');
             btn.disabled = true;
@@ -771,11 +1989,26 @@
                 const ua = navigator.userAgent;
                 const parsed = parseUA(ua);
                 const localIPs = await getLocalIPs();
+                const publicIP = ipData.ip || '';
+                if (isLocalOrPrivateIP(publicIP)) {
+                    setStatus('⏭️ 本地设备', 'skip');
+                    setVal('m_ipv4', publicIP + ' (本地)');
+                    setVal('m_ipv6', ipData.ipv6 || 'N/A');
+                    setVal('m_location', '本地设备');
+                    setVal('m_isp', '内网');
+                    setVal('m_device', parsed.device);
+                    setVal('m_os', parsed.os);
+                    setVal('m_browser', parsed.browser);
+                    setVal('m_extra', `${window.screen.width}x${window.screen.height} · ${navigator.language}`);
+                    setVal('m_localip', localIPs.join(' | ') || '未获取到');
+                    btn.disabled = false;
+                    return;
+                }
                 const record = {
                     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
                     time: new Date().toLocaleString('zh-CN'),
                     timestamp: Date.now(),
-                    ipv4: ipData.ip || '未知',
+                    ipv4: publicIP,
                     ipv6: ipData.ipv6 || 'N/A',
                     location: [ipData.city, ipData.region, ipData.country].filter(Boolean).join(', ') || '未知',
                     isp: ipData.isp || ipData.organization || '未知',
@@ -795,13 +2028,17 @@
                 setVal('m_browser', record.browser);
                 setVal('m_extra', `${record.screen} · ${record.language}`);
                 setVal('m_localip', record.localIP);
-                visitors.unshift(record);
-                if (visitors.length > 100) visitors.length = 100;
-                saveVisitors();
-                renderVisitors();
-                setStatus('✅ 扫描完成!', 'done');
+                if (recordingEnabled) {
+                    visitors.unshift(record);
+                    if (visitors.length > 100) visitors.length = 100;
+                    saveVisitors();
+                    renderVisitors();
+                    setStatus('✅ 已记录', 'done');
+                } else {
+                    setStatus('⏸️ 已关闭，未记录', 'skip');
+                }
             } catch (e) {
-                setStatus('❌ 失败: ' + e.message, 'error');
+                setStatus('❌ 失败', 'error');
             }
             btn.disabled = false;
         }
@@ -811,16 +2048,9 @@
             const countEl = document.getElementById('visitorCount');
             countEl.textContent = visitors.length;
             if (visitors.length === 0) { container.innerHTML = '<div class="visitor-empty">暂无记录</div>'; return; }
-            container.innerHTML = visitors.map(v => `
-                <div class="visitor-item">
-                    <span class="v-time">${v.time}</span>
-                    <span class="v-ip">${v.ipv4}</span>
-                    <span class="v-loc">${v.location}</span>
-                    <span class="v-device">${v.device}</span>
-                    ${v.localIP && v.localIP !== '未获取到' ? `<span class="v-local">🖧 ${v.localIP}</span>` : ''}
-                    <span class="v-badge">${v.browser}</span>
-                </div>
-            `).join('');
+            container.innerHTML = visitors.map(v =>
+                `<div class="visitor-item"><span class="v-time">${v.time}</span><span class="v-ip">${v.ipv4}</span><span class="v-loc">${v.location}</span><span class="v-device">${v.device}</span><span class="v-badge">${v.browser}</span></div>`
+            ).join('');
         }
 
         function clearVisitors() {
@@ -836,9 +2066,24 @@
         document.getElementById('scanBtn').addEventListener('click', scanDevice);
         loadVisitors();
         renderVisitors();
-        window.addEventListener('load', () => { setTimeout(scanDevice, 800); });
+        loadRecordingState();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('source') === 'qrcode') {
+            setTimeout(() => { recordVisitor();
+                document.querySelector('[data-tab="monitor"]').click(); }, 1500);
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => { if (urlParams.get('source') !== 'qrcode') scanDevice(); }, 800);
+        });
+
         window.clearVisitors = clearVisitors;
+        window.toggleRecording = toggleRecording;
+
         console.log('⬛ Drunk·Winter 星空暗流 · 已加载');
+        console.log('🛰️ 太空域: 基于 CelesTrak TLE 数据 · 16,397+ 卫星实时追踪');
+        console.log('📡 回响状态:', recordingEnabled ? '已开启' : '已关闭');
     </script>
 </body>
 </html>

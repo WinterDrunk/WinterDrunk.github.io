@@ -2,14 +2,18 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>暗域 · 控制台</title>
     <style>
+        /* ============================================================
+           暗色主题 · 专业控制台 · 多端适配
+           ============================================================ */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: #0a0e17; }
         ::-webkit-scrollbar-thumb { background: #1a2a3a; border-radius: 2px; }
@@ -43,9 +47,10 @@
             background: #0d1420;
             border: 1px solid #1a2a3a;
             gap: 8px 16px;
+            border-radius: 4px;
         }
         .top-bar .brand {
-            font-size: 16px;
+            font-size: clamp(14px, 2vw, 18px);
             font-weight: 300;
             letter-spacing: 4px;
             background: linear-gradient(135deg, #00e87a, #00c8ff);
@@ -58,11 +63,11 @@
             letter-spacing: 2px;
             -webkit-text-fill-color: #5a7a8a;
             background: none;
-            margin-left: 10px;
+            margin-left: 8px;
         }
         .top-bar .status {
             display: flex;
-            gap: 12px 20px;
+            gap: 8px 16px;
             flex-wrap: wrap;
             font-size: 10px;
             color: #5a7a8a;
@@ -76,11 +81,10 @@
             margin-right: 4px;
         }
         .top-bar .status .dot.green { background: #00e87a; }
-        .top-bar .status .dot.cyan { background: #00c8ff; }
         .top-bar .status .ip { color: #00c8ff; }
         .top-bar .status .badge {
             border: 1px solid #1a2a3a;
-            padding: 0 10px;
+            padding: 0 8px;
             font-size: 9px;
             color: #5a7a8a;
         }
@@ -88,7 +92,7 @@
         /* ===== 主网格 ===== */
         .grid {
             display: grid;
-            grid-template-columns: 200px 1fr 260px;
+            grid-template-columns: 200px 1fr 280px;
             grid-template-rows: auto 1fr auto;
             gap: 12px;
             flex: 1;
@@ -101,10 +105,9 @@
             padding: 10px 12px;
             overflow-y: auto;
             max-height: calc(100vh - 140px);
+            border-radius: 4px;
         }
-        .sidebar .section {
-            margin-bottom: 10px;
-        }
+        .sidebar .section { margin-bottom: 10px; }
         .sidebar .section-title {
             font-size: 9px;
             color: #5a7a8a;
@@ -139,7 +142,7 @@
         .earth-3d-container {
             width: 100%;
             height: 100%;
-            min-height: 320px;
+            min-height: 280px;
             background: #0a0e17;
             border-radius: 4px;
             overflow: hidden;
@@ -157,13 +160,13 @@
             grid-template-columns: 1fr 1fr;
             gap: 12px;
             flex: 1;
-            min-height: 320px;
+            min-height: 280px;
         }
         .canvas-box {
             background: #0d1420;
             border: 1px solid #1a2a3a;
             position: relative;
-            min-height: 200px;
+            min-height: 180px;
             overflow: hidden;
             border-radius: 4px;
         }
@@ -200,7 +203,7 @@
             bottom: 6px;
             left: 10px;
             display: flex;
-            gap: 12px;
+            gap: 8px 12px;
             font-size: 8px;
             color: #5a7a8a;
             background: rgba(10, 14, 23, 0.7);
@@ -271,11 +274,11 @@
         .info-bar {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px 20px;
+            gap: 6px 16px;
             padding: 6px 12px;
             background: #0d1420;
             border: 1px solid #1a2a3a;
-            font-size: 10px;
+            font-size: clamp(9px, 1vw, 11px);
             color: #5a7a8a;
             border-radius: 4px;
         }
@@ -283,6 +286,7 @@
         .info-bar .value.cyan { color: #00c8ff; }
         .info-bar .value.orange { color: #ff6a00; }
         .info-bar .value.red { color: #ff2200; }
+        .info-bar .sep { color: #1a2a3a; }
 
         /* ===== 底部 ===== */
         .bottom-bar {
@@ -306,11 +310,11 @@
         .tool-bar {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px 20px;
+            gap: 6px 16px;
             padding: 6px 12px;
             background: #0d1420;
             border: 1px solid #1a2a3a;
-            font-size: 10px;
+            font-size: clamp(9px, 1vw, 11px);
             color: #5a7a8a;
             align-items: center;
             border-radius: 4px;
@@ -332,9 +336,9 @@
             color: #c8d8e8;
             padding: 2px 10px;
             font-family: inherit;
-            font-size: 10px;
+            font-size: clamp(9px, 1vw, 11px);
             outline: none;
-            width: 160px;
+            width: clamp(100px, 15vw, 180px);
             border-radius: 2px;
         }
         .tool-bar .cmd input:focus { border-color: #00e87a; }
@@ -344,7 +348,7 @@
             color: #5a7a8a;
             padding: 2px 12px;
             font-family: inherit;
-            font-size: 10px;
+            font-size: clamp(9px, 1vw, 11px);
             cursor: pointer;
             transition: 0.2s;
             border-radius: 2px;
@@ -354,25 +358,123 @@
             color: #00e87a;
         }
 
+        /* ===== 新增面板样式 ===== */
+        .panel-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-top: 4px;
+        }
+        .mini-panel {
+            background: #0d1420;
+            border: 1px solid #1a2a3a;
+            border-radius: 4px;
+            padding: 10px 12px;
+            min-height: 120px;
+        }
+        .mini-panel .mp-title {
+            font-size: 9px;
+            color: #5a7a8a;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #0a1a1a;
+            padding-bottom: 3px;
+            margin-bottom: 6px;
+        }
+        .mini-panel .mp-content {
+            font-size: 10px;
+            color: #c8d8e8;
+            line-height: 1.8;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+        .mini-panel .mp-content .cve-item {
+            padding: 2px 0;
+            border-bottom: 1px solid #0a0e17;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .mini-panel .mp-content .cve-item .cve-id { color: #ff6a00; }
+        .mini-panel .mp-content .cve-item .cve-score { color: #00e87a; }
+        .mini-panel .mp-content .cve-item .cve-desc {
+            color: #5a7a8a;
+            font-size: 9px;
+            width: 100%;
+        }
+        .mini-panel .mp-content .weather-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+            border-bottom: 1px solid #0a0e17;
+        }
+        .mini-panel .mp-content .darknet-item {
+            padding: 2px 0;
+            border-bottom: 1px solid #0a0e17;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .mini-panel .mp-content .darknet-item .onion { color: #b39ddb; }
+        .mini-panel .mp-content .darknet-item .status {
+            font-size: 9px;
+            padding: 0 6px;
+            border-radius: 2px;
+        }
+        .mini-panel .mp-content .darknet-item .status.online { color: #00e87a; }
+        .mini-panel .mp-content .darknet-item .status.offline { color: #ff2200; }
+        .mini-panel .mp-content .darknet-item .status.unknown { color: #ff6a00; }
+
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid #1a2a3a;
+            color: #5a7a8a;
+            padding: 1px 10px;
+            font-family: inherit;
+            font-size: 9px;
+            cursor: pointer;
+            transition: 0.2s;
+            border-radius: 2px;
+            margin-left: 8px;
+        }
+        .refresh-btn:hover {
+            border-color: #00c8ff;
+            color: #00c8ff;
+        }
+
+        /* ============================================================
+           多端适配 - 响应式
+           ============================================================ */
+
+        /* 平板 */
         @media (max-width: 1024px) {
             .grid {
-                grid-template-columns: 160px 1fr 200px;
+                grid-template-columns: 160px 1fr 220px;
+            }
+            .panel-grid-3 {
+                grid-template-columns: 1fr 1fr;
             }
             .canvas-grid {
                 grid-template-columns: 1fr 1fr;
             }
         }
+
+        /* 手机横屏 / 小平板 */
         @media (max-width: 768px) {
+            body { padding: 10px; }
             .grid {
                 grid-template-columns: 1fr;
                 grid-template-rows: auto;
+                gap: 10px;
             }
             .sidebar {
-                max-height: 120px;
+                max-height: 140px;
                 display: flex;
                 flex-wrap: wrap;
                 gap: 2px;
                 padding: 6px 10px;
+                overflow-y: auto;
             }
             .sidebar .section {
                 margin-bottom: 0;
@@ -383,23 +485,30 @@
                 padding: 2px 8px;
                 font-size: 10px;
                 border-left: none;
+                border-bottom: 2px solid transparent;
             }
             .sidebar .item.active {
                 border-left: none;
-                border-bottom: 2px solid #00e87a;
+                border-bottom-color: #00e87a;
             }
             .canvas-grid {
                 grid-template-columns: 1fr;
+            }
+            .canvas-box {
+                min-height: 160px;
             }
             .right-panel {
                 max-height: 300px;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 12px;
+                gap: 10px;
             }
             .right-panel .panel-box {
                 max-height: 160px;
                 overflow-y: auto;
+            }
+            .panel-grid-3 {
+                grid-template-columns: 1fr 1fr;
             }
             .tool-bar .cmd {
                 margin-left: 0;
@@ -407,20 +516,56 @@
             }
             .tool-bar .cmd input {
                 flex: 1;
+                width: auto;
             }
             .earth-3d-container {
-                min-height: 250px;
+                min-height: 220px;
             }
-        }
-        @media (max-width: 480px) {
-            .top-bar .brand { font-size: 14px; }
             .top-bar .brand small { display: none; }
+            .top-bar .status .badge { display: none; }
+            .top-bar .status { gap: 4px 10px; font-size: 9px; }
+            .bottom-bar { font-size: 8px; }
+            .bottom-bar .key { font-size: 7px; padding: 0 4px; }
+            .mini-panel .mp-content { font-size: 9px; max-height: 100px; }
+            .info-bar .sep { display: none; }
+        }
+
+        /* 手机竖屏 */
+        @media (max-width: 480px) {
+            body { padding: 6px; }
+            .top-bar .brand { font-size: 14px; letter-spacing: 2px; }
+            .grid { gap: 8px; }
+            .canvas-box { min-height: 140px; }
             .right-panel {
                 grid-template-columns: 1fr;
+                max-height: 400px;
             }
-            .earth-3d-container {
-                min-height: 200px;
+            .right-panel .panel-box {
+                max-height: 140px;
             }
+            .panel-grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                max-height: 120px;
+                padding: 4px 8px;
+            }
+            .sidebar .item { font-size: 9px; padding: 2px 6px; }
+            .earth-3d-container { min-height: 180px; }
+            .tool-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 4px;
+            }
+            .tool-bar .cmd { flex-wrap: wrap; }
+            .tool-bar .cmd input { width: 100%; }
+            .info-bar { font-size: 8px; gap: 4px 8px; padding: 4px 8px; }
+            .bottom-bar { font-size: 7px; flex-direction: column; align-items: center; gap: 2px; }
+            .top-bar .status .ip { font-size: 8px; }
+            .mini-panel .mp-content .cve-item { flex-direction: column; }
+            .mini-panel .mp-content .cve-item .cve-desc { font-size: 8px; }
+            .mini-panel .mp-content .darknet-item { flex-direction: column; }
+            .mini-panel .mp-content .weather-row { flex-direction: column; }
         }
     </style>
 </head>
@@ -453,6 +598,7 @@
                 <div class="section-title">◈ 控制台</div>
                 <a class="item active" data-view="dashboard"><span class="icon">◉</span> 总览</a>
                 <a class="item" data-view="satellite"><span class="icon">◔</span> 卫星追踪</a>
+                <a class="item" data-view="tracking"><span class="icon">◉</span> 卫星实时追踪</a>
                 <a class="item" data-view="threat"><span class="icon">◈</span> 威胁态势</a>
                 <a class="item" data-view="recon"><span class="icon">◊</span> 侦查日志</a>
             </div>
@@ -471,19 +617,56 @@
             <!-- 信息条 -->
             <div class="info-bar" id="infoBar">
                 <span><span class="label">GEO-TRACE</span> <span class="value">waiting target</span></span>
-                <span><span class="sep">|</span></span>
+                <span class="sep">|</span>
                 <span><span class="label">seismic</span> <span class="value orange" id="quakeCount">266</span> <span class="label">· 24h</span></span>
-                <span><span class="sep">|</span></span>
+                <span class="sep">|</span>
                 <span><span class="label">threats</span> <span class="value red" id="threatCount">4</span></span>
-                <span><span class="sep">|</span></span>
+                <span class="sep">|</span>
                 <span><span class="label">ISS ALT</span> <span class="value cyan" id="issAlt">414 km</span></span>
                 <span style="margin-left:auto;"><span class="label">STATUS</span> <span class="value green">● OPERATING</span></span>
             </div>
 
-            <!-- 可视化画布 -->
-            <div class="canvas-grid" id="canvasGrid">
-                <!-- 左侧：3D 地球 -->
-                <div class="canvas-box" style="grid-column: 1 / -1; min-height: 380px;">
+            <!-- ===== 新面板：CVE + 天气 + 暗网 ===== -->
+            <div class="panel-grid-3">
+
+                <!-- CVE 漏洞监控 -->
+                <div class="mini-panel">
+                    <div class="mp-title">
+                        🛡️ CVE 漏洞监控
+                        <button class="refresh-btn" onclick="fetchCVE()">⟳</button>
+                    </div>
+                    <div class="mp-content" id="cveContent">
+                        <div style="color:#5a7a8a;font-size:9px;">⏳ 加载漏洞情报...</div>
+                    </div>
+                </div>
+
+                <!-- 天气信息 -->
+                <div class="mini-panel">
+                    <div class="mp-title">
+                        🌤️ 实时天气
+                        <button class="refresh-btn" onclick="fetchWeather()">⟳</button>
+                    </div>
+                    <div class="mp-content" id="weatherContent">
+                        <div style="color:#5a7a8a;font-size:9px;">⏳ 定位中...</div>
+                    </div>
+                </div>
+
+                <!-- 暗网监测 -->
+                <div class="mini-panel">
+                    <div class="mp-title">
+                        🌑 暗网监测
+                        <button class="refresh-btn" onclick="fetchDarknet()">⟳</button>
+                    </div>
+                    <div class="mp-content" id="darknetContent">
+                        <div style="color:#5a7a8a;font-size:9px;">⏳ 加载暗网情报...</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ===== 原有：3D 地球 ===== -->
+            <div class="canvas-grid" id="canvasGrid" style="margin-top:4px;">
+                <div class="canvas-box" style="grid-column: 1 / -1; min-height: 320px;">
                     <div id="earthContainer" class="earth-3d-container"></div>
                     <div class="label">🌍 3D 地球 · 实时卫星追踪</div>
                     <div class="status" id="earthStatus">● 3D 渲染中</div>
@@ -556,7 +739,7 @@
     // ============================================================
     var container = document.getElementById('earthContainer');
     var width = container.clientWidth;
-    var height = container.clientHeight || 380;
+    var height = container.clientHeight || 320;
 
     var scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0e17);
@@ -566,7 +749,7 @@
 
     var renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
     // ---- 灯光 ----
@@ -583,7 +766,6 @@
     var earthGroup = new THREE.Group();
     scene.add(earthGroup);
 
-    // 地球纹理 (使用高质量 NASA 纹理)
     var textureLoader = new THREE.TextureLoader();
     var earthMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
     var earthSpecularMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
@@ -625,7 +807,7 @@
     var glow = new THREE.Mesh(glowGeo, glowMat);
     earthGroup.add(glow);
 
-    // ---- 卫星光点 (在轨道上) ----
+    // ---- 卫星光点 ----
     var satGroup = new THREE.Group();
     scene.add(satGroup);
     var satPositions = [];
@@ -649,7 +831,7 @@
         satPositions.push({ mesh: mesh, lat: lat, lon: lon, alt: alt, speed: 0.2 + Math.random() * 0.3 });
     }
 
-    // ---- ISS 特殊标记 ----
+    // ---- ISS ----
     var issGeo = new THREE.SphereGeometry(0.025, 8, 8);
     var issMat = new THREE.MeshBasicMaterial({ color: 0x00e87a });
     var iss = new THREE.Mesh(issGeo, issMat);
@@ -682,7 +864,7 @@
     scene.add(orbit2);
     scene.add(orbit3);
 
-    // ---- 星星背景 ----
+    // ---- 星星 ----
     var starsGeo = new THREE.BufferGeometry();
     var starsCount = 1500;
     var starPositions = new Float32Array(starsCount * 3);
@@ -702,22 +884,16 @@
     var stars = new THREE.Points(starsGeo, starsMat);
     scene.add(stars);
 
-    // ---- 卫星光点闪烁 ----
-    var satGlowGroup = new THREE.Group();
-    scene.add(satGlowGroup);
-
-    // ---- 动画循环 ----
+    // ---- 动画 ----
     var clock = new THREE.Clock();
 
     function animate() {
         var delta = clock.getDelta();
         var elapsed = clock.getElapsedTime();
 
-        // 地球自转
         earth.rotation.y += delta * 0.1;
         clouds.rotation.y += delta * 0.12;
 
-        // 卫星运动
         satPositions.forEach(function(s) {
             s.lon += delta * s.speed * 0.3;
             var x = s.alt * Math.cos(s.lat) * Math.cos(s.lon);
@@ -726,7 +902,6 @@
             s.mesh.position.set(x, y, z);
         });
 
-        // ISS 运动
         issLon += delta * 0.4;
         issLat = 0.5 + 0.3 * Math.sin(elapsed * 0.2);
         iss.position.set(
@@ -735,11 +910,8 @@
             issAlt * Math.cos(issLat) * Math.sin(issLon)
         );
 
-        // 星星缓慢旋转
         stars.rotation.y += delta * 0.002;
         stars.rotation.x += delta * 0.001;
-
-        // 大气层光晕呼吸
         glowMat.opacity = 0.06 + 0.03 * Math.sin(elapsed * 0.3);
 
         renderer.render(scene, camera);
@@ -748,10 +920,9 @@
 
     animate();
 
-    // ---- 窗口自适应 ----
     function resizeEarth() {
         var w = container.clientWidth;
-        var h = container.clientHeight || 380;
+        var h = container.clientHeight || 320;
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
@@ -759,15 +930,145 @@
 
     window.addEventListener('resize', resizeEarth);
     setTimeout(resizeEarth, 100);
-
-    // ---- 状态更新 ----
     document.getElementById('earthStatus').textContent = '● 3D 实时渲染';
 
     console.log('🌍 3D 地球已加载');
-    console.log('🛰️ 60+ 卫星实时追踪');
 
     // ============================================================
-    // 2. 卫星统计更新
+    // 2. CVE 漏洞监控 (NVD API)
+    // ============================================================
+    function fetchCVE() {
+        var container = document.getElementById('cveContent');
+        container.innerHTML = '<div style="color:#5a7a8a;font-size:9px;">⏳ 获取漏洞情报...</div>';
+
+        // 使用 NVD API 获取最近 7 天的 CVE
+        var date = new Date();
+        date.setDate(date.getDate() - 7);
+        var startDate = date.toISOString().split('T')[0];
+
+        fetch('https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=' + startDate + '&resultsPerPage=5')
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (!data.vulnerabilities || data.vulnerabilities.length === 0) {
+                    container.innerHTML = '<div style="color:#5a7a8a;font-size:9px;">📭 暂无新漏洞</div>';
+                    return;
+                }
+                var html = '';
+                data.vulnerabilities.slice(0, 5).forEach(function(item) {
+                    var cve = item.cve;
+                    var id = cve.id || 'CVE-未知';
+                    var score = '--';
+                    var desc = '无描述';
+                    if (cve.metrics && cve.metrics.cvssMetricV31 && cve.metrics.cvssMetricV31[0]) {
+                        score = cve.metrics.cvssMetricV31[0].cvssData.baseScore || '--';
+                    }
+                    if (cve.descriptions && cve.descriptions[0]) {
+                        var d = cve.descriptions[0].value || '无描述';
+                        desc = d.length > 40 ? d.substring(0, 40) + '...' : d;
+                    }
+                    html += '<div class="cve-item">' +
+                        '<span class="cve-id">' + id + '</span>' +
+                        '<span class="cve-score">' + (score !== '--' ? 'CVSS: ' + score : '--') + '</span>' +
+                        '<span class="cve-desc">' + desc + '</span>' +
+                        '</div>';
+                });
+                container.innerHTML = html;
+            })
+            .catch(function() {
+                container.innerHTML = '<div style="color:#ff6a00;font-size:9px;">⚠️ CVE 服务不可用</div>';
+            });
+    }
+
+    // ============================================================
+    // 3. 天气信息 (wttr.in + IP 定位)
+    // ============================================================
+    function fetchWeather() {
+        var container = document.getElementById('weatherContent');
+        container.innerHTML = '<div style="color:#5a7a8a;font-size:9px;">⏳ 定位中...</div>';
+
+        // 先获取 IP
+        fetch('https://api.ip.sb/geoip')
+            .then(function(res) { return res.json(); })
+            .then(function(geo) {
+                var city = geo.city || 'Beijing';
+                var country = geo.country || 'CN';
+                // 获取天气
+                return fetch('https://wttr.in/' + city + ',' + country + '?format=%C+%t+%w&lang=zh')
+                    .then(function(r) { return r.text(); })
+                    .then(function(text) {
+                        var parts = text.trim().split(/\s+/);
+                        var condition = parts.slice(0, -2).join(' ') || '未知';
+                        var temp = parts[parts.length - 2] || '--';
+                        var wind = parts[parts.length - 1] || '--';
+                        container.innerHTML =
+                            '<div class="weather-row"><span>📍 ' + city + ', ' + country + '</span></div>' +
+                            '<div class="weather-row"><span>🌤️ ' + condition + '</span><span>' + temp +
+                            '</span></div>' +
+                            '<div class="weather-row"><span>💨 风速</span><span>' + wind + '</span></div>';
+                    });
+            })
+            .catch(function() {
+                // 降级：默认北京天气
+                fetch('https://wttr.in/Beijing?format=%C+%t+%w&lang=zh')
+                    .then(function(r) { return r.text(); })
+                    .then(function(text) {
+                        var parts = text.trim().split(/\s+/);
+                        var condition = parts.slice(0, -2).join(' ') || '未知';
+                        var temp = parts[parts.length - 2] || '--';
+                        var wind = parts[parts.length - 1] || '--';
+                        container.innerHTML =
+                            '<div class="weather-row"><span>📍 北京 (默认)</span></div>' +
+                            '<div class="weather-row"><span>🌤️ ' + condition + '</span><span>' + temp +
+                            '</span></div>' +
+                            '<div class="weather-row"><span>💨 风速</span><span>' + wind + '</span></div>';
+                    })
+                    .catch(function() {
+                        container.innerHTML =
+                            '<div style="color:#ff6a00;font-size:9px;">⚠️ 天气服务不可用</div>';
+                    });
+            });
+    }
+
+    // ============================================================
+    // 4. 暗网监测 (模拟 + 真实源)
+    // ============================================================
+    function fetchDarknet() {
+        var container = document.getElementById('darknetContent');
+        container.innerHTML = '<div style="color:#5a7a8a;font-size:9px;">⏳ 加载暗网情报...</div>';
+
+        // 模拟暗网数据 (真实数据需 Tor 访问)
+        var darknetData = [
+            { name: 'DarkMarket', onion: 'darkmarket.onion', status: 'online' },
+            { name: 'AlphaBay 2.0', onion: 'alphabay.onion', status: 'offline' },
+            { name: 'Hydra Market', onion: 'hydra.onion', status: 'offline' },
+            { name: 'Silk Road 3.0', onion: 'silkroad.onion', status: 'unknown' },
+            { name: 'Tor Mail', onion: 'tormail.onion', status: 'online' },
+        ];
+
+        // 随机打乱
+        var shuffled = darknetData.sort(function() { return Math.random() - 0.5; });
+
+        var html = '';
+        shuffled.slice(0, 4).forEach(function(item) {
+            var statusClass = item.status === 'online' ? 'online' :
+                item.status === 'offline' ? 'offline' : 'unknown';
+            var statusLabel = item.status === 'online' ? '● 在线' :
+                item.status === 'offline' ? '○ 离线' : '? 未知';
+            html += '<div class="darknet-item">' +
+                '<span class="onion">🧅 ' + item.name + '</span>' +
+                '<span class="status ' + statusClass + '">' + statusLabel + '</span>' +
+                '</div>';
+        });
+
+        html += '<div style="color:#5a7a8a;font-size:8px;margin-top:4px;border-top:1px solid #0a1a1a;padding-top:4px;">' +
+            '📡 数据源: DarkWeb 监测 · 实时状态模拟' +
+            '</div>';
+
+        container.innerHTML = html;
+    }
+
+    // ============================================================
+    // 5. 卫星统计
     // ============================================================
     function updateStats() {
         var leo = 12800 + Math.floor(Math.random() * 30);
@@ -783,7 +1084,7 @@
     }
 
     // ============================================================
-    // 3. ISS 高度更新
+    // 6. ISS 高度
     // ============================================================
     function updateISS() {
         fetch('https://api.wheretheiss.at/v1/satellites/25544')
@@ -799,7 +1100,7 @@
     }
 
     // ============================================================
-    // 4. 命令交互
+    // 7. 命令交互
     // ============================================================
     function runCommand() {
         var input = document.getElementById('cmdInput');
@@ -809,9 +1110,7 @@
         var time = new Date().toLocaleTimeString('zh-CN');
         log.innerHTML = '<div style="color:#5a7a8a;">[' + time + '] ▶ <span style="color:#00e87a;">' + val +
             '</span></div>' + log.innerHTML;
-        if (log.children.length > 20) {
-            log.removeChild(log.lastChild);
-        }
+        if (log.children.length > 20) log.removeChild(log.lastChild);
         setTimeout(function() {
             var results = ['✅ 扫描完成', '⚠️ 发现 2 个开放端口', '📍 地理位置: 北京', '📡 延迟: 12ms'];
             var r = results[Math.floor(Math.random() * results.length)];
@@ -831,7 +1130,7 @@
     });
 
     // ============================================================
-    // 5. 侧边栏切换
+    // 8. 侧边栏切换
     // ============================================================
     document.querySelectorAll('#sidebar .item').forEach(function(item) {
         item.addEventListener('click', function() {
@@ -852,20 +1151,30 @@
             } else if (view === 'monitor') {
                 window.location.hash = 'monitor';
                 window.location.reload();
+            } else if (view === 'tracking') {
+                window.location.hash = 'tracking';
+                window.location.reload();
             }
         });
     });
 
     // ============================================================
-    // 6. 初始化
+    // 9. 初始化
     // ============================================================
     updateStats();
     updateISS();
+    fetchCVE();
+    fetchWeather();
+    fetchDarknet();
+
     setInterval(updateStats, 30000);
     setInterval(updateISS, 5000);
+    setInterval(fetchCVE, 120000); // 2分钟
+    setInterval(fetchWeather, 180000); // 3分钟
+    setInterval(fetchDarknet, 60000); // 1分钟
 
     console.log('⧩ 暗域 · 控制台已启动');
-    console.log('🌍 3D 地球 | 🛰️ 卫星追踪 | 📡 实时监控');
+    console.log('🛡️ CVE 监控 | 🌤️ 天气 | 🌑 暗网监测');
 </script>
 </body>
 </html>

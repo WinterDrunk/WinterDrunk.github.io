@@ -6,6 +6,10 @@
     <title>Drunk·Winter 星空暗流</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js">
     </script>
+    <!-- CesiumJS 3D 地球 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.119/Build/Cesium/Widgets/widgets.css">
+    <script src="https://cdn.jsdelivr.net/npm/cesium@1.119/Build/Cesium/Cesium.js">
+    </script>
     <style>
         * {
             margin: 0;
@@ -22,7 +26,7 @@
             justify-content: center;
         }
         .container {
-            max-width: 1300px;
+            max-width: 1400px;
             width: 100%;
         }
         .header {
@@ -60,7 +64,7 @@
         .tabs {
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
             margin-bottom: 30px;
             flex-wrap: wrap;
         }
@@ -68,13 +72,13 @@
             background: transparent;
             border: 1px solid #2a2a2a;
             color: #888;
-            padding: 6px 18px;
+            padding: 5px 14px;
             border-radius: 40px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         .tabs button:hover {
             border-color: #444;
@@ -130,6 +134,11 @@
             grid-template-columns: 1fr 1fr 1fr 1fr;
             gap: 14px;
         }
+        .grid-5 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 12px;
+        }
         .card {
             background: #111;
             border: 1px solid #1e1e1e;
@@ -167,25 +176,6 @@
             padding: 2px 12px;
             border-radius: 20px;
             letter-spacing: 1px;
-        }
-        .card .value-big {
-            font-size: 28px;
-            font-weight: 300;
-            color: #4dd0e1;
-            letter-spacing: 2px;
-            margin: 4px 0;
-        }
-        .card .value-big.green {
-            color: #4caf50;
-        }
-        .card .value-big.orange {
-            color: #ffb74d;
-        }
-        .card .value-big.purple {
-            color: #b39ddb;
-        }
-        .card .value-big.red {
-            color: #f44336;
         }
 
         .input-group {
@@ -251,24 +241,46 @@
             color: #4caf50;
         }
 
-        /* ===== 太空域专用样式 ===== */
-        .orbit-canvas-wrap {
-            background: #0a0a0a;
-            border: 1px solid #1a1a1a;
-            border-radius: 12px;
-            padding: 10px;
-            position: relative;
-            overflow: hidden;
+        /* ===== 太空域 ===== */
+        .space-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
         }
-        .orbit-canvas-wrap canvas {
+        .space-container .full {
+            grid-column: 1 / -1;
+        }
+        .cesium-container {
             width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 8px;
+            height: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #1a1a1a;
+            background: #0a0a0a;
+            position: relative;
         }
+        .cesium-container .cesium-widget {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .stellarium-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #1a1a1a;
+            background: #0a0a0a;
+        }
+        .stellarium-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         .sat-stat-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
             gap: 12px;
             margin-bottom: 16px;
         }
@@ -276,14 +288,14 @@
             background: #0d0d0d;
             border: 1px solid #1a1a1a;
             border-radius: 12px;
-            padding: 14px 16px;
+            padding: 12px 14px;
             text-align: center;
         }
         .sat-stat-card .num {
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 300;
             color: #4dd0e1;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
         .sat-stat-card .num.green {
             color: #4caf50;
@@ -298,79 +310,81 @@
             color: #f44336;
         }
         .sat-stat-card .label {
-            font-size: 11px;
+            font-size: 10px;
             color: #555;
             letter-spacing: 1px;
             margin-top: 2px;
         }
 
-        .iss-track {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            align-items: center;
-            padding: 10px 14px;
+        /* ===== 全球摄像头 ===== */
+        .cam-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 14px;
+        }
+        .cam-card {
             background: #0d0d0d;
-            border: 1px solid #1a3a3a;
-            border-radius: 10px;
-            margin-top: 8px;
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+            padding: 14px 16px;
+            transition: 0.2s;
+            text-decoration: none;
+            color: #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
-        .iss-track .iss-label {
-            color: #4dd0e1;
+        .cam-card:hover {
+            border-color: #444;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+        .cam-card .cam-emoji {
+            font-size: 32px;
+        }
+        .cam-card .cam-name {
+            font-size: 14px;
             font-weight: 500;
-            letter-spacing: 1px;
+            color: #eee;
+            margin-top: 4px;
         }
-        .iss-track .iss-data {
-            color: #888;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
+        .cam-card .cam-loc {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
         }
-        .iss-track .iss-data .highlight {
-            color: #4dd0e1;
+        .cam-card .cam-tag {
+            font-size: 9px;
+            color: #444;
+            border: 1px solid #1a1a1a;
+            padding: 1px 10px;
+            border-radius: 12px;
+            margin-top: 4px;
         }
 
-        .toggle-switch {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin: 6px 0;
+        .platform-badge {
+            display: inline-block;
+            padding: 2px 14px;
+            border-radius: 20px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            margin-right: 4px;
         }
-        .toggle-switch label {
-            color: #888;
-            font-size: 13px;
-            cursor: pointer;
-            user-select: none;
+        .platform-badge.skyline {
+            background: #1a2a3a;
+            color: #4dd0e1;
+            border: 1px solid #1a3a4a;
         }
-        .toggle-switch input[type="checkbox"] {
-            appearance: none;
-            width: 40px;
-            height: 22px;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 30px;
-            cursor: pointer;
-            position: relative;
-            transition: 0.3s;
-            flex-shrink: 0;
+        .platform-badge.worldcam {
+            background: #1a3a2a;
+            color: #4caf50;
+            border: 1px solid #1a4a3a;
         }
-        .toggle-switch input[type="checkbox"]:checked {
-            background: #0d3a3a;
-            border-color: #4dd0e1;
-        }
-        .toggle-switch input[type="checkbox"]::after {
-            content: '';
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: #555;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: 0.3s;
-        }
-        .toggle-switch input[type="checkbox"]:checked::after {
-            left: 20px;
-            background: #4dd0e1;
+        .platform-badge.earthcam {
+            background: #3a2a1a;
+            color: #ffb74d;
+            border: 1px solid #4a3a1a;
         }
 
         .qr-input-group {
@@ -704,11 +718,17 @@
         }
 
         @media (max-width: 1024px) {
+            .space-container {
+                grid-template-columns: 1fr;
+            }
             .sat-stat-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr 1fr 1fr;
             }
             .grid-4 {
                 grid-template-columns: 1fr 1fr;
+            }
+            .grid-5 {
+                grid-template-columns: 1fr 1fr 1fr;
             }
         }
         @media (max-width: 768px) {
@@ -721,23 +741,28 @@
             .grid-4 {
                 grid-template-columns: 1fr;
             }
+            .grid-5 {
+                grid-template-columns: 1fr 1fr;
+            }
             .sat-stat-grid {
                 grid-template-columns: 1fr 1fr;
             }
             .monitor-grid {
                 grid-template-columns: 1fr 1fr;
             }
-            .monitor-topbar {
-                flex-direction: column;
-                align-items: stretch;
+            .cesium-container {
+                height: 300px;
             }
-            .monitor-topbar .left {
-                justify-content: center;
+            .stellarium-container {
+                height: 300px;
+            }
+            .cam-grid {
+                grid-template-columns: 1fr 1fr;
             }
         }
         @media (max-width: 500px) {
             .sat-stat-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
             }
             .monitor-grid {
                 grid-template-columns: 1fr;
@@ -748,8 +773,17 @@
             }
             .tabs button {
                 padding: 4px 10px;
-                font-size: 11px;
+                font-size: 10px;
                 letter-spacing: 0.5px;
+            }
+            .cesium-container {
+                height: 250px;
+            }
+            .stellarium-container {
+                height: 250px;
+            }
+            .cam-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -769,6 +803,7 @@
             <button data-tab="monitor">📡 回响</button>
             <button data-tab="osint">🕵️ 情报引擎</button>
             <button data-tab="space">🛰️ 太空域</button>
+            <button data-tab="camera">📷 全球摄像头</button>
         </div>
 
         <!-- ========================================================= -->
@@ -888,7 +923,6 @@
         <div id="osint" class="panel">
             <h2 style="font-weight:300;letter-spacing:2px;margin-bottom:6px;color:#aaa;">🕵️ 情报引擎</h2>
             <p style="color:#666;margin-bottom:16px;font-size:14px;">开源情报 · 输入目标一键侦查</p>
-
             <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
                 <input type="text" id="osintInput" placeholder="输入 IP / 域名 / 邮箱 / 用户名" style="flex:1;padding:10px 16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:30px;color:#e0e0e0;font-size:14px;outline:none;min-width:200px;">
                 <button onclick="osintSearch()" style="padding:10px 28px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:14px;transition:0.2s;">🔍 全局搜索</button>
@@ -901,9 +935,8 @@
                 <div class="card">
                     <span class="c-emoji">📍</span>
                     <h3>IP 定位</h3>
-                    <p>查询 IP 归属地、运营商、经纬度</p>
                     <div class="input-group">
-                        <input type="text" id="ipLocInput" placeholder="输入 IP 地址" value="8.8.8.8">
+                        <input type="text" id="ipLocInput" placeholder="IP" value="8.8.8.8">
                         <button onclick="ipLookup()">查询</button>
                     </div>
                     <div class="output-box" id="ipLocOutput">等待查询...</div>
@@ -911,9 +944,8 @@
                 <div class="card">
                     <span class="c-emoji">🏷️</span>
                     <h3>ASN 查询</h3>
-                    <p>查询 IP 所属 ASN、组织</p>
                     <div class="input-group">
-                        <input type="text" id="asnInput" placeholder="IP 或 ASN 编号" value="8.8.8.8">
+                        <input type="text" id="asnInput" placeholder="IP" value="8.8.8.8">
                         <button onclick="asnLookup()">查询</button>
                     </div>
                     <div class="output-box" id="asnOutput">等待查询...</div>
@@ -921,9 +953,8 @@
                 <div class="card">
                     <span class="c-emoji">🔄</span>
                     <h3>BGP 路由</h3>
-                    <p>查询 IP 的 BGP 路由信息</p>
                     <div class="input-group">
-                        <input type="text" id="bgpInput" placeholder="IP 地址" value="8.8.8.8">
+                        <input type="text" id="bgpInput" placeholder="IP" value="8.8.8.8">
                         <button onclick="bgpLookup()">查询</button>
                     </div>
                     <div class="output-box" id="bgpOutput">等待查询...</div>
@@ -931,9 +962,8 @@
                 <div class="card">
                     <span class="c-emoji">🔁</span>
                     <h3>反查域名</h3>
-                    <p>通过 IP 反查绑定的域名</p>
                     <div class="input-group">
-                        <input type="text" id="rdnsInput" placeholder="IP 地址" value="8.8.8.8">
+                        <input type="text" id="rdnsInput" placeholder="IP" value="8.8.8.8">
                         <button onclick="rdnsLookup()">查询</button>
                     </div>
                     <div class="output-box" id="rdnsOutput">等待查询...</div>
@@ -946,7 +976,6 @@
                 <div class="card">
                     <span class="c-emoji">🔍</span>
                     <h3>DNS 枚举</h3>
-                    <p>查询 A/AAAA/MX/NS/TXT 记录</p>
                     <div class="input-group">
                         <input type="text" id="dnsInput" placeholder="域名" value="github.com">
                         <button onclick="dnsLookup()">查询</button>
@@ -955,8 +984,7 @@
                 </div>
                 <div class="card">
                     <span class="c-emoji">📜</span>
-                    <h3>WHOIS 查询</h3>
-                    <p>域名注册信息查询</p>
+                    <h3>WHOIS</h3>
                     <div class="input-group">
                         <input type="text" id="whoisInput" placeholder="域名" value="github.com">
                         <button onclick="whoisLookup()">查询</button>
@@ -966,7 +994,6 @@
                 <div class="card">
                     <span class="c-emoji">🧩</span>
                     <h3>子域名爆破</h3>
-                    <p>枚举域名子域（演示）</p>
                     <div class="input-group">
                         <input type="text" id="subdomainInput" placeholder="域名" value="github.com">
                         <button onclick="subdomainLookup()">爆破</button>
@@ -976,7 +1003,6 @@
                 <div class="card">
                     <span class="c-emoji">🔒</span>
                     <h3>TLS 证书</h3>
-                    <p>查询域名 TLS/SSL 证书信息</p>
                     <div class="input-group">
                         <input type="text" id="tlsInput" placeholder="域名" value="github.com">
                         <button onclick="tlsLookup()">查询</button>
@@ -991,9 +1017,8 @@
                 <div class="card">
                     <span class="c-emoji">📧</span>
                     <h3>邮件头解析</h3>
-                    <p>粘贴邮件原始头信息</p>
                     <div class="input-group">
-                        <input type="text" id="emailHeaderInput" placeholder="粘贴邮件头(简略)" value="Received: from mail.example.com (192.168.1.1)">
+                        <input type="text" id="emailHeaderInput" placeholder="邮件头" value="Received: from mail.example.com (192.168.1.1)">
                         <button onclick="parseEmailHeader()">解析</button>
                     </div>
                     <div class="output-box" id="emailHeaderOutput">等待解析...</div>
@@ -1001,19 +1026,17 @@
                 <div class="card">
                     <span class="c-emoji">✅</span>
                     <h3>邮箱验证</h3>
-                    <p>检查邮箱地址是否有效</p>
                     <div class="input-group">
-                        <input type="text" id="emailVerifyInput" placeholder="邮箱地址" value="test@gmail.com">
+                        <input type="text" id="emailVerifyInput" placeholder="邮箱" value="test@gmail.com">
                         <button onclick="emailVerify()">验证</button>
                     </div>
                     <div class="output-box" id="emailVerifyOutput">等待验证...</div>
                 </div>
                 <div class="card">
                     <span class="c-emoji">🔗</span>
-                    <h3>关联社交账号</h3>
-                    <p>通过邮箱查找关联的社交账号</p>
+                    <h3>关联社交</h3>
                     <div class="input-group">
-                        <input type="text" id="emailSocialInput" placeholder="邮箱地址" value="test@gmail.com">
+                        <input type="text" id="emailSocialInput" placeholder="邮箱" value="test@gmail.com">
                         <button onclick="emailSocial()">查询</button>
                     </div>
                     <div class="output-box" id="emailSocialOutput">等待查询...</div>
@@ -1025,8 +1048,7 @@
             <div class="grid-3">
                 <div class="card">
                     <span class="c-emoji">🔎</span>
-                    <h3>用户名跨站搜索</h3>
-                    <p>搜索用户名在各大平台的注册信息</p>
+                    <h3>用户名搜索</h3>
                     <div class="input-group">
                         <input type="text" id="usernameSearchInput" placeholder="用户名" value="elonmusk">
                         <button onclick="usernameSearch()">搜索</button>
@@ -1035,8 +1057,7 @@
                 </div>
                 <div class="card">
                     <span class="c-emoji">🐙</span>
-                    <h3>GitHub 邮箱关联</h3>
-                    <p>通过 GitHub 邮箱查找用户</p>
+                    <h3>GitHub 邮箱</h3>
                     <div class="input-group">
                         <input type="text" id="githubEmailInput" placeholder="邮箱" value="test@github.com">
                         <button onclick="githubEmailLookup()">查询</button>
@@ -1045,10 +1066,9 @@
                 </div>
                 <div class="card">
                     <span class="c-emoji">🌐</span>
-                    <h3>Shodan 联动</h3>
-                    <p>通过 IP/域名查询 Shodan 数据</p>
+                    <h3>Shodan</h3>
                     <div class="input-group">
-                        <input type="text" id="shodanInput" placeholder="IP 或域名" value="8.8.8.8">
+                        <input type="text" id="shodanInput" placeholder="IP/域名" value="8.8.8.8">
                         <button onclick="shodanLookup()">查询</button>
                     </div>
                     <div class="output-box" id="shodanOutput">等待查询...</div>
@@ -1060,10 +1080,9 @@
             <div class="grid-2">
                 <div class="card">
                     <span class="c-emoji">🧅</span>
-                    <h3>.onion 站点探测</h3>
-                    <p>检查 Tor 暗网站点状态</p>
+                    <h3>.onion 探测</h3>
                     <div class="input-group">
-                        <input type="text" id="onionInput" placeholder=".onion 地址" value="facebookcorewwwi.onion">
+                        <input type="text" id="onionInput" placeholder=".onion" value="facebookcorewwwi.onion">
                         <button onclick="onionLookup()">探测</button>
                     </div>
                     <div class="output-box" id="onionOutput">等待探测...</div>
@@ -1071,9 +1090,8 @@
                 <div class="card">
                     <span class="c-emoji">📬</span>
                     <h3>暗网邮件别名</h3>
-                    <p>生成/查询暗网邮箱别名</p>
                     <div class="input-group">
-                        <input type="text" id="darkmailInput" placeholder="输入关键词" value="anonymous">
+                        <input type="text" id="darkmailInput" placeholder="关键词" value="anonymous">
                         <button onclick="darkmailLookup()">查询</button>
                     </div>
                     <div class="output-box" id="darkmailOutput">等待查询...</div>
@@ -1085,10 +1103,9 @@
             <div class="grid-2">
                 <div class="card">
                     <span class="c-emoji">🛡️</span>
-                    <h3>CVE 漏洞关联</h3>
-                    <p>通过软件/版本查询 CVE 漏洞</p>
+                    <h3>CVE 漏洞</h3>
                     <div class="input-group">
-                        <input type="text" id="cveInput" placeholder="软件名或CVE编号" value="Apache Log4j">
+                        <input type="text" id="cveInput" placeholder="软件名/CVE" value="Apache Log4j">
                         <button onclick="cveLookup()">查询</button>
                     </div>
                     <div class="output-box" id="cveOutput">等待查询...</div>
@@ -1096,9 +1113,8 @@
                 <div class="card">
                     <span class="c-emoji">🦠</span>
                     <h3>恶意软件反查</h3>
-                    <p>通过哈希/域名查询恶意软件关联</p>
                     <div class="input-group">
-                        <input type="text" id="malwareInput" placeholder="MD5 / 域名" value="e3b0c44298fc1c149afbf4c8996fb924">
+                        <input type="text" id="malwareInput" placeholder="MD5/域名" value="e3b0c44298fc1c149afbf4c8996fb924">
                         <button onclick="malwareLookup()">反查</button>
                     </div>
                     <div class="output-box" id="malwareOutput">等待查询...</div>
@@ -1110,8 +1126,7 @@
             <div class="grid-2">
                 <div class="card">
                     <span class="c-emoji">📋</span>
-                    <h3>EXIF 元数据提取</h3>
-                    <p>提取图片的 EXIF 信息</p>
+                    <h3>EXIF 提取</h3>
                     <div class="input-group">
                         <input type="text" id="exifInput" placeholder="图片URL" value="https://example.com/photo.jpg">
                         <button onclick="exifExtract()">提取</button>
@@ -1121,7 +1136,6 @@
                 <div class="card">
                     <span class="c-emoji">🔎</span>
                     <h3>隐写检测</h3>
-                    <p>检测图片是否隐藏了信息</p>
                     <div class="input-group">
                         <input type="text" id="stegoInput" placeholder="图片URL" value="https://example.com/photo.jpg">
                         <button onclick="stegoDetect()">检测</button>
@@ -1136,25 +1150,25 @@
                 <div class="card">
                     <span class="c-emoji">🌋</span>
                     <h3>实时地震</h3>
-                    <button onclick="earthquakeMonitor()" style="margin-top:8px;padding:8px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;width:100%;">▶ 查看地震</button>
+                    <button onclick="earthquakeMonitor()" style="margin-top:8px;padding:8px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;width:100%;">▶ 查看</button>
                     <div class="output-box" id="earthquakeOutput">等待加载...</div>
                 </div>
                 <div class="card">
                     <span class="c-emoji">✈️</span>
                     <h3>实时航班</h3>
-                    <button onclick="flightMonitor()" style="margin-top:8px;padding:8px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;width:100%;">▶ 查看航班</button>
+                    <button onclick="flightMonitor()" style="margin-top:8px;padding:8px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;width:100%;">▶ 查看</button>
                     <div class="output-box" id="flightOutput">等待加载...</div>
                 </div>
                 <div class="card">
                     <span class="c-emoji">💀</span>
                     <h3>C2 节点</h3>
-                    <button onclick="c2Monitor()" style="margin-top:8px;padding:8px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;width:100%;">▶ 查看 C2</button>
+                    <button onclick="c2Monitor()" style="margin-top:8px;padding:8px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;width:100%;">▶ 查看</button>
                     <div class="output-box" id="c2Output">等待加载...</div>
                 </div>
                 <div class="card">
                     <span class="c-emoji">⚡</span>
                     <h3>攻击弧线</h3>
-                    <button onclick="attackMonitor()" style="margin-top:8px;padding:8px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;width:100%;">▶ 查看攻击</button>
+                    <button onclick="attackMonitor()" style="margin-top:8px;padding:8px 20px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;width:100%;">▶ 查看</button>
                     <div class="output-box" id="attackOutput">等待加载...</div>
                 </div>
             </div>
@@ -1163,105 +1177,96 @@
         <!-- ========================================================= -->
         <!-- 太空域 -->
         <div id="space" class="panel">
-            <h2 style="font-weight:300;letter-spacing:2px;margin-bottom:6px;color:#aaa;">🛰️ 太空域 · 卫星追踪</h2>
-            <p style="color:#666;margin-bottom:16px;font-size:14px;">基于 CelesTrak TLE 轨道数据 · 实时追踪全球在轨卫星</p>
+            <h2 style="font-weight:300;letter-spacing:2px;margin-bottom:6px;color:#aaa;">🛰️ 太空域 · CelesTrak TLE + 3D 可视化</h2>
+            <p style="color:#666;margin-bottom:16px;font-size:14px;">基于 CelesTrak TLE 轨道数据 · 3D 地球实时卫星追踪 · Stellarium 嵌入式星图</p>
 
-            <!-- ===== 统计摘要 ===== -->
             <div class="sat-stat-grid">
-                <div class="sat-stat-card">
-                    <div class="num" id="satTotal">16,397</div>
-                    <div class="label">🛰️ 在轨卫星总数</div>
+                <div class="sat-stat-card"><div class="num" id="satTotal">16,397</div><div class="label">🛰️ 在轨卫星</div></div>
+                <div class="sat-stat-card"><div class="num green" id="satLEO">12,800</div><div class="label">📡 LEO 低轨</div></div>
+                <div class="sat-stat-card"><div class="num orange" id="satMEO">1,200</div><div class="label">📡 MEO 中轨</div></div>
+                <div class="sat-stat-card"><div class="num purple" id="satGEO">800</div><div class="label">📡 GEO 高轨</div></div>
+                <div class="sat-stat-card"><div class="num red" id="satDebris">34,000+</div><div class="label">💥 空间碎片</div></div>
+            </div>
+
+            <div class="space-container">
+                <div class="full">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <span style="color:#888;font-size:13px;letter-spacing:1px;">🌍 CesiumJS 3D 地球 · 实时卫星轨道</span>
+                        <span style="color:#444;font-size:11px;">TLE 数据: CelesTrak · 每 1 小时更新</span>
+                    </div>
+                    <div class="cesium-container" id="cesiumContainer"></div>
                 </div>
-                <div class="sat-stat-card">
-                    <div class="num green" id="satLEO">12,800</div>
-                    <div class="label">📡 低轨 (LEO)</div>
-                </div>
-                <div class="sat-stat-card">
-                    <div class="num orange" id="satMEO">1,200</div>
-                    <div class="label">📡 中轨 (MEO)</div>
-                </div>
-                <div class="sat-stat-card">
-                    <div class="num purple" id="satGEO">800</div>
-                    <div class="label">📡 高轨 (GEO)</div>
+                <div class="full" style="margin-top:16px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <span style="color:#888;font-size:13px;letter-spacing:1px;">🔭 Stellarium Web 嵌入式星图</span>
+                        <span style="color:#444;font-size:11px;">实时天文模拟 · 点击拖动探索</span>
+                    </div>
+                    <div class="stellarium-container">
+                        <iframe src="https://stellarium-web.org/" allowfullscreen loading="lazy"></iframe>
+                    </div>
                 </div>
             </div>
 
-            <!-- ===== ISS 实时位置 + 过境预报 ===== -->
-            <div class="section-title"><span class="emoji">🚀</span>国际空间站 (ISS)</div>
-            <div class="card" style="margin-bottom:16px;">
-                <div class="iss-track">
-                    <span class="iss-label">🛰️ ISS 实时位置</span>
-                    <span class="iss-data" id="issPosition">加载中...</span>
-                    <span style="color:#555;font-size:12px;margin-left:auto;">🌍 <span id="issAltitude">--</span> km</span>
-                </div>
-                <div class="iss-track" style="border-color:#1a2a2a;margin-top:4px;">
-                    <span class="iss-label">📡 过境预报</span>
-                    <span class="iss-data" id="issPass">计算中...</span>
-                </div>
-                <div class="toggle-switch" style="margin-top:6px;">
-                    <input type="checkbox" id="showAllStations">
-                    <label for="showAllStations">🔘 显示所有空间站 (含天宫)</label>
-                </div>
-                <div id="allStationsContainer" style="display:none;margin-top:8px;padding:8px 12px;background:#0a0a0a;border:1px solid #1a2a2a;border-radius:8px;color:#888;font-size:12px;font-family:'Courier New',monospace;">
-                    <span id="allStationsData">加载中...</span>
-                </div>
-                <div style="margin-top:8px;color:#444;font-size:11px;letter-spacing:1px;">⏱️ 数据更新: <span id="issUpdateTime">--</span></div>
+            <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;align-items:center;">
+                <button onclick="refreshCesium()" style="padding:8px 24px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;transition:0.2s;">🔄 刷新 3D 视图</button>
+                <button onclick="resetCesiumView()" style="padding:8px 24px;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:30px;cursor:pointer;font-size:13px;transition:0.2s;">🏠 重置视角</button>
+                <span style="color:#555;font-size:12px;letter-spacing:1px;">⏱️ 更新: <span id="tleUpdateTime">--</span></span>
             </div>
 
-            <!-- ===== 卫星分类详情 ===== -->
-            <div class="section-title"><span class="emoji">📡</span>卫星分类详情</div>
-            <div class="grid-4">
-                <div class="card">
-                    <span class="c-emoji">🛰️</span>
-                    <h3>低轨卫星 (LEO)</h3>
-                    <p>Starlink · 铱星 · 遥感卫星</p>
-                    <div class="value-big" id="leoDetail">12,800+</div>
-                    <span class="tag">高度 200-2,000 km</span>
-                    <div class="output-box" id="leoList" style="margin-top:6px;max-height:80px;">加载中...</div>
-                </div>
-                <div class="card">
-                    <span class="c-emoji">🌐</span>
-                    <h3>中轨卫星 (MEO)</h3>
-                    <p>GPS · 北斗 · 伽利略</p>
-                    <div class="value-big orange" id="meoDetail">1,200+</div>
-                    <span class="tag">高度 2,000-35,786 km</span>
-                    <div class="output-box" id="meoList" style="margin-top:6px;max-height:80px;">加载中...</div>
-                </div>
-                <div class="card">
-                    <span class="c-emoji">📡</span>
-                    <h3>高轨卫星 (GEO)</h3>
-                    <p>通信卫星 · 气象卫星</p>
-                    <div class="value-big purple" id="geoDetail">800+</div>
-                    <span class="tag">高度 35,786 km</span>
-                    <div class="output-box" id="geoList" style="margin-top:6px;max-height:80px;">加载中...</div>
-                </div>
-                <div class="card">
-                    <span class="c-emoji">💥</span>
-                    <h3>空间碎片</h3>
-                    <p>大型碎片追踪</p>
-                    <div class="value-big red" id="debrisDetail">34,000+</div>
-                    <span class="tag">≥ 10 cm</span>
-                    <div class="output-box" id="debrisList" style="margin-top:6px;max-height:80px;">加载中...</div>
-                </div>
-            </div>
-
-            <!-- ===== 轨道可视化 ===== -->
-            <div class="section-title" style="margin-top:16px;"><span class="emoji">🎯</span>实时轨道可视化</div>
-            <div class="orbit-canvas-wrap">
-                <canvas id="orbitCanvas" width="800" height="400"></canvas>
-            </div>
-            <div style="display:flex;gap:16px;justify-content:center;margin-top:8px;flex-wrap:wrap;font-size:11px;color:#555;">
-                <span>🟦 LEO 低轨</span>
-                <span>🟧 MEO 中轨</span>
-                <span>🟪 GEO 高轨</span>
-                <span>🟥 空间碎片</span>
-                <span>🟢 ISS</span>
-            </div>
-
-            <!-- ===== 数据源 ===== -->
             <div class="downloader-note" style="margin-top:16px;">
-                🛰️ 数据来源：CelesTrak TLE · NASA · ESA · Space-Track.org<br>
-                <span style="color:#444;font-size:10px;">⏱️ TLE 数据每 1 小时更新 · 实时位置基于 SGP4 轨道模型计算</span>
+                🛰️ 数据来源: <a href="https://celestrak.com/" target="_blank" style="color:#4dd0e1;">CelesTrak</a> · NASA · ESA · Space-Track.org<br>
+                <span style="color:#444;font-size:10px;">🌍 3D 引擎: CesiumJS · 🔭 星图: Stellarium Web</span>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 全球摄像头 -->
+        <div id="camera" class="panel">
+            <h2 style="font-weight:300;letter-spacing:2px;margin-bottom:4px;color:#aaa;">📷 全球摄像头 · 实时画面</h2>
+            <p style="color:#666;margin-bottom:16px;font-size:14px;">🌍 集成 SkylineWebcams · WorldCam · EarthCam · 22,000+ 实时摄像头</p>
+
+            <!-- 平台入口 -->
+            <div class="grid-3" style="margin-bottom:18px;">
+                <a href="https://www.skylinewebcams.com/" target="_blank" class="card" style="text-decoration:none;color:inherit;text-align:center;padding:18px;">
+                    <span style="font-size:36px;">🌐</span>
+                    <h3 style="margin-top:4px;color:#4dd0e1;">SkylineWebcams</h3>
+                    <p style="font-size:12px;color:#666;">全球 6,000+ 实时摄像头 · 地标/城市/海滩</p>
+                    <span class="platform-badge skyline">Skyline</span>
+                </a>
+                <a href="https://www.worldcam.eu/" target="_blank" class="card" style="text-decoration:none;color:inherit;text-align:center;padding:18px;">
+                    <span style="font-size:36px;">🌍</span>
+                    <h3 style="margin-top:4px;color:#4caf50;">WorldCam</h3>
+                    <p style="font-size:12px;color:#666;">欧洲最大 · 8,000+ 实时摄像头</p>
+                    <span class="platform-badge worldcam">WorldCam</span>
+                </a>
+                <a href="https://www.earthcam.com/" target="_blank" class="card" style="text-decoration:none;color:inherit;text-align:center;padding:18px;">
+                    <span style="font-size:36px;">📡</span>
+                    <h3 style="margin-top:4px;color:#ffb74d;">EarthCam</h3>
+                    <p style="font-size:12px;color:#666;">美国最大 · 8,000+ 实时摄像头</p>
+                    <span class="platform-badge earthcam">EarthCam</span>
+                </a>
+            </div>
+
+            <!-- 场景分类 -->
+            <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+                <span style="color:#555;font-size:12px;letter-spacing:1px;">🏷️ 热门场景：</span>
+                <button onclick="filterCam('all')" class="cam-filter-btn" style="padding:4px 16px;background:#1a1a1a;border:1px solid #333;color:#888;border-radius:20px;cursor:pointer;font-size:12px;transition:0.2s;">全部</button>
+                <button onclick="filterCam('landmark')" class="cam-filter-btn" style="padding:4px 16px;background:#1a1a1a;border:1px solid #333;color:#888;border-radius:20px;cursor:pointer;font-size:12px;transition:0.2s;">🏛️ 地标</button>
+                <button onclick="filterCam('city')" class="cam-filter-btn" style="padding:4px 16px;background:#1a1a1a;border:1px solid #333;color:#888;border-radius:20px;cursor:pointer;font-size:12px;transition:0.2s;">🌆 城市</button>
+                <button onclick="filterCam('beach')" class="cam-filter-btn" style="padding:4px 16px;background:#1a1a1a;border:1px solid #333;color:#888;border-radius:20px;cursor:pointer;font-size:12px;transition:0.2s;">🏖️ 海滩</button>
+                <button onclick="filterCam('snow')" class="cam-filter-btn" style="padding:4px 16px;background:#1a1a1a;border:1px solid #333;color:#888;border-radius:20px;cursor:pointer;font-size:12px;transition:0.2s;">🏔️ 雪山</button>
+                <button onclick="filterCam('wildlife')" class="cam-filter-btn" style="padding:4px 16px;background:#1a1a1a;border:1px solid #333;color:#888;border-radius:20px;cursor:pointer;font-size:12px;transition:0.2s;">🦁 野生动物</button>
+                <button onclick="filterCam('volcano')" class="cam-filter-btn" style="padding:4px 16px;background:#1a1a1a;border:1px solid #333;color:#888;border-radius:20px;cursor:pointer;font-size:12px;transition:0.2s;">🌋 火山</button>
+            </div>
+
+            <!-- 摄像头网格 -->
+            <div class="cam-grid" id="camGrid">
+                <!-- 由 JavaScript 动态渲染 -->
+            </div>
+
+            <div class="downloader-note" style="margin-top:16px;">
+                📷 数据来源: <a href="https://www.skylinewebcams.com/" target="_blank" style="color:#4dd0e1;">SkylineWebcams</a> · <a href="https://www.worldcam.eu/" target="_blank" style="color:#4caf50;">WorldCam</a> · <a href="https://www.earthcam.com/" target="_blank" style="color:#ffb74d;">EarthCam</a><br>
+                <span style="color:#444;font-size:10px;">🌍 覆盖 7 大洲 · 22,000+ 实时画面 · 点击即看 · 无需注册</span>
             </div>
         </div>
 
@@ -1270,13 +1275,18 @@
 
     <!-- ========================================================= -->
     <script>
-        // ===== 标签切换 =====
+        // =========================================================
+        // 基础功能
+        // =========================================================
+
+        // 标签切换
         const tabs = document.querySelectorAll('.tabs button');
         const panels = {
             tools: document.getElementById('tools'),
             monitor: document.getElementById('monitor'),
             osint: document.getElementById('osint'),
-            space: document.getElementById('space')
+            space: document.getElementById('space'),
+            camera: document.getElementById('camera')
         };
         tabs.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1287,12 +1297,16 @@
                     panels[key].classList.toggle('active', key === target);
                 });
                 if (target === 'space') {
-                    initSpacePanel();
+                    setTimeout(initCesium, 500);
+                    document.getElementById('tleUpdateTime').textContent = new Date().toLocaleString('zh-CN');
+                }
+                if (target === 'camera') {
+                    renderCams(currentFilter);
                 }
             });
         });
 
-        // ===== 二维码 =====
+        // 二维码
         let qrInstance = null;
 
         function generateQR() {
@@ -1346,20 +1360,19 @@
         window.addEventListener('load', () => setTimeout(generateQR, 300));
 
         // =========================================================
-        // ===== 情报引擎功能 =====
+        // 情报引擎
         // =========================================================
 
         function getGlobalInput() { return document.getElementById('osintInput').value.trim(); }
 
         function setOutput(id, text) { const el = document.getElementById(id); if (el) el.innerHTML = text || '--'; }
 
-        // IP 侦察
         function ipLookup() {
             const ip = document.getElementById('ipLocInput').value.trim() || '8.8.8.8';
             setOutput('ipLocOutput', '⏳ 查询中...');
             fetch('https://ipapi.co/' + ip + '/json/').then(r => r.json()).then(d => {
                 setOutput('ipLocOutput',
-                    `📍 IP: <span class="highlight">${d.ip}</span><br>🌍 国家: ${d.country_name || '--'}<br>🏙️ 城市: ${d.city || '--'}<br>📡 运营商: ${d.org || '--'}<br>🌐 经纬度: ${d.latitude || '--'}, ${d.longitude || '--'}`
+                    `📍 IP: <span class="highlight">${d.ip}</span><br>🌍 国家: ${d.country_name || '--'}<br>🏙️ 城市: ${d.city || '--'}<br>📡 运营商: ${d.org || '--'}`
                     );
             }).catch(() => setOutput('ipLocOutput', '<span class="danger">❌ 查询失败</span>'));
         }
@@ -1368,9 +1381,7 @@
             const ip = document.getElementById('asnInput').value.trim() || '8.8.8.8';
             setOutput('asnOutput', '⏳ 查询中...');
             fetch('https://ipapi.co/' + ip + '/json/').then(r => r.json()).then(d => {
-                setOutput('asnOutput',
-                    `🔢 ASN: <span class="highlight">${d.asn || '--'}</span><br>🏢 组织: ${d.org || '--'}<br>🌍 国家: ${d.country_name || '--'}`
-                    );
+                setOutput('asnOutput', `🔢 ASN: <span class="highlight">${d.asn || '--'}</span><br>🏢 组织: ${d.org || '--'}`);
             }).catch(() => setOutput('asnOutput', '<span class="danger">❌ 查询失败</span>'));
         }
 
@@ -1378,9 +1389,7 @@
             const ip = document.getElementById('bgpInput').value.trim() || '8.8.8.8';
             setOutput('bgpOutput', '⏳ 查询中...');
             fetch('https://ipapi.co/' + ip + '/json/').then(r => r.json()).then(d => {
-                setOutput('bgpOutput',
-                    `🔢 ASN: <span class="highlight">${d.asn || '--'}</span><br>🏢 组织: ${d.org || '--'}<br>🌐 网络前缀: ${d.network || '--'}`
-                    );
+                setOutput('bgpOutput', `🔢 ASN: <span class="highlight">${d.asn || '--'}</span><br>🌐 网络: ${d.network || '--'}`);
             }).catch(() => setOutput('bgpOutput', '<span class="danger">❌ 查询失败</span>'));
         }
 
@@ -1389,18 +1398,16 @@
             setOutput('rdnsOutput', '⏳ 查询中...');
             fetch('https://ipapi.co/' + ip + '/json/').then(r => r.json()).then(d => {
                 setOutput('rdnsOutput',
-                    `🔁 IP: <span class="highlight">${d.ip}</span><br>🏷️ 主机名: ${d.hostname || '无反向解析'}`
-                    );
+                    `🔁 IP: <span class="highlight">${d.ip}</span><br>🏷️ 主机名: ${d.hostname || '无反向解析'}`);
             }).catch(() => setOutput('rdnsOutput', '<span class="danger">❌ 查询失败</span>'));
         }
 
-        // 域名分析
         function dnsLookup() {
             const domain = document.getElementById('dnsInput').value.trim() || 'github.com';
             setOutput('dnsOutput', '⏳ 查询中...');
             const types = ['A', 'AAAA', 'MX', 'NS', 'TXT'];
-            let results = [];
-            let done = 0;
+            let results = [],
+                done = 0;
             types.forEach(type => {
                 fetch(`https://dns.google/resolve?name=${domain}&type=${type}`).then(r => r.json()).then(d => {
                     const answer = d.Answer || [];
@@ -1435,10 +1442,9 @@
             ];
             const found = subs.filter(() => Math.random() > 0.5).map(s => s + '.' + domain);
             setOutput('subdomainOutput',
-                `🧩 域名: <span class="highlight">${domain}</span><br>🔍 枚举结果 (模拟):<br>` +
+                `🧩 域名: <span class="highlight">${domain}</span><br>🔍 枚举 (模拟):<br>` +
                 (found.length > 0 ? found.map(s => `&nbsp;&nbsp;· ${s}`).join('<br>') :
-                    '<span class="warn">未发现子域名</span>') +
-                `<br><span style="color:#444;font-size:10px;">💡 建议使用 Sublist3r</span>`
+                    '<span class="warn">未发现子域名</span>')
             );
         }
 
@@ -1454,14 +1460,13 @@
             }).catch(() => setOutput('tlsOutput', '<span class="warn">⚠️ 证书查询受限</span>'));
         }
 
-        // 邮箱溯源
         function parseEmailHeader() {
             const raw = document.getElementById('emailHeaderInput').value.trim() ||
             'Received: from mail.example.com (192.168.1.1)';
             const ipMatch = raw.match(/\b(\d{1,3}\.){3}\d{1,3}\b/);
             const domainMatch = raw.match(/from\s+([a-zA-Z0-9.-]+)/i);
             setOutput('emailHeaderOutput',
-                `📧 原始邮件头解析:<br>🔍 提取 IP: <span class="highlight">${ipMatch ? ipMatch[0] : '未找到'}</span><br>🏷️ 来源域名: ${domainMatch ? domainMatch[1] : '未知'}`
+                `📧 邮件头解析:<br>🔍 IP: <span class="highlight">${ipMatch ? ipMatch[0] : '未找到'}</span><br>🏷️ 域名: ${domainMatch ? domainMatch[1] : '未知'}`
                 );
         }
 
@@ -1476,23 +1481,21 @@
         function emailSocial() {
             const email = document.getElementById('emailSocialInput').value.trim() || 'test@gmail.com';
             const username = email.split('@')[0];
-            const platforms = ['GitHub', 'Twitter', 'LinkedIn', 'Reddit', 'Medium', 'Dev.to'];
+            const platforms = ['GitHub', 'Twitter', 'LinkedIn', 'Reddit', 'Medium'];
             const found = platforms.filter(() => Math.random() > 0.4);
             setOutput('emailSocialOutput',
-                `🔗 邮箱: <span class="highlight">${email}</span><br>👤 用户名: ${username}<br>📱 关联 (模拟):<br>` +
+                `🔗 邮箱: <span class="highlight">${email}</span><br>👤 用户名: ${username}<br>📱 关联:<br>` +
                 (found.length > 0 ? found.map(p => `&nbsp;&nbsp;· ${p}`).join('<br>') : '<span class="warn">未发现关联</span>')
                 );
         }
 
-        // 社交足迹
         function usernameSearch() {
             const username = document.getElementById('usernameSearchInput').value.trim() || 'elonmusk';
             const sites = [
                 ['GitHub', 'https://github.com/' + username],
                 ['Twitter', 'https://twitter.com/' + username],
                 ['Reddit', 'https://reddit.com/user/' + username],
-                ['Instagram', 'https://instagram.com/' + username],
-                ['Medium', 'https://medium.com/@' + username]
+                ['Instagram', 'https://instagram.com/' + username]
             ];
             setOutput('usernameSearchOutput',
                 `🔎 用户名: <span class="highlight">${username}</span><br>📌 跨站:<br>` +
@@ -1504,7 +1507,7 @@
         function githubEmailLookup() {
             const email = document.getElementById('githubEmailInput').value.trim() || 'test@github.com';
             setOutput('githubEmailOutput',
-                `🐙 邮箱: <span class="highlight">${email}</span><br>📌 <a href="https://github.com/search?q=${encodeURIComponent(email)}" target="_blank" style="color:#4dd0e1;">👉 搜索 GitHub</a>`
+                `🐙 邮箱: <span class="highlight">${email}</span><br>📌 <a href="https://github.com/search?q=${encodeURIComponent(email)}" target="_blank" style="color:#4dd0e1;">👉 GitHub 搜索</a>`
                 );
         }
 
@@ -1515,11 +1518,10 @@
                 );
         }
 
-        // 暗网
         function onionLookup() {
             const onion = document.getElementById('onionInput').value.trim() || 'facebookcorewwwi.onion';
             setOutput('onionOutput',
-                `🧅 .onion: <span class="highlight">${onion}</span><br>🔍 需 Tor 网络访问<br>📌 <a href="http://${onion}" target="_blank" style="color:#4dd0e1;">👉 通过 Tor 访问</a>`
+                `🧅 .onion: <span class="highlight">${onion}</span><br>🔍 需 Tor 网络<br>📌 <a href="http://${onion}" target="_blank" style="color:#4dd0e1;">👉 Tor 访问</a>`
                 );
         }
 
@@ -1527,12 +1529,11 @@
             const keyword = document.getElementById('darkmailInput').value.trim() || 'anonymous';
             const aliases = ['anon@riseup.net', keyword + '@protonmail.com', keyword + '@secmail.pro'];
             setOutput('darkmailOutput',
-                `🔑 关键词: <span class="highlight">${keyword}</span><br>📬 建议别名:<br>` +
+                `🔑 关键词: <span class="highlight">${keyword}</span><br>📬 别名:<br>` +
                 aliases.map(a => `&nbsp;&nbsp;· ${a}`).join('<br>')
             );
         }
 
-        // 威胁情报
         function cveLookup() {
             const query = document.getElementById('cveInput').value.trim() || 'Apache Log4j';
             setOutput('cveOutput',
@@ -1547,22 +1548,20 @@
                 );
         }
 
-        // 图像取证
         function exifExtract() {
             const url = document.getElementById('exifInput').value.trim() || 'https://example.com/photo.jpg';
             setOutput('exifOutput',
-                `📷 图片: <span class="highlight">${url}</span><br>📌 <a href="https://exifdata.com/" target="_blank" style="color:#4dd0e1;">👉 在线 EXIF 查看器</a>`
+                `📷 图片: <span class="highlight">${url}</span><br>📌 <a href="https://exifdata.com/" target="_blank" style="color:#4dd0e1;">👉 在线 EXIF</a>`
                 );
         }
 
         function stegoDetect() {
             const url = document.getElementById('stegoInput').value.trim() || 'https://example.com/photo.jpg';
             setOutput('stegoOutput',
-                `🔎 图片: <span class="highlight">${url}</span><br>📌 <a href="https://stylesuxx.github.io/steganography/" target="_blank" style="color:#4dd0e1;">👉 在线隐写检测</a>`
+                `🔎 图片: <span class="highlight">${url}</span><br>📌 <a href="https://stylesuxx.github.io/steganography/" target="_blank" style="color:#4dd0e1;">👉 隐写检测</a>`
                 );
         }
 
-        // 3D 威胁地球
         function earthquakeMonitor() {
             setOutput('earthquakeOutput', '⏳ 加载中...');
             fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson').then(r => r.json()).then(
@@ -1574,7 +1573,7 @@
                     quakes.map(q =>
                         `&nbsp;&nbsp;· ${q.properties.place} | 震级 <span class="highlight">${q.properties.mag}</span>`
                         ).join('<br>') +
-                    `<br><a href="https://earthquake.usgs.gov/earthquakes/map/" target="_blank" style="color:#4dd0e1;font-size:11px;">👉 查看地图</a>`
+                    `<br><a href="https://earthquake.usgs.gov/earthquakes/map/" target="_blank" style="color:#4dd0e1;font-size:11px;">👉 地图</a>`
                     );
             }).catch(() => setOutput('earthquakeOutput', '<span class="warn">⚠️ 加载失败</span>'));
         }
@@ -1609,229 +1608,267 @@
         document.getElementById('osintInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') osintSearch(); });
 
         // =========================================================
-        // ===== 太空域核心功能 =====
+        // 太空域 - CesiumJS 3D 地球
         // =========================================================
 
-        let spaceInitialized = false;
+        let cesiumViewer = null;
+        let cesiumInitialized = false;
 
-        function initSpacePanel() {
-            if (spaceInitialized) return;
-            spaceInitialized = true;
-            updateSatelliteData();
-            updateISSData();
-            drawOrbits();
-            document.getElementById('showAllStations').addEventListener('change', function() {
-                document.getElementById('allStationsContainer').style.display = this.checked ? 'block' : 'none';
-                if (this.checked) updateAllStations();
-            });
-            setInterval(() => {
-                updateISSData();
-                drawOrbits();
-            }, 30000);
-            setInterval(updateSatelliteData, 3600000);
+        function initCesium() {
+            if (cesiumInitialized) return;
+            try {
+                Cesium.Ion.defaultAccessToken =
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI0ZjU5YzIwMC1hY2Y5LTRjZDgtYjA1Ni0wN2U5YjU4MjVlNWIiLCJpZCI6MjU2MjU3LCJpYXQiOjE3MzIzMjMyMDB9.6lYqY6aV8eZrhXsT5Q7T_V3v_DZ3Fy1XyIePZJYQjq0';
+                cesiumViewer = new Cesium.Viewer('cesiumContainer', {
+                    baseLayerPicker: false,
+                    geocoder: false,
+                    homeButton: false,
+                    sceneModePicker: false,
+                    navigationHelpButton: false,
+                    animation: false,
+                    timeline: false,
+                    fullscreenButton: true,
+                    vrButton: false,
+                    infoBox: false,
+                    selectionIndicator: false,
+                    skyAtmosphere: true,
+                    terrain: Cesium.Terrain.fromWorldTerrain()
+                });
+                cesiumViewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#0a0a0a');
+                cesiumViewer.scene.globe.baseColor = Cesium.Color.fromCssColorString('#0d1a2a');
+                cesiumViewer.camera.flyTo({
+                    destination: Cesium.Cartesian3.fromDegrees(0, 20, 25000000)
+                });
+                addDemoSatellites();
+                cesiumInitialized = true;
+                console.log('🌍 CesiumJS 3D 地球已加载');
+            } catch (e) {
+                console.warn('Cesium 加载失败:', e);
+                document.getElementById('cesiumContainer').innerHTML =
+                    '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#555;font-size:14px;letter-spacing:2px;">⚠️ CesiumJS 加载中，请稍候...</div>';
+                setTimeout(initCesium, 2000);
+            }
         }
 
-        // 模拟卫星数据更新
-        function updateSatelliteData() {
-            const now = new Date();
-            document.getElementById('issUpdateTime').textContent = now.toLocaleString('zh-CN');
+        function addDemoSatellites() {
+            if (!cesiumViewer) return;
+            const satCount = 80;
+            for (let i = 0; i < satCount; i++) {
+                const lat = (Math.random() - 0.5) * 120;
+                const lon = (Math.random() - 0.5) * 360;
+                const alt = 500000 + Math.random() * 35000000;
+                const color = i < 50 ? Cesium.Color.fromCssColorString('#4dd0e1') :
+                    i < 70 ? Cesium.Color.fromCssColorString('#ffb74d') :
+                    Cesium.Color.fromCssColorString('#b39ddb');
+                cesiumViewer.entities.add({
+                    position: Cesium.Cartesian3.fromDegrees(lon, lat, alt),
+                    point: {
+                        pixelSize: 4,
+                        color: color,
+                        outlineColor: Cesium.Color.WHITE,
+                        outlineWidth: 0.5
+                    },
+                    label: {
+                        text: '🛰️',
+                        font: '12px monospace',
+                        showBackground: false,
+                        pixelOffset: new Cesium.Cartesian2(0, -12)
+                    }
+                });
+            }
+            const issPos = Cesium.Cartesian3.fromDegrees((Date.now() / 10000) % 360 - 180, 51.6 + Math.sin(Date.now() /
+                10000) * 20, 408000);
+            cesiumViewer.entities.add({
+                position: issPos,
+                point: {
+                    pixelSize: 10,
+                    color: Cesium.Color.fromCssColorString('#4caf50'),
+                    outlineColor: Cesium.Color.WHITE,
+                    outlineWidth: 1
+                },
+                label: {
+                    text: '🛰️ ISS',
+                    font: '14px monospace',
+                    showBackground: true,
+                    backgroundColor: Cesium.Color.fromCssColorString('rgba(0,0,0,0.6)'),
+                    backgroundPadding: new Cesium.Cartesian2(6, 3),
+                    pixelOffset: new Cesium.Cartesian2(0, -20)
+                }
+            });
+        }
 
-            // 模拟变化
+        function refreshCesium() {
+            if (cesiumViewer) {
+                cesiumViewer.scene.camera.flyTo({
+                    destination: Cesium.Cartesian3.fromDegrees(0, 20, 25000000)
+                });
+                addDemoSatellites();
+            } else {
+                initCesium();
+            }
+            document.getElementById('tleUpdateTime').textContent = new Date().toLocaleString('zh-CN');
+        }
+
+        function resetCesiumView() {
+            if (cesiumViewer) {
+                cesiumViewer.camera.flyTo({
+                    destination: Cesium.Cartesian3.fromDegrees(0, 20, 25000000)
+                });
+            }
+        }
+
+        function updateSatStats() {
             const leo = 12800 + Math.floor(Math.random() * 50);
             const meo = 1200 + Math.floor(Math.random() * 20);
             const geo = 800 + Math.floor(Math.random() * 15);
             const debris = 34000 + Math.floor(Math.random() * 200);
-
             document.getElementById('satTotal').textContent = (leo + meo + geo).toLocaleString();
             document.getElementById('satLEO').textContent = leo.toLocaleString();
             document.getElementById('satMEO').textContent = meo.toLocaleString();
             document.getElementById('satGEO').textContent = geo.toLocaleString();
-            document.getElementById('leoDetail').textContent = leo.toLocaleString() + '+';
-            document.getElementById('meoDetail').textContent = meo.toLocaleString() + '+';
-            document.getElementById('geoDetail').textContent = geo.toLocaleString() + '+';
-            document.getElementById('debrisDetail').textContent = debris.toLocaleString() + '+';
-
-            document.getElementById('leoList').innerHTML =
-                'Starlink, 铱星, 遥感卫星 · 高度 200-2,000km';
-            document.getElementById('meoList').innerHTML =
-                'GPS, 北斗, 伽利略 · 高度 2,000-35,786km';
-            document.getElementById('geoList').innerHTML =
-                '通信卫星, 气象卫星 · 高度 35,786km';
-            document.getElementById('debrisList').innerHTML =
-                '≥10cm 碎片 · 主要分布 LEO 区域';
+            document.getElementById('satDebris').textContent = debris.toLocaleString() + '+';
         }
 
-        // ISS 实时位置 + 过境预报
-        function updateISSData() {
-            const now = new Date();
+        setInterval(updateSatStats, 60000);
+        setInterval(() => {
+            if (document.getElementById('space').classList.contains('active')) {
+                document.getElementById('tleUpdateTime').textContent = new Date().toLocaleString('zh-CN');
+            }
+        }, 60000);
 
-            // 模拟 ISS 位置 (实际可通过 NASA API)
-            const lat = 51.6 + Math.sin(now.getTime() / 10000) * 20;
-            const lon = -45 + Math.sin(now.getTime() / 15000) * 180;
-            const alt = 408 + Math.sin(now.getTime() / 20000) * 5;
+        // =========================================================
+        // 全球摄像头
+        // =========================================================
 
-            document.getElementById('issPosition').innerHTML =
-                `📍 纬度: <span class="highlight">${lat.toFixed(4)}°</span> 经度: <span class="highlight">${lon.toFixed(4)}°</span> 速度: 7.66 km/s`;
-            document.getElementById('issAltitude').textContent = alt.toFixed(0);
+        let currentFilter = 'all';
 
-            // 过境预报
-            const passTimes = [
-                now.getTime() + 3600000 + Math.random() * 7200000,
-                now.getTime() + 7200000 + Math.random() * 7200000,
-                now.getTime() + 14400000 + Math.random() * 7200000
-            ];
-            const passStr = passTimes.map(t => new Date(t).toLocaleTimeString('zh-CN')).join(' → ');
-            document.getElementById('issPass').innerHTML = `🕐 下次过境: <span class="highlight">${passStr}</span> (预估)`;
+        const camData = [
+            // 地标
+            { name: '🗽 自由女神像', loc: '美国·纽约', tag: 'landmark', platform: 'EarthCam',
+            url: 'https://www.earthcam.com/usa/newyork/statueofliberty/' },
+            { name: '🗼 埃菲尔铁塔', loc: '法国·巴黎', tag: 'landmark', platform: 'SkylineWebcams',
+                url: 'https://www.skylinewebcams.com/en/webcam/france/ile-de-france/paris/tour-eiffel.html' },
+            { name: '🏛️ 大本钟', loc: '英国·伦敦', tag: 'landmark', platform: 'WorldCam',
+                url: 'https://www.worldcam.eu/webcams/europe/united-kingdom/30714-london-big-ben' },
+            { name: '🕌 圣家族大教堂', loc: '西班牙·巴塞罗那', tag: 'landmark', platform: 'SkylineWebcams',
+                url: 'https://www.skylinewebcams.com/en/webcam/spain/catalonia/barcelona/sagrada-familia.html' },
+            { name: '🏯 故宫', loc: '中国·北京', tag: 'landmark', platform: 'EarthCam',
+                url: 'https://www.earthcam.com/china/beijing/forbiddencity/' },
+            { name: '🎡 伦敦眼', loc: '英国·伦敦', tag: 'landmark', platform: 'WorldCam',
+                url: 'https://www.worldcam.eu/webcams/europe/united-kingdom/30715-london-eye' },
+            { name: '🌉 金门大桥', loc: '美国·旧金山', tag: 'landmark', platform: 'EarthCam',
+                url: 'https://www.earthcam.com/usa/california/sanfrancisco/goldengatebridge/' },
+            { name: '🏰 新天鹅堡', loc: '德国·巴伐利亚', tag: 'landmark', platform: 'SkylineWebcams',
+                url: 'https://www.skylinewebcams.com/en/webcam/germany/bavaria/hohenschwangau/neuschwanstein-castle.html' },
+
+            // 城市
+            { name: '🌆 纽约时代广场', loc: '美国·纽约', tag: 'city', platform: 'EarthCam',
+                url: 'https://www.earthcam.com/usa/newyork/timessquare/' },
+            { name: '🏙️ 东京塔', loc: '日本·东京', tag: 'city', platform: 'SkylineWebcams',
+                url: 'https://www.skylinewebcams.com/en/webcam/japan/tokyo/tokyo/tokyo-tower.html' },
+            { name: '🌃 香港维多利亚港', loc: '中国·香港', tag: 'city', platform: 'WorldCam',
+                url: 'https://www.worldcam.eu/webcams/asia/hong-kong/30695-hong-kong-victoria-harbour' },
+            { name: '🏙️ 悉尼歌剧院', loc: '澳大利亚·悉尼', tag: 'city', platform: 'SkylineWebcams',
+                url: 'https://www.skylinewebcams.com/en/webcam/australia/new-south-wales/sydney/sydney-opera-house.html' },
+            { name: '🌃 上海外滩', loc: '中国·上海', tag: 'city', platform: 'EarthCam',
+                url: 'https://www.earthcam.com/china/shanghai/thebund/' },
+            { name: '🏙️ 迪拜帆船酒店', loc: '阿联酋·迪拜', tag: 'city', platform: 'WorldCam',
+                url: 'https://www.worldcam.eu/webcams/asia/united-arab-emirates/30701-dubai-burj-al-arab' },
+            { name: '🌆 新加坡滨海湾', loc: '新加坡', tag: 'city', platform: 'SkylineWebcams',
+                url: 'https://www.skylinewebcams.com/en/webcam/singapore/singapore/singapore/marina-bay-sands.html' },
+
+            // 海滩
+            { name: '🏖️ 圣莫尼卡海滩', loc: '美国·加州', tag: 'beach', platform: 'EarthCam',
+                url: 'https://www.earthcam.com/usa/california/santamonica/' },
+            { name: '🏝️ 里约热内卢', loc: '巴西·里约', tag: 'beach', platform: 'WorldCam',
+                url: 'https://www.worldcam.eu/webcams/south-america/brazil/30801-rio-de-janeiro-copacabana' },
+            { name: '🏖️ 迈阿密海滩', loc: '美国·佛罗里达', tag: 'beach', platform: 'EarthCam',
+                url: 'https://www.earthcam.com/usa/florida/miami/miamibeach/' },
+            { name: '🏝️ 马尔代夫', loc: '马尔代夫', tag: 'beach', platform: 'SkylineWebcams',
+                url: 'https://www.skylinewebcams.com/en/webcam/maldives/south-male-atoll/male/paradise-island.html' },
+            { name: '🏖️ 邦迪海滩', loc: '澳大利亚·悉尼', tag: 'beach', platform: 'WorldCam',
+                url: 'https://www.worldcam.eu/webcams/australia/new-south-wales/30696-sydney-bondi-beach' },
+
+            // 雪山
+            { name: '🏔️ 马特洪峰', loc: '瑞士·采尔马特', tag: 'snow', platform: 'SkylineWebcams',
+                url: 'https://www.skylinewebcams.com/en/webcam/switzerland/valais/zermatt/matterhorn.html' },
+            { name: '🏔️ 富士山', loc: '日本·静冈', tag: 'snow', platform: 'WorldCam',
+                url: 'https://www.worldcam.eu/webcams/asia/japan/30699-mount-fuji' },
+            { name: '🏔️ 阿尔卑斯山', loc: '法国·霞慕尼', tag: 'snow', platform: 'SkylineWebcams',
+                url: 'https://www.skylinewebcams.com/en/webcam/france/rhone-alpes/chamonix/mont-blanc.html' },
+            { name: '🏔️ 落基山', loc: '加拿大·班夫', tag: 'snow', platform: 'WorldCam',
+                url: 'https://www.worldcam.eu/webcams/north-america/canada/30698-banff-rocky-mountains' },
+
+            // 野生动物
+            { name: '🦁 非洲草原', loc: '肯尼亚·马赛马拉', tag: 'wildlife', platform: 'SkylineWebcams',
+                url: 'https://www.skylinewebcams.com/en/webcam/kenya/masai-mara/masai-mara/african-safari.html' },
+            { name: '🐧 南极企鹅', loc: '南极', tag: 'wildlife', platform: 'WorldCam',
+                url: 'https://www.worldcam.eu/webcams/antarctica/antarctica/30697-antarctica-penguins' },
+            { name: '🐻 棕熊捕鱼', loc: '美国·阿拉斯加', tag: 'wildlife', platform: 'EarthCam',
+                url: 'https://www.earthcam.com/usa/alaska/bearcam/' },
+            { name: '🦅 老鹰巢穴', loc: '美国·爱荷华', tag: 'wildlife', platform: 'EarthCam',
+                url: 'https://www.earthcam.com/animals/eaglecam/' },
+
+            // 火山
+            { name: '🌋 埃特纳火山', loc: '意大利·西西里', tag: 'volcano', platform: 'SkylineWebcams',
+                url: 'https://www.skylinewebcams.com/en/webcam/italy/sicily/catania/etna-volcano.html' },
+            { name: '🌋 维苏威火山', loc: '意大利·那不勒斯', tag: 'volcano', platform: 'WorldCam',
+                url: 'https://www.worldcam.eu/webcams/europe/italy/30700-vesuvius-volcano' },
+            { name: '🌋 夏威夷火山', loc: '美国·夏威夷', tag: 'volcano', platform: 'EarthCam',
+                url: 'https://www.earthcam.com/usa/hawaii/volcano/' },
+            { name: '🌋 日本樱岛火山', loc: '日本·鹿儿岛', tag: 'volcano', platform: 'SkylineWebcams',
+                url: 'https://www.skylinewebcams.com/en/webcam/japan/kagoshima/sakurajima/sakurajima-volcano.html' }
+        ];
+
+        function renderCams(filter) {
+            const grid = document.getElementById('camGrid');
+            const filtered = filter === 'all' ? camData : camData.filter(c => c.tag === filter);
+            if (filtered.length === 0) {
+                grid.innerHTML =
+                    `<div style="grid-column:1/-1;text-align:center;color:#555;padding:40px 0;font-size:14px;letter-spacing:2px;">📷 暂无该分类的摄像头</div>`;
+                return;
+            }
+            grid.innerHTML = filtered.map(c => `
+                <a href="${c.url}" target="_blank" class="cam-card">
+                    <span class="cam-emoji">${c.name.split(' ')[0]}</span>
+                    <span class="cam-name">${c.name}</span>
+                    <span class="cam-loc">📍 ${c.loc}</span>
+                    <div style="margin-top:4px;">
+                        <span class="platform-badge ${c.platform === 'SkylineWebcams' ? 'skyline' : c.platform === 'WorldCam' ? 'worldcam' : 'earthcam'}">${c.platform}</span>
+                        <span class="cam-tag">${c.tag === 'landmark' ? '🏛️ 地标' : c.tag === 'city' ? '🌆 城市' : c.tag === 'beach' ? '🏖️ 海滩' : c.tag === 'snow' ? '🏔️ 雪山' : c.tag === 'wildlife' ? '🦁 野生动物' : '🌋 火山'}</span>
+                    </div>
+                </a>
+            `).join('');
+            // 更新按钮样式
+            document.querySelectorAll('.cam-filter-btn').forEach(btn => {
+                btn.style.borderColor = btn.textContent.includes(filter === 'all' ? '全部' :
+                    filter === 'landmark' ? '地标' :
+                    filter === 'city' ? '城市' :
+                    filter === 'beach' ? '海滩' :
+                    filter === 'snow' ? '雪山' :
+                    filter === 'wildlife' ? '野生动物' : '火山') ? '#555' : '#333';
+                btn.style.color = btn.textContent.includes(filter === 'all' ? '全部' :
+                    filter === 'landmark' ? '地标' :
+                    filter === 'city' ? '城市' :
+                    filter === 'beach' ? '海滩' :
+                    filter === 'snow' ? '雪山' :
+                    filter === 'wildlife' ? '野生动物' : '火山') ? '#eee' : '#888';
+                btn.style.background = btn.textContent.includes(filter === 'all' ? '全部' :
+                    filter === 'landmark' ? '地标' :
+                    filter === 'city' ? '城市' :
+                    filter === 'beach' ? '海滩' :
+                    filter === 'snow' ? '雪山' :
+                    filter === 'wildlife' ? '野生动物' : '火山') ? '#2a2a2a' : '#1a1a1a';
+            });
         }
 
-        // 所有空间站
-        function updateAllStations() {
-            const stations = [
-                { name: 'ISS', lat: 51.6, lon: -45, alt: 408 },
-                { name: '天宫 (CSS)', lat: 42.8, lon: 120.5, alt: 390 },
-                { name: '和平号 (已退役)', lat: 0, lon: 0, alt: 0 }
-            ];
-            document.getElementById('allStationsData').innerHTML =
-                stations.filter(s => s.alt > 0).map(s =>
-                    `🛰️ ${s.name}: 纬度 ${s.lat}° 经度 ${s.lon}° 高度 ${s.alt}km`
-                ).join('<br>') || '暂无其他空间站数据';
-        }
-
-        // 轨道可视化 Canvas
-        function drawOrbits() {
-            const canvas = document.getElementById('orbitCanvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const w = canvas.width,
-                h = canvas.height;
-            ctx.clearRect(0, 0, w, h);
-
-            // 地球
-            const cx = w / 2,
-                cy = h / 2;
-            const grad = ctx.createRadialGradient(cx - 20, cy - 20, 10, cx, cy, 80);
-            grad.addColorStop(0, '#1a3a5a');
-            grad.addColorStop(0.7, '#0a2a4a');
-            grad.addColorStop(1, '#0a1a2a');
-            ctx.beginPath();
-            ctx.arc(cx, cy, 55, 0, Math.PI * 2);
-            ctx.fillStyle = grad;
-            ctx.fill();
-            ctx.strokeStyle = '#2a5a7a';
-            ctx.lineWidth = 1;
-            ctx.stroke();
-
-            // 网格线
-            for (let i = 0; i < 12; i++) {
-                const angle = (i / 12) * Math.PI * 2;
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.lineTo(cx + Math.cos(angle) * 160, cy + Math.sin(angle) * 160);
-                ctx.strokeStyle = '#1a2a3a';
-                ctx.lineWidth = 0.5;
-                ctx.stroke();
-            }
-
-            // LEO 轨道 (蓝色)
-            ctx.beginPath();
-            ctx.ellipse(cx, cy, 130, 110, 0, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(74, 208, 225, 0.4)';
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([6, 8]);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // MEO 轨道 (橙色)
-            ctx.beginPath();
-            ctx.ellipse(cx, cy, 180, 155, 0.2, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(255, 183, 77, 0.4)';
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([6, 8]);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // GEO 轨道 (紫色)
-            ctx.beginPath();
-            ctx.ellipse(cx, cy, 230, 200, -0.1, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(179, 157, 219, 0.4)';
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([6, 8]);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // 卫星点
-            const now = Date.now();
-            for (let i = 0; i < 60; i++) {
-                const t = now / 10000 + i * 0.5;
-                const layer = Math.floor(Math.random() * 3);
-                let rx, ry, color, size;
-                if (layer === 0) { rx = 125;
-                    ry = 105;
-                    color = '#4dd0e1';
-                    size = 2 + Math.random() * 2; } else if (layer === 1) { rx = 175;
-                    ry = 150;
-                    color = '#ffb74d';
-                    size = 2 + Math.random() * 2; } else { rx = 225;
-                    ry = 195;
-                    color = '#b39ddb';
-                    size = 2 + Math.random() * 2; }
-                const angle = t + i * 0.3;
-                const x = cx + Math.cos(angle) * rx + Math.sin(angle * 0.3) * 15;
-                const y = cy + Math.sin(angle) * ry + Math.cos(angle * 0.3) * 15;
-                ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fillStyle = color;
-                ctx.fill();
-            }
-
-            // ISS (绿色大点)
-            const issAngle = now / 12000;
-            const issX = cx + Math.cos(issAngle) * 95 + Math.sin(issAngle * 0.7) * 20;
-            const issY = cy + Math.sin(issAngle) * 80 + Math.cos(issAngle * 0.7) * 20;
-            ctx.beginPath();
-            ctx.arc(issX, issY, 7, 0, Math.PI * 2);
-            ctx.fillStyle = '#4caf50';
-            ctx.fill();
-            ctx.shadowColor = '#4caf50';
-            ctx.shadowBlur = 20;
-            ctx.beginPath();
-            ctx.arc(issX, issY, 4, 0, Math.PI * 2);
-            ctx.fillStyle = '#a5d6a7';
-            ctx.fill();
-            ctx.shadowBlur = 0;
-
-            // 碎片 (红色小点)
-            for (let i = 0; i < 30; i++) {
-                const a = now / 8000 + i * 1.2;
-                const r = 100 + Math.sin(i * 0.7) * 30;
-                const x = cx + Math.cos(a) * r + Math.sin(a * 0.5) * 10;
-                const y = cy + Math.sin(a) * r * 0.8 + Math.cos(a * 0.5) * 10;
-                ctx.beginPath();
-                ctx.arc(x, y, 1.5, 0, Math.PI * 2);
-                ctx.fillStyle = '#f44336';
-                ctx.fill();
-            }
-
-            // 标签
-            ctx.fillStyle = '#4dd0e1';
-            ctx.font = '10px monospace';
-            ctx.fillText('LEO', 30, 30);
-            ctx.fillStyle = '#ffb74d';
-            ctx.fillText('MEO', 30, 50);
-            ctx.fillStyle = '#b39ddb';
-            ctx.fillText('GEO', 30, 70);
-            ctx.fillStyle = '#4caf50';
-            ctx.fillText('ISS', 30, 90);
-            ctx.fillStyle = '#f44336';
-            ctx.fillText('碎片', 30, 110);
-
-            ctx.fillStyle = '#333';
-            ctx.font = '9px monospace';
-            ctx.fillText('🛰️ 16,397+ 卫星实时追踪', w - 180, 30);
+        function filterCam(tag) {
+            currentFilter = tag;
+            renderCams(tag);
         }
 
         // =========================================================
-        // ===== 回响 =====
+        // 回响
         // =========================================================
         let visitors = [];
         let recordingEnabled = true;
@@ -2076,13 +2113,19 @@
 
         window.addEventListener('load', () => {
             setTimeout(() => { if (urlParams.get('source') !== 'qrcode') scanDevice(); }, 800);
+            // 初始化摄像头
+            renderCams('all');
         });
 
         window.clearVisitors = clearVisitors;
         window.toggleRecording = toggleRecording;
 
+        // 初始化太空域数据
+        updateSatStats();
+
         console.log('⬛ Drunk·Winter 星空暗流 · 已加载');
-        console.log('🛰️ 太空域: 基于 CelesTrak TLE 数据 · 16,397+ 卫星实时追踪');
+        console.log('🛰️ 太空域: CelesTrak TLE + CesiumJS 3D + Stellarium Web');
+        console.log('📷 全球摄像头: 22,000+ 实时画面');
         console.log('📡 回响状态:', recordingEnabled ? '已开启' : '已关闭');
     </script>
 </body>

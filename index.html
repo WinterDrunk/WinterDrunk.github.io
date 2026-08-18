@@ -5,31 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drunk·Winter 暗域</title>
     <style>
-        /* ============================================================
-           暗色主题 · 专业级界面
-           配色：主背景 #0a0e17 | 面板 #111927 | 主色 #00e87a
-           强调 #00c8ff | 警示 #ff6a00 | 危险 #ff2200
-           ============================================================ */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0e17;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1a2a3a;
-            border-radius: 2px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #2a3a4a;
-        }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0e17; }
+        ::-webkit-scrollbar-thumb { background: #1a2a3a; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2a3a4a; }
 
         body {
             background: #0a0e17;
@@ -41,13 +25,10 @@
             justify-content: center;
             line-height: 1.6;
         }
-
         .container {
             max-width: 1400px;
             width: 100%;
         }
-
-        /* ===== 头部 ===== */
         .header {
             text-align: center;
             margin-bottom: 28px;
@@ -82,8 +63,6 @@
             letter-spacing: 3px;
             background: #0a1a12;
         }
-
-        /* ===== 导航栏 ===== */
         .tabs {
             display: flex;
             justify-content: center;
@@ -116,8 +95,6 @@
             border-bottom-color: #00e87a;
             background: rgba(0, 232, 122, 0.06);
         }
-
-        /* ===== 内容容器 ===== */
         .panel-container {
             animation: fadeIn 0.25s ease;
             min-height: 400px;
@@ -126,8 +103,6 @@
             0% { opacity: 0; transform: translateY(6px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-
-        /* ===== 页脚 ===== */
         .footer {
             margin-top: 40px;
             text-align: center;
@@ -138,8 +113,6 @@
             letter-spacing: 4px;
             font-weight: 300;
         }
-
-        /* ===== 加载状态 ===== */
         .loading {
             color: #5a7a8a;
             text-align: center;
@@ -158,8 +131,6 @@
             50% { content: '..'; }
             75% { content: '...'; }
         }
-
-        /* ===== 响应式 ===== */
         @media (max-width: 768px) {
             body { padding: 20px 12px; }
             .header h1 { font-size: 22px; letter-spacing: 4px; }
@@ -172,18 +143,15 @@
     </style>
 </head>
 <body>
-
     <div class="container">
-        <!-- 头部 -->
         <div class="header">
             <h1>⧩ 暗 域</h1>
             <div class="sub">DRUNK · WINTER · 星空暗流</div>
             <div class="badge">● 运行中</div>
         </div>
-
-        <!-- 导航 -->
         <div class="tabs" id="navTabs">
-            <button class="active" data-page="tools">🛠 工具</button>
+            <button data-page="console">⌨️ 控制台</button>
+            <button data-page="tools">🛠 工具</button>
             <button data-page="monitor">📡 回响</button>
             <button data-page="osint">🕵️ 情报</button>
             <button data-page="recon">🚀 侦查</button>
@@ -191,16 +159,11 @@
             <button data-page="star">🔭 星图</button>
             <button data-page="camera">📷 全球眼</button>
         </div>
-
-        <!-- 内容 -->
         <div class="panel-container" id="panelContainer">
             <div class="loading">⏳ 加载</div>
         </div>
-
-        <!-- 页脚 -->
         <div class="footer">⧩ 暗域 · 自留地</div>
     </div>
-
     <script>
         var container = document.getElementById('panelContainer');
         var tabs = document.querySelectorAll('#navTabs button');
@@ -211,11 +174,8 @@
             currentPage = page;
             var fileName = page + '.html';
             container.innerHTML = '<div class="loading">⏳ 加载 ' + page + '</div>';
-
-            // 清除旧脚本
             var oldScripts = document.querySelectorAll('.dynamic-script');
             oldScripts.forEach(function(s) { s.remove(); });
-
             fetch(fileName)
                 .then(function(res) {
                     if (!res.ok) throw new Error('404');
@@ -223,7 +183,6 @@
                 })
                 .then(function(html) {
                     container.innerHTML = html;
-                    // 提取脚本
                     var match = html.match(/<script>([\s\S]*?)<\/script>/);
                     if (match) {
                         var script = document.createElement('script');
@@ -237,6 +196,18 @@
                 });
         }
 
+        // 默认加载控制台
+        var initPage = window.location.hash.replace('#', '') || 'console';
+        var activeBtn = document.querySelector('#navTabs button[data-page="' + initPage + '"]');
+        if (activeBtn) {
+            tabs.forEach(function(b) { b.classList.remove('active'); });
+            activeBtn.classList.add('active');
+            loadPage(initPage);
+        } else {
+            document.querySelector('#navTabs button[data-page="console"]').classList.add('active');
+            loadPage('console');
+        }
+
         tabs.forEach(function(btn) {
             btn.addEventListener('click', function() {
                 tabs.forEach(function(b) { b.classList.remove('active'); });
@@ -247,18 +218,8 @@
             });
         });
 
-        var initPage = window.location.hash.replace('#', '') || 'tools';
-        var activeBtn = document.querySelector('#navTabs button[data-page="' + initPage + '"]');
-        if (activeBtn) {
-            tabs.forEach(function(b) { b.classList.remove('active'); });
-            activeBtn.classList.add('active');
-            loadPage(initPage);
-        } else {
-            loadPage('tools');
-        }
-
         window.addEventListener('hashchange', function() {
-            var page = window.location.hash.replace('#', '') || 'tools';
+            var page = window.location.hash.replace('#', '') || 'console';
             var btn = document.querySelector('#navTabs button[data-page="' + page + '"]');
             if (btn) {
                 tabs.forEach(function(b) { b.classList.remove('active'); });

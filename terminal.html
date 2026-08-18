@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT · TERMINAL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0e17; }
+        ::-webkit-scrollbar-thumb { background: #1a2a3a; border-radius: 2px; }
+        body {
+            background: #0a0e17;
+            min-height: 100vh;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            color: #c8d8e8;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+        }
+        .terminal {
+            max-width: 1440px;
+            width: 100%;
+            background: #0a0e17;
+            border: 1px solid #1a2a3a;
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            grid-template-rows: auto 1fr auto;
+            gap: 0;
+            min-height: calc(100vh - 32px);
+        }
+        .header {
+            grid-column: 1 / -1;
+            border-bottom: 1px solid #1a2a3a;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        .header .title {
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #00e87a, #00c8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header .title small { font-size: 10px; color: #5a7a8a; -webkit-text-fill-color: #5a7a8a; margin-left: 10px; }
+        .header .top-stats { display: flex; gap: 12px; font-size: 10px; color: #5a7a8a; flex-wrap: wrap; align-items: center; }
+        .header .top-stats .ip { color: #00c8ff; }
+        .header .top-stats .badge { border: 1px solid #1a2a3a; padding: 0 8px; font-size: 9px; }
+        .sidebar { border-right: 1px solid #1a2a3a; padding-right: 12px; margin-right: 12px; overflow-y: auto; max-height: calc(100vh - 180px); }
+        .sidebar .section-title { font-size: 9px; color: #5a7a8a; letter-spacing: 2px; text-transform: uppercase; margin: 10px 0 4px; border-bottom: 1px solid #0a1a1a; padding-bottom: 3px; }
+        .sidebar .item { display: block; padding: 3px 8px; font-size: 11px; color: #5a7a8a; text-decoration: none; cursor: default; border-left: 2px solid transparent; transition: 0.2s; }
+        .sidebar .item:hover { color: #c8d8e8; background: rgba(0,232,122,0.04); }
+        .sidebar .item.active { color: #00e87a; border-left-color: #00e87a; background: rgba(0,232,122,0.06); }
+        .main { display: flex; flex-direction: column; min-height: 0; }
+        .main-status { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 10px; color: #5a7a8a; border-bottom: 1px solid #1a2a3a; padding-bottom: 6px; margin-bottom: 10px; }
+        .main-status .value.green { color: #00e87a; }
+        .main-status .value.cyan { color: #00c8ff; }
+        .main-status .value.orange { color: #ff6a00; }
+        .main-status .value.red { color: #ff2200; }
+        .geo-container { flex: 1; background: #0d1420; border: 1px solid #1a2a3a; min-height: 250px; position: relative; }
+        .geo-container canvas { width: 100%; height: 100%; display: block; }
+        .geo-container .geo-overlay { position: absolute; bottom: 6px; left: 10px; display: flex; gap: 14px; font-size: 9px; color: #5a7a8a; background: rgba(10,14,23,0.7); padding: 2px 12px; border: 1px solid #1a2a3a; }
+        .geo-container .geo-overlay .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 3px; vertical-align: middle; }
+        .geo-container .geo-overlay .dot.quakes { background: #ff6a00; }
+        .geo-container .geo-overlay .dot.cyber { background: #00c8ff; }
+        .geo-container .geo-overlay .dot.flights { background: #00e87a; }
+        .geo-container .geo-overlay .dot.threats { background: #ff2200; }
+        .main-tools { display: flex; flex-wrap: wrap; gap: 8px 20px; padding: 6px 0; border-top: 1px solid #1a2a3a; margin-top: 8px; font-size: 10px; color: #5a7a8a; align-items: center; }
+        .main-tools .num { color: #c8d8e8; }
+        .main-tools .num.green { color: #00e87a; }
+        .main-tools .num.cyan { color: #00c8ff; }
+        .main-tools .num.orange { color: #ff6a00; }
+        .main-tools .num.red { color: #ff2200; }
+        .main-tools .cmd { display: flex; gap: 6px; align-items: center; margin-left: auto; }
+        .main-tools .cmd input { background: #0a0e17; border: 1px solid #1a2a3a; color: #c8d8e8; padding: 2px 10px; font-family: inherit; font-size: 10px; outline: none; width: 160px; }
+        .main-tools .cmd input:focus { border-color: #00e87a; }
+        .main-tools .cmd button { background: transparent; border: 1px solid #1a2a3a; color: #5a7a8a; padding: 2px 12px; font-family: inherit; font-size: 10px; cursor: pointer; transition: 0.2s; }
+        .main-tools .cmd button:hover { border-color: #00e87a; color: #00e87a; }
+        .footer-status { grid-column: 1 / -1; border-top: 1px solid #1a2a3a; margin-top: 10px; padding-top: 6px; display: flex; justify-content: space-between; font-size: 9px; color: #5a7a8a; flex-wrap: wrap; gap: 4px 16px; }
+        .footer-status .key { border: 1px solid #0a1a1a; padding: 0 6px; font-size: 8px; }
+        @media (max-width: 768px) {
+            .terminal { grid-template-columns: 1fr; }
+            .sidebar { border-right: none; padding-right: 0; margin-right: 0; max-height: 150px; display: flex; flex-wrap: wrap; gap: 2px; border-bottom: 1px solid #1a2a3a; padding-bottom: 8px; margin-bottom: 8px; }
+            .sidebar .section-title { width: 100%; margin: 4px 0 2px; }
+            .sidebar .item { border-left: none; font-size: 10px; padding: 2px 8px; }
+            .sidebar .item.active { border-left: none; border-bottom: 2px solid #00e87a; }
+            .main-tools .cmd { margin-left: 0; }
+            .main-tools .cmd input { width: 100px; }
+            .header .top-stats { font-size: 9px; gap: 6px; }
+        }
+        @media (max-width: 480px) {
+            .header .title { font-size: 14px; }
+            .main-status { font-size: 9px; gap: 4px 10px; }
+            .main-tools { font-size: 9px; }
+            .geo-container { min-height: 180px; }
+        }
+    </style>
+</head>
+<body>
+<div class="terminal">
+    <header class="header">
+        <div class="title">OSINT: TERMINAL <small>435 modules</small></div>
+        <div class="top-stats">
+            <span class="badge">INFO</span>
+            <span>http://localhost:8080</span>
+            <span class="ip">8.8.8.8</span>
+            <span class="ip">1.1.1.1</span>
+            <span class="ip">192.168.10.101</span>
+            <span class="badge">RUN</span>
+        </div>
+    </header>
+    <nav class="sidebar">
+        <div class="section-title">MODULES</div>
+        <div class="section-title">情报核心</div>
+        <a class="item active"><span class="icon">▶</span> OSINT-Terminal</a>
+        <a class="item"><span class="icon">◆</span> 智能索引+指导</a>
+        <a class="item"><span class="icon">◈</span> 自动侦查</a>
+        <div class="section-title">太空域</div>
+        <a class="item"><span class="icon">◉</span> 卫星追踪</a>
+        <a class="item"><span class="icon">◎</span> 专业地图</a>
+        <div class="section-title">攻防</div>
+        <a class="item"><span class="icon">⚔</span> 攻防墙</a>
+        <a class="item"><span class="icon">🔴</span> Red Team</a>
+        <a class="item"><span class="icon">🔵</span> Blue Team</a>
+        <div class="section-title">AI</div>
+        <a class="item"><span class="icon">◇</span> Ollama (DeepSeek)</a>
+    </nav>
+    <main class="main">
+        <div class="main-status">
+            <span><span class="label">GEO-TRACE</span> <span class="value">waiting target</span></span>
+            <span><span class="label">seismic</span> <span class="value orange">266</span> <span class="label">· 24h</span></span>
+            <span><span class="label">threats</span> <span class="value red">4</span></span>
+            <span style="margin-left:auto;"><span class="label">STATUS</span> <span class="value green">● OPERATING</span></span>
+        </div>
+        <div class="geo-container">
+            <canvas id="geoCanvas"></canvas>
+            <div class="geo-overlay">
+                <span><span class="dot quakes"></span> quakes</span>
+                <span><span class="dot cyber"></span> cyber arcs</span>
+                <span><span class="dot flights"></span> flights</span>
+                <span><span class="dot threats"></span> threats</span>
+            </div>
+        </div>
+        <div class="main-tools">
+            <span>TOOLS LANDED: <span class="num green">438</span></span>
+            <span>QUERIES: <span class="num cyan">0</span></span>
+            <span>C2 NODES: <span class="num orange">0</span></span>
+            <span>ISS ALT: <span class="num cyan">-488 km</span></span>
+            <span>ATTACK ARCS: <span class="num red">4</span></span>
+            <div class="cmd">
+                <span style="color:#5a7a8a;">▶</span>
+                <input type="text" id="cmdInput" placeholder="enter to run" value="8.8.8.8">
+                <button onclick="runCommand()">RUN</button>
+                <button onclick="clearCommand()">exit</button>
+            </div>
+        </div>
+    </main>
+    <footer class="footer-status">
+        <div><span>READY</span> <span>439 | tools | loaded</span> <span>no target</span></div>
+        <div><span class="key">Enter</span> to run <span class="key">Esc</span> to clear</div>
+    </footer>
+</div>
+<script>
+    var canvas = document.getElementById('geoCanvas');
+    var ctx = canvas.getContext('2d');
+    var container = canvas.parentElement;
+    var width, height;
+
+    function resize() {
+        var rect = container.getBoundingClientRect();
+        width = rect.width;
+        height = rect.height - 2;
+        canvas.width = width * window.devicePixelRatio;
+        canvas.height = height * window.devicePixelRatio;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+
+    var nodes = [], arcs = [], quakes = [], threats = [];
+    for (var i = 0; i < 60; i++) {
+        nodes.push({ x: Math.random() * 0.8 + 0.1, y: Math.random() * 0.8 + 0.1, vx: (Math.random()-0.5)*0.003, vy: (Math.random()-0.5)*0.003, type: Math.random()<0.12?'c2':(Math.random()<0.25?'threat':'normal'), size:2+Math.random()*3, phase:Math.random()*Math.PI*2 });
+    }
+    for (var i = 0; i < 6; i++) { quakes.push({ x: Math.random(), y: Math.random(), r: 6+Math.random()*14, phase: Math.random()*Math.PI*2 }); }
+    for (var i = 0; i < 4; i++) { threats.push({ x: Math.random(), y: Math.random(), size: 8+Math.random()*6, phase: Math.random()*Math.PI*2 }); }
+    for (var i = 0; i < 6; i++) { var a=Math.floor(Math.random()*nodes.length), b=Math.floor(Math.random()*nodes.length); if(a!==b) arcs.push({from:a,to:b,progress:Math.random()}); }
+
+    var time = 0;
+
+    function draw() {
+        time += 0.006;
+        var w = width, h = height;
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#0d1420';
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = 'rgba(26,42,58,0.12)';
+        ctx.lineWidth = 0.5;
+        for (var i = 0; i < 15; i++) { var x = (i/15)*w; ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+        for (var i = 0; i < 10; i++) { var y = (i/10)*h; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+
+        quakes.forEach(function(q) {
+            var r = q.r + 3 * Math.sin(time * 1.2 + q.phase);
+            ctx.fillStyle = 'rgba(255,106,0,' + (0.15 + 0.15 * Math.sin(time * 1.5 + q.phase)) + ')';
+            ctx.beginPath(); ctx.arc(q.x * w, q.y * h, r, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#ff6a00';
+            ctx.beginPath(); ctx.arc(q.x * w, q.y * h, 2, 0, Math.PI * 2); ctx.fill();
+        });
+
+        threats.forEach(function(t) {
+            var r = t.size * (1 + 0.2 * Math.sin(time * 2 + t.phase));
+            var grad = ctx.createRadialGradient(t.x*w, t.y*h, 0, t.x*w, t.y*h, r);
+            grad.addColorStop(0, 'rgba(255,34,0,0.5)'); grad.addColorStop(1, 'rgba(255,34,0,0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath(); ctx.arc(t.x*w, t.y*h, r, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#ff2200';
+            ctx.beginPath(); ctx.arc(t.x*w, t.y*h, 3, 0, Math.PI * 2); ctx.fill();
+        });
+
+        nodes.forEach(function(n) { n.x += n.vx; n.y += n.vy; if(n.x<0.05||n.x>0.95) n.vx*=-1; if(n.y<0.05||n.y>0.95) n.vy*=-1; });
+
+        arcs.forEach(function(a) {
+            var from = nodes[a.from], to = nodes[a.to];
+            if (!from || !to) return;
+            var p = (a.progress + time * 0.08) % 1;
+            var cx = (from.x + to.x) / 2 + 0.1 * Math.sin(p * Math.PI);
+            var cy = (from.y + to.y) / 2 - 0.06;
+            ctx.beginPath();
+            ctx.moveTo(from.x * w, from.y * h);
+            ctx.quadraticCurveTo(cx * w, cy * h, to.x * w, to.y * h);
+            ctx.strokeStyle = 'rgba(0,200,255,' + (0.15 + 0.25 * Math.sin(p * Math.PI)) + ')';
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+            var t = p;
+            var mx = (1-t)*(1-t)*from.x + 2*(1-t)*t*cx + t*t*to.x;
+            var my = (1-t)*(1-t)*from.y + 2*(1-t)*t*cy + t*t*to.y;
+            ctx.fillStyle = '#00c8ff';
+            ctx.shadowColor = '#00c8ff';
+            ctx.shadowBlur = 6;
+            ctx.beginPath(); ctx.arc(mx * w, my * h, 2, 0, Math.PI * 2); ctx.fill();
+            ctx.shadowBlur = 0;
+        });
+
+        nodes.forEach(function(n) {
+            var color = n.type === 'c2' ? '#ff2200' : (n.type === 'threat' ? '#ff6a00' : '#00c8ff');
+            var size = n.size + 1.2 * Math.sin(time * 1.5 + n.phase);
+            ctx.fillStyle = color;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 6;
+            ctx.beginPath(); ctx.arc(n.x * w, n.y * h, size, 0, Math.PI * 2); ctx.fill();
+            ctx.shadowBlur = 0;
+        });
+
+        for (var i = 0; i < 4; i++) {
+            var t = (time * 0.15 + i * 0.25) % 1;
+            var x = 0.05 + t * 0.9;
+            var y = 0.2 + 0.5 * Math.sin(t * Math.PI * 3 + i * 1.5);
+            ctx.fillStyle = 'rgba(0,232,122,0.4)';
+            ctx.shadowColor = '#00e87a';
+            ctx.shadowBlur = 4;
+            ctx.beginPath(); ctx.arc(x * w, y * h, 1.5, 0, Math.PI * 2); ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+
+        ctx.fillStyle = '#5a7a8a';
+        ctx.font = '8px monospace';
+        ctx.fillText('TOOLS: 438', 8, 16);
+        ctx.fillText('C2: ' + nodes.filter(function(n){return n.type==='c2';}).length, 8, 30);
+        ctx.fillText('THREATS: ' + threats.length, 8, 44);
+
+        requestAnimationFrame(draw);
+    }
+
+    function runCommand() {
+        var input = document.getElementById('cmdInput');
+        var val = input.value.trim();
+        if (!val) return;
+        alert('▶ 执行: ' + val + '\n(模拟命令)');
+    }
+    function clearCommand() { document.getElementById('cmdInput').value = ''; }
+    document.getElementById('cmdInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') runCommand();
+        if (e.key === 'Escape') clearCommand();
+    });
+
+    resize();
+    draw();
+    window.addEventListener('resize', resize);
+</script>
+</body>
+</html>

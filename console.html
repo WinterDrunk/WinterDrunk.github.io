@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>暗域 · 控制台</title>
+    <style>
+        /* ============================================================
+           暗色主题 · 专业控制台
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0e17; }
+        ::-webkit-scrollbar-thumb { background: #1a2a3a; border-radius: 2px; }
+
+        body {
+            background: #0a0e17;
+            min-height: 100vh;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+            color: #c8d8e8;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .console {
+            max-width: 1440px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: calc(100vh - 32px);
+        }
+
+        /* ===== 顶部状态栏 ===== */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 8px 14px;
+            background: #0d1420;
+            border: 1px solid #1a2a3a;
+            gap: 8px 16px;
+        }
+        .top-bar .brand {
+            font-size: 16px;
+            font-weight: 300;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #00e87a, #00c8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .top-bar .brand small {
+            font-size: 10px;
+            letter-spacing: 2px;
+            -webkit-text-fill-color: #5a7a8a;
+            background: none;
+            margin-left: 10px;
+        }
+        .top-bar .status {
+            display: flex;
+            gap: 12px 20px;
+            flex-wrap: wrap;
+            font-size: 10px;
+            color: #5a7a8a;
+            align-items: center;
+        }
+        .top-bar .status .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        .top-bar .status .dot.green { background: #00e87a; }
+        .top-bar .status .dot.cyan { background: #00c8ff; }
+        .top-bar .status .dot.orange { background: #ff6a00; }
+        .top-bar .status .dot.red { background: #ff2200; }
+        .top-bar .status .ip { color: #00c8ff; }
+        .top-bar .status .badge {
+            border: 1px solid #1a2a3a;
+            padding: 0 10px;
+            font-size: 9px;
+            color: #5a7a8a;
+        }
+
+        /* ===== 主网格 ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: 220px 1fr 280px;
+            grid-template-rows: auto 1fr auto;
+            gap: 12px;
+            flex: 1;
+        }
+
+        /* ===== 侧边栏 ===== */
+        .sidebar {
+            background: #0d1420;
+            border: 1px solid #1a2a3a;
+            padding: 10px 12px;
+            overflow-y: auto;
+            max-height: calc(100vh - 140px);
+        }
+        .sidebar .section {
+            margin-bottom: 10px;
+        }
+        .sidebar .section-title {
+            font-size: 9px;
+            color: #5a7a8a;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #0a1a1a;
+            padding-bottom: 3px;
+            margin-bottom: 4px;
+        }
+        .sidebar .item {
+            display: block;
+            padding: 3px 8px;
+            font-size: 11px;
+            color: #5a7a8a;
+            text-decoration: none;
+            cursor: pointer;
+            border-left: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .sidebar .item:hover {
+            color: #c8d8e8;
+            background: rgba(0, 232, 122, 0.04);
+        }
+        .sidebar .item.active {
+            color: #00e87a;
+            border-left-color: #00e87a;
+            background: rgba(0, 232, 122, 0.06);
+        }
+        .sidebar .item .icon { margin-right: 6px; opacity: 0.5; }
+
+        /* ===== 主内容 ===== */
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 0;
+        }
+
+        /* 信息条 */
+        .info-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 20px;
+            padding: 6px 12px;
+            background: #0d1420;
+            border: 1px solid #1a2a3a;
+            font-size: 10px;
+            color: #5a7a8a;
+        }
+        .info-bar .label { color: #5a7a8a; }
+        .info-bar .value { color: #c8d8e8; }
+        .info-bar .value.green { color: #00e87a; }
+        .info-bar .value.cyan { color: #00c8ff; }
+        .info-bar .value.orange { color: #ff6a00; }
+        .info-bar .value.red { color: #ff2200; }
+        .info-bar .sep { color: #1a2a3a; }
+
+        /* 可视化画布区域 */
+        .canvas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            flex: 1;
+        }
+        .canvas-box {
+            background: #0d1420;
+            border: 1px solid #1a2a3a;
+            position: relative;
+            min-height: 200px;
+            overflow: hidden;
+        }
+        .canvas-box canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .canvas-box .label {
+            position: absolute;
+            top: 6px;
+            left: 10px;
+            font-size: 9px;
+            color: #5a7a8a;
+            letter-spacing: 1px;
+            background: rgba(10, 14, 23, 0.7);
+            padding: 1px 10px;
+            border: 1px solid #1a2a3a;
+        }
+        .canvas-box .status {
+            position: absolute;
+            top: 6px;
+            right: 10px;
+            font-size: 8px;
+            color: #5a7a8a;
+            background: rgba(10, 14, 23, 0.7);
+            padding: 1px 10px;
+            border: 1px solid #1a2a3a;
+        }
+        .canvas-box .legend {
+            position: absolute;
+            bottom: 6px;
+            left: 10px;
+            display: flex;
+            gap: 12px;
+            font-size: 8px;
+            color: #5a7a8a;
+            background: rgba(10, 14, 23, 0.7);
+            padding: 2px 10px;
+            border: 1px solid #1a2a3a;
+            flex-wrap: wrap;
+        }
+        .canvas-box .legend .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 3px;
+            vertical-align: middle;
+        }
+        .dot.green { background: #00e87a; }
+        .dot.cyan { background: #00c8ff; }
+        .dot.orange { background: #ff6a00; }
+        .dot.red { background: #ff2200; }
+        .dot.purple { background: #b39ddb; }
+
+        /* 底部工具条 */
+        .tool-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 20px;
+            padding: 6px 12px;
+            background: #0d1420;
+            border: 1px solid #1a2a3a;
+            font-size: 10px;
+            color: #5a7a8a;
+            align-items: center;
+        }
+        .tool-bar .num { color: #c8d8e8; }
+        .tool-bar .num.green { color: #00e87a; }
+        .tool-bar .num.cyan { color: #00c8ff; }
+        .tool-bar .num.orange { color: #ff6a00; }
+        .tool-bar .num.red { color: #ff2200; }
+        .tool-bar .cmd {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-left: auto;
+        }
+        .tool-bar .cmd input {
+            background: #0a0e17;
+            border: 1px solid #1a2a3a;
+            color: #c8d8e8;
+            padding: 2px 10px;
+            font-family: inherit;
+            font-size: 10px;
+            outline: none;
+            width: 160px;
+        }
+        .tool-bar .cmd input:focus { border-color: #00e87a; }
+        .tool-bar .cmd button {
+            background: transparent;
+            border: 1px solid #1a2a3a;
+            color: #5a7a8a;
+            padding: 2px 12px;
+            font-family: inherit;
+            font-size: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tool-bar .cmd button:hover {
+            border-color: #00e87a;
+            color: #00e87a;
+        }
+
+        /* ===== 右侧面板 ===== */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+        .right-panel .panel-box {
+            background: #0d1420;
+            border: 1px solid #1a2a3a;
+            padding: 10px 12px;
+        }
+        .right-panel .panel-box .title {
+            font-size: 9px;
+            color: #5a7a8a;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #0a1a1a;
+            padding-bottom: 3px;
+            margin-bottom: 6px;
+        }
+        .right-panel .panel-box .entry {
+            font-size: 10px;
+            color: #5a7a8a;
+            padding: 2px 0;
+            border-bottom: 1px solid #0a0e17;
+            display: flex;
+            justify-content: space-between;
+        }
+        .right-panel .panel-box .entry .val { color: #c8d8e8; }
+        .right-panel .panel-box .entry .val.green { color: #00e87a; }
+        .right-panel .panel-box .entry .val.cyan { color: #00c8ff; }
+        .right-panel .panel-box .entry .val.orange { color: #ff6a00; }
+        .right-panel .panel-box .entry .val.red { color: #ff2200; }
+        .right-panel .panel-box .log {
+            font-size: 9px;
+            color: #5a7a8a;
+            line-height: 1.8;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .right-panel .panel-box .log .hl { color: #00e87a; }
+        .right-panel .panel-box .log .cyan { color: #00c8ff; }
+        .right-panel .panel-box .log .orange { color: #ff6a00; }
+        .right-panel .panel-box .log .red { color: #ff2200; }
+
+        /* ===== 底部状态 ===== */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 14px;
+            background: #0d1420;
+            border: 1px solid #1a2a3a;
+            font-size: 9px;
+            color: #5a7a8a;
+            flex-wrap: wrap;
+            gap: 4px 16px;
+        }
+        .bottom-bar .key {
+            border: 1px solid #0a1a1a;
+            padding: 0 6px;
+            font-size: 8px;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: 180px 1fr 220px;
+            }
+            .canvas-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+            .sidebar {
+                max-height: 120px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 2px;
+                padding: 6px 10px;
+            }
+            .sidebar .section {
+                margin-bottom: 0;
+                width: 100%;
+            }
+            .sidebar .item {
+                display: inline-block;
+                padding: 2px 8px;
+                font-size: 10px;
+                border-left: none;
+            }
+            .sidebar .item.active {
+                border-left: none;
+                border-bottom: 2px solid #00e87a;
+            }
+            .canvas-grid {
+                grid-template-columns: 1fr;
+            }
+            .right-panel {
+                max-height: 300px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .right-panel .panel-box {
+                max-height: 160px;
+                overflow-y: auto;
+            }
+            .tool-bar .cmd {
+                margin-left: 0;
+                width: 100%;
+            }
+            .tool-bar .cmd input {
+                flex: 1;
+            }
+        }
+        @media (max-width: 480px) {
+            .top-bar .brand { font-size: 14px; }
+            .top-bar .brand small { display: none; }
+            .right-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="console">
+
+    <!-- ===== 顶部状态栏 ===== -->
+    <div class="top-bar">
+        <div class="brand">
+            ⧩ 暗域 <small>CONTROL · v2.0</small>
+        </div>
+        <div class="status">
+            <span><span class="dot green"></span> ONLINE</span>
+            <span class="badge">OSINT</span>
+            <span class="badge">TERMINAL</span>
+            <span class="ip">8.8.8.8</span>
+            <span class="ip">1.1.1.1</span>
+            <span class="ip" style="font-size:9px;">2489:8a50:7c17:...</span>
+            <span class="badge">● 运行中</span>
+        </div>
+    </div>
+
+    <!-- ===== 主网格 ===== -->
+    <div class="grid">
+
+        <!-- ===== 侧边栏 ===== -->
+        <nav class="sidebar" id="sidebar">
+            <div class="section">
+                <div class="section-title">◈ 控制台</div>
+                <a class="item active" data-view="dashboard"><span class="icon">◉</span> 总览</a>
+                <a class="item" data-view="satellite"><span class="icon">◔</span> 卫星追踪</a>
+                <a class="item" data-view="threat"><span class="icon">◈</span> 威胁态势</a>
+                <a class="item" data-view="recon"><span class="icon">◊</span> 侦查日志</a>
+            </div>
+            <div class="section">
+                <div class="section-title">⚙ 模块</div>
+                <a class="item" data-view="tools"><span class="icon">◰</span> 工具集</a>
+                <a class="item" data-view="camera"><span class="icon">◱</span> 全球眼</a>
+                <a class="item" data-view="star"><span class="icon">◴</span> 星图</a>
+                <a class="item" data-view="monitor"><span class="icon">◵</span> 回响</a>
+            </div>
+            <div class="section">
+                <div class="section-title">⊚ AI</div>
+                <a class="item"><span class="icon">⊚</span> 终端引擎</a>
+                <a class="item"><span class="icon">◇</span> Ollama (DeepSeek)</a>
+            </div>
+        </nav>
+
+        <!-- ===== 主内容 ===== -->
+        <div class="main">
+
+            <!-- 信息条 -->
+            <div class="info-bar" id="infoBar">
+                <span><span class="label">GEO-TRACE</span> <span class="value">waiting target</span></span>
+                <span><span class="sep">|</span></span>
+                <span><span class="label">seismic</span> <span class="value orange" id="quakeCount">266</span> <span class="label">· 24h</span></span>
+                <span><span class="sep">|</span></span>
+                <span><span class="label">threats</span> <span class="value red" id="threatCount">4</span></span>
+                <span><span class="sep">|</span></span>
+                <span><span class="label">ISS ALT</span> <span class="value cyan" id="issAlt">-488 km</span></span>
+                <span style="margin-left:auto;"><span class="label">STATUS</span> <span class="value green">● OPERATING</span></span>
+            </div>
+
+            <!-- 可视化画布 -->
+            <div class="canvas-grid" id="canvasGrid">
+                <!-- 左侧：卫星追踪 -->
+                <div class="canvas-box">
+                    <canvas id="satCanvas"></canvas>
+                    <div class="label">🛰️ 卫星分布 · <span id="satCountLabel">80</span> 颗</div>
+                    <div class="status" id="satStatus">● 模拟数据</div>
+                    <div class="legend">
+                        <span><span class="dot cyan"></span> LEO</span>
+                        <span><span class="dot orange"></span> MEO</span>
+                        <span><span class="dot purple"></span> GEO</span>
+                        <span><span class="dot green"></span> ISS</span>
+                        <span><span class="dot red"></span> 碎片</span>
+                    </div>
+                </div>
+
+                <!-- 右侧：威胁态势 -->
+                <div class="canvas-box">
+                    <canvas id="threatCanvas"></canvas>
+                    <div class="label">🌍 威胁态势 · <span id="threatNodeCount">0</span> 节点</div>
+                    <div class="status" id="threatStatus">● 实时监控</div>
+                    <div class="legend">
+                        <span><span class="dot red"></span> C2 节点</span>
+                        <span><span class="dot orange"></span> 攻击目标</span>
+                        <span><span class="dot cyan"></span> 数据流</span>
+                        <span><span class="dot green"></span> 安全节点</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部工具条 -->
+            <div class="tool-bar">
+                <span>TOOLS: <span class="num green">438</span></span>
+                <span>QUERIES: <span class="num cyan">0</span></span>
+                <span>C2 NODES: <span class="num orange">0</span></span>
+                <span>ATTACK ARCS: <span class="num red">4</span></span>
+                <div class="cmd">
+                    <span style="color:#5a7a8a;">▶</span>
+                    <input type="text" id="cmdInput" placeholder="enter to run" value="8.8.8.8">
+                    <button onclick="runCommand()">RUN</button>
+                    <button onclick="clearCommand()">exit</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ===== 右侧面板 ===== -->
+        <div class="right-panel">
+
+            <!-- 快速统计 -->
+            <div class="panel-box">
+                <div class="title">📊 实时统计</div>
+                <div class="entry"><span>在轨卫星</span><span class="val cyan" id="rSatTotal">16,397</span></div>
+                <div class="entry"><span>LEO 低轨</span><span class="val green" id="rSatLEO">12,800</span></div>
+                <div class="entry"><span>MEO 中轨</span><span class="val orange" id="rSatMEO">1,200</span></div>
+                <div class="entry"><span>GEO 高轨</span><span class="val purple" id="rSatGEO">800</span></div>
+                <div class="entry"><span>空间碎片</span><span class="val red" id="rSatDebris">34,000+</span></div>
+                <div class="entry" style="border-top:1px solid #0a1a1a;margin-top:4px;padding-top:4px;">
+                    <span>ISS 高度</span>
+                    <span class="val cyan" id="rIssAlt">-- km</span>
+                </div>
+            </div>
+
+            <!-- 侦查日志 -->
+            <div class="panel-box" style="flex:1;">
+                <div class="title">📋 侦查日志</div>
+                <div class="log" id="reconLog">
+                    <div>⏳ 等待侦查...</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ===== 底部状态 ===== -->
+    <div class="bottom-bar">
+        <div>READY · 439 tools loaded</div>
+        <div>
+            <span class="key">press</span> to search
+            <span class="key">Enter</span> to run
+            <span class="key">Esc</span> to clear
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ============================================================
+    // 1. 卫星分布 Canvas
+    // ============================================================
+    var satCanvas = document.getElementById('satCanvas');
+    var satCtx = satCanvas.getContext('2d');
+    var satContainer = satCanvas.parentElement;
+
+    function resizeSat() {
+        var rect = satContainer.getBoundingClientRect();
+        var w = rect.width,
+            h = rect.height;
+        satCanvas.width = w * window.devicePixelRatio;
+        satCanvas.height = h * window.devicePixelRatio;
+        satCanvas.style.width = w + 'px';
+        satCanvas.style.height = h + 'px';
+        satCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        return { w: w, h: h };
+    }
+
+    var satNodes = [];
+    var satTime = 0;
+
+    function initSatellites() {
+        satNodes = [];
+        for (var i = 0; i < 80; i++) {
+            satNodes.push({
+                x: Math.random(),
+                y: Math.random(),
+                vx: (Math.random() - 0.5) * 0.003,
+                vy: (Math.random() - 0.5) * 0.003,
+                layer: Math.floor(Math.random() * 3),
+                size: 2 + Math.random() * 2,
+                phase: Math.random() * Math.PI * 2
+            });
+        }
+    }
+
+    function drawSatellites() {
+        var dim = resizeSat();
+        var w = dim.w,
+            h = dim.h;
+        satTime += 0.005;
+        satCtx.clearRect(0, 0, w, h);
+
+        // 背景
+        satCtx.fillStyle = '#0d1420';
+        satCtx.fillRect(0, 0, w, h);
+
+        // 网格
+        satCtx.strokeStyle = 'rgba(26,42,58,0.15)';
+        satCtx.lineWidth = 0.5;
+        for (var i = 0; i < 12; i++) {
+            var x = (i / 12) * w;
+            satCtx.beginPath();
+            satCtx.moveTo(x, 0);
+            satCtx.lineTo(x, h);
+            satCtx.stroke();
+        }
+        for (var i = 0; i < 8; i++) {
+            var y = (i / 8) * h;
+            satCtx.beginPath();
+            satCtx.moveTo(0, y);
+            satCtx.lineTo(w, y);
+            satCtx.stroke();
+        }
+
+        // 轨道圈
+        var orbits = [
+            { rx: w * 0.28, ry: h * 0.22, color: 'rgba(0,200,255,0.12)' },
+            { rx: w * 0.44, ry: h * 0.36, color: 'rgba(255,183,77,0.10)' },
+            { rx: w * 0.58, ry: h * 0.48, color: 'rgba(179,157,219,0.10)' }
+        ];
+        orbits.forEach(function(o) {
+            satCtx.beginPath();
+            satCtx.ellipse(w / 2, h / 2, o.rx, o.ry, 0, 0, Math.PI * 2);
+            satCtx.strokeStyle = o.color;
+            satCtx.lineWidth = 1;
+            satCtx.setLineDash([3, 5]);
+            satCtx.stroke();
+            satCtx.setLineDash([]);
+        });
+
+        // 更新位置
+        satNodes.forEach(function(n) {
+            n.x += n.vx;
+            n.y += n.vy;
+            if (n.x < 0 || n.x > 1) n.vx *= -1;
+            if (n.y < 0 || n.y > 1) n.vy *= -1;
+        });
+
+        // 绘制卫星
+        var colors = ['#00c8ff', '#ffb74d', '#b39ddb'];
+        satNodes.forEach(function(n) {
+            var color = colors[n.layer] || '#00c8ff';
+            var size = n.size + 0.5 * Math.sin(satTime * 1.5 + n.phase);
+            var x = n.x * w,
+                y = n.y * h;
+            satCtx.fillStyle = color;
+            satCtx.shadowColor = color;
+            satCtx.shadowBlur = 6;
+            satCtx.beginPath();
+            satCtx.arc(x, y, size, 0, Math.PI * 2);
+            satCtx.fill();
+            satCtx.shadowBlur = 0;
+        });
+
+        // ISS (绿色)
+        var issAngle = satTime * 0.4;
+        var issX = w / 2 + Math.cos(issAngle) * w * 0.18;
+        var issY = h / 2 + Math.sin(issAngle) * h * 0.16;
+        satCtx.shadowColor = '#00e87a';
+        satCtx.shadowBlur = 20;
+        satCtx.fillStyle = '#00e87a';
+        satCtx.beginPath();
+        satCtx.arc(issX, issY, 6, 0, Math.PI * 2);
+        satCtx.fill();
+        satCtx.shadowBlur = 0;
+        satCtx.fillStyle = '#a5d6a7';
+        satCtx.font = '8px monospace';
+        satCtx.fillText('ISS', issX - 10, issY - 12);
+
+        // 碎片 (红色小点)
+        for (var i = 0; i < 20; i++) {
+            var a = satTime * 0.3 + i * 1.2;
+            var r = w * 0.15 + Math.sin(i * 0.7) * 20;
+            var x = w / 2 + Math.cos(a) * r + Math.sin(a * 0.5) * 8;
+            var y = h / 2 + Math.sin(a) * r * 0.6 + Math.cos(a * 0.5) * 8;
+            satCtx.fillStyle = 'rgba(255,34,0,0.4)';
+            satCtx.beginPath();
+            satCtx.arc(x, y, 1.5, 0, Math.PI * 2);
+            satCtx.fill();
+        }
+
+        // 左上角信息
+        satCtx.fillStyle = '#5a7a8a';
+        satCtx.font = '8px monospace';
+        satCtx.fillText('LEO: 80%', 8, 18);
+        satCtx.fillText('MEO: 15%', 8, 32);
+        satCtx.fillText('GEO: 5%', 8, 46);
+
+        requestAnimationFrame(drawSatellites);
+    }
+
+    // ============================================================
+    // 2. 威胁态势 Canvas
+    // ============================================================
+    var threatCanvas = document.getElementById('threatCanvas');
+    var threatCtx = threatCanvas.getContext('2d');
+    var threatContainer = threatCanvas.parentElement;
+
+    function resizeThreat() {
+        var rect = threatContainer.getBoundingClientRect();
+        var w = rect.width,
+            h = rect.height;
+        threatCanvas.width = w * window.devicePixelRatio;
+        threatCanvas.height = h * window.devicePixelRatio;
+        threatCanvas.style.width = w + 'px';
+        threatCanvas.style.height = h + 'px';
+        threatCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        return { w: w, h: h };
+    }
+
+    var threatNodes = [];
+    var threatArcs = [];
+    var threatTime = 0;
+
+    function initThreat() {
+        threatNodes = [];
+        for (var i = 0; i < 50; i++) {
+            threatNodes.push({
+                x: Math.random() * 0.85 + 0.075,
+                y: Math.random() * 0.85 + 0.075,
+                vx: (Math.random() - 0.5) * 0.004,
+                vy: (Math.random() - 0.5) * 0.004,
+                type: Math.random() < 0.12 ? 'c2' : (Math.random() < 0.25 ? 'attack' : 'safe'),
+                size: 2 + Math.random() * 4,
+                phase: Math.random() * Math.PI * 2
+            });
+        }
+        threatArcs = [];
+        for (var i = 0; i < 6; i++) {
+            var a = Math.floor(Math.random() * threatNodes.length);
+            var b = Math.floor(Math.random() * threatNodes.length);
+            if (a !== b) threatArcs.push({ from: a, to: b, progress: Math.random() });
+        }
+        document.getElementById('threatNodeCount').textContent = threatNodes.length;
+    }
+
+    function drawThreat() {
+        var dim = resizeThreat();
+        var w = dim.w,
+            h = dim.h;
+        threatTime += 0.008;
+        threatCtx.clearRect(0, 0, w, h);
+
+        threatCtx.fillStyle = '#0d1420';
+        threatCtx.fillRect(0, 0, w, h);
+
+        // 网格
+        threatCtx.strokeStyle = 'rgba(26,42,58,0.12)';
+        threatCtx.lineWidth = 0.5;
+        for (var i = 0; i < 10; i++) {
+            var x = (i / 10) * w;
+            threatCtx.beginPath();
+            threatCtx.moveTo(x, 0);
+            threatCtx.lineTo(x, h);
+            threatCtx.stroke();
+        }
+        for (var i = 0; i < 8; i++) {
+            var y = (i / 8) * h;
+            threatCtx.beginPath();
+            threatCtx.moveTo(0, y);
+            threatCtx.lineTo(w, y);
+            threatCtx.stroke();
+        }
+
+        // 更新节点
+        threatNodes.forEach(function(n) {
+            n.x += n.vx;
+            n.y += n.vy;
+            if (n.x < 0.05 || n.x > 0.95) n.vx *= -1;
+            if (n.y < 0.05 || n.y > 0.95) n.vy *= -1;
+        });
+
+        // 弧线 (攻击弧线)
+        threatArcs.forEach(function(a) {
+            var from = threatNodes[a.from];
+            var to = threatNodes[a.to];
+            if (!from || !to) return;
+            var p = (a.progress + threatTime * 0.08) % 1;
+            var curve = 0.15 * Math.sin(p * Math.PI);
+            var cx = (from.x + to.x) / 2 + curve;
+            var cy = (from.y + to.y) / 2 - 0.08;
+            threatCtx.beginPath();
+            threatCtx.moveTo(from.x * w, from.y * h);
+            threatCtx.quadraticCurveTo(cx * w, cy * h, to.x * w, to.y * h);
+            threatCtx.strokeStyle = 'rgba(255,34,0,' + (0.15 + 0.25 * Math.sin(p * Math.PI)) + ')';
+            threatCtx.lineWidth = 0.8;
+            threatCtx.stroke();
+            // 光点
+            var t = p;
+            var mx = (1 - t) * (1 - t) * from.x + 2 * (1 - t) * t * cx + t * t * to.x;
+            var my = (1 - t) * (1 - t) * from.y + 2 * (1 - t) * t * cy + t * t * to.y;
+            threatCtx.fillStyle = '#ff2200';
+            threatCtx.shadowColor = '#ff2200';
+            threatCtx.shadowBlur = 8;
+            threatCtx.beginPath();
+            threatCtx.arc(mx * w, my * h, 2, 0, Math.PI * 2);
+            threatCtx.fill();
+            threatCtx.shadowBlur = 0;
+        });
+
+        // 绘制节点
+        threatNodes.forEach(function(n) {
+            var color, glow;
+            switch (n.type) {
+                case 'c2':
+                    color = '#ff2200';
+                    glow = 'rgba(255,34,0,';
+                    break;
+                case 'attack':
+                    color = '#ff6a00';
+                    glow = 'rgba(255,106,0,';
+                    break;
+                default:
+                    color = '#00c8ff';
+                    glow = 'rgba(0,200,255,';
+            }
+            var size = n.size + 1.5 * Math.sin(threatTime * 1.2 + n.phase);
+            var grad = threatCtx.createRadialGradient(n.x * w, n.y * h, 0, n.x * w, n.y * h, size * 4);
+            grad.addColorStop(0, glow + '0.2)');
+            grad.addColorStop(1, glow + '0)');
+            threatCtx.fillStyle = grad;
+            threatCtx.beginPath();
+            threatCtx.arc(n.x * w, n.y * h, size * 4, 0, Math.PI * 2);
+            threatCtx.fill();
+            threatCtx.fillStyle = color;
+            threatCtx.shadowColor = color;
+            threatCtx.shadowBlur = 6;
+            threatCtx.beginPath();
+            threatCtx.arc(n.x * w, n.y * h, size, 0, Math.PI * 2);
+            threatCtx.fill();
+            threatCtx.shadowBlur = 0;
+        });
+
+        // 坐标标签
+        threatCtx.fillStyle = '#5a7a8a';
+        threatCtx.font = '8px monospace';
+        var c2Count = threatNodes.filter(function(n) { return n.type === 'c2'; }).length;
+        var attackCount = threatNodes.filter(function(n) { return n.type === 'attack'; }).length;
+        threatCtx.fillText('C2: ' + c2Count, 8, 18);
+        threatCtx.fillText('攻击目标: ' + attackCount, 8, 32);
+        threatCtx.fillText('安全节点: ' + (threatNodes.length - c2Count - attackCount), 8, 46);
+
+        // 更新威胁数量
+        document.getElementById('threatNodeCount').textContent = threatNodes.length;
+        document.getElementById('threatCount').textContent = c2Count + attackCount;
+
+        requestAnimationFrame(drawThreat);
+    }
+
+    // ============================================================
+    // 3. ISS 高度更新
+    // ============================================================
+    function updateISS() {
+        fetch('https://api.wheretheiss.at/v1/satellites/25544')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data && data.altitude) {
+                    var alt = data.altitude.toFixed(0);
+                    document.getElementById('issAlt').textContent = alt + ' km';
+                    document.getElementById('rIssAlt').textContent = alt + ' km';
+                }
+            })
+            .catch(function() {});
+    }
+
+    // ============================================================
+    // 4. 仿真数据更新
+    // ============================================================
+    function updateStats() {
+        var leo = 12800 + Math.floor(Math.random() * 30);
+        var meo = 1200 + Math.floor(Math.random() * 15);
+        var geo = 800 + Math.floor(Math.random() * 10);
+        var debris = 34000 + Math.floor(Math.random() * 100);
+        document.getElementById('rSatTotal').textContent = (leo + meo + geo).toLocaleString();
+        document.getElementById('rSatLEO').textContent = leo.toLocaleString();
+        document.getElementById('rSatMEO').textContent = meo.toLocaleString();
+        document.getElementById('rSatGEO').textContent = geo.toLocaleString();
+        document.getElementById('rSatDebris').textContent = debris.toLocaleString() + '+';
+        document.getElementById('satCountLabel').textContent = 80;
+    }
+
+    // ============================================================
+    // 5. 命令交互
+    // ============================================================
+    function runCommand() {
+        var input = document.getElementById('cmdInput');
+        var val = input.value.trim();
+        if (!val) return;
+        var log = document.getElementById('reconLog');
+        var time = new Date().toLocaleTimeString('zh-CN');
+        log.innerHTML = '<div style="color:#5a7a8a;">[' + time + '] ▶ <span style="color:#00e87a;">' + val +
+            '</span></div>' + log.innerHTML;
+        if (log.children.length > 20) {
+            log.removeChild(log.lastChild);
+        }
+        // 模拟结果
+        setTimeout(function() {
+            var results = ['✅ 扫描完成', '⚠️ 发现 2 个开放端口', '📍 地理位置: 北京', '📡 延迟: 12ms'];
+            var r = results[Math.floor(Math.random() * results.length)];
+            log.innerHTML = '<div style="color:#5a7a8a;">[' + new Date().toLocaleTimeString('zh-CN') + '] ' + r +
+                '</div>' + log.innerHTML;
+        }, 500 + Math.random() * 600);
+    }
+
+    function clearCommand() {
+        document.getElementById('cmdInput').value = '';
+        document.getElementById('reconLog').innerHTML = '<div>⏳ 等待侦查...</div>';
+    }
+
+    document.getElementById('cmdInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') runCommand();
+        if (e.key === 'Escape') clearCommand();
+    });
+
+    // ============================================================
+    // 6. 侧边栏切换
+    // ============================================================
+    document.querySelectorAll('#sidebar .item').forEach(function(item) {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('#sidebar .item').forEach(function(i) {
+                i.classList.remove('active');
+            });
+            this.classList.add('active');
+            var view = this.dataset.view;
+            if (view === 'camera') {
+                window.location.hash = 'camera';
+                window.location.reload();
+            } else if (view === 'star') {
+                window.location.hash = 'star';
+                window.location.reload();
+            } else if (view === 'tools') {
+                window.location.hash = 'tools';
+                window.location.reload();
+            } else if (view === 'monitor') {
+                window.location.hash = 'monitor';
+                window.location.reload();
+            }
+        });
+    });
+
+    // ============================================================
+    // 7. 初始化
+    // ============================================================
+    initSatellites();
+    initThreat();
+    updateStats();
+    updateISS();
+
+    setTimeout(drawSatellites, 100);
+    setTimeout(drawThreat, 150);
+
+    setInterval(updateStats, 30000);
+    setInterval(updateISS, 5000);
+
+    console.log('⧩ 暗域 · 控制台已启动');
+    console.log('🛰️ 卫星追踪 | 🌍 威胁态势 | 📡 实时监控');
+</script>
+
+</body>
+</html>

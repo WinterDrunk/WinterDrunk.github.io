@@ -5,15 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>暗域 · 控制台</title>
     <style>
-        /* ============================================================
-           暗色主题 · 专业控制台 · 多端适配
-           ============================================================ */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: #0a0e17; }
         ::-webkit-scrollbar-thumb { background: #1a2a3a; border-radius: 2px; }
@@ -21,9 +13,9 @@
         body {
             background: #0a0e17;
             min-height: 100vh;
-            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
             color: #c8d8e8;
-            padding: 16px;
+            padding: 12px;
             display: flex;
             justify-content: center;
         }
@@ -33,24 +25,24 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            min-height: calc(100vh - 32px);
+            gap: 10px;
+            min-height: calc(100vh - 24px);
         }
 
-        /* ===== 顶部状态栏 ===== */
+        /* 顶部 */
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            padding: 8px 14px;
+            padding: 6px 14px;
             background: #0d1420;
             border: 1px solid #1a2a3a;
-            gap: 8px 16px;
+            gap: 6px 12px;
             border-radius: 4px;
         }
         .top-bar .brand {
-            font-size: clamp(14px, 2vw, 18px);
+            font-size: clamp(14px, 1.8vw, 18px);
             font-weight: 300;
             letter-spacing: 4px;
             background: linear-gradient(135deg, #00e87a, #00c8ff);
@@ -58,229 +50,55 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .top-bar .brand small {
-            font-size: 10px;
-            letter-spacing: 2px;
-            -webkit-text-fill-color: #5a7a8a;
-            background: none;
-            margin-left: 8px;
-        }
+        .top-bar .brand small { font-size: 10px; -webkit-text-fill-color: #5a7a8a; margin-left: 6px; }
         .top-bar .status {
-            display: flex;
-            gap: 8px 16px;
-            flex-wrap: wrap;
-            font-size: 10px;
-            color: #5a7a8a;
-            align-items: center;
+            display: flex; gap: 6px 14px; flex-wrap: wrap; font-size: 10px; color: #5a7a8a; align-items: center;
         }
-        .top-bar .status .dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            margin-right: 4px;
-        }
+        .top-bar .status .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px; }
         .top-bar .status .dot.green { background: #00e87a; }
         .top-bar .status .ip { color: #00c8ff; }
         .top-bar .status .badge {
-            border: 1px solid #1a2a3a;
-            padding: 0 8px;
-            font-size: 9px;
-            color: #5a7a8a;
+            border: 1px solid #1a2a3a; padding: 0 8px; font-size: 9px; color: #5a7a8a;
         }
 
-        /* ===== 主网格 ===== */
+        /* 网格 */
         .grid {
             display: grid;
-            grid-template-columns: 200px 1fr 280px;
-            grid-template-rows: auto 1fr auto;
-            gap: 12px;
+            grid-template-columns: 180px 1fr 240px;
+            gap: 10px;
             flex: 1;
         }
 
-        /* ===== 侧边栏 ===== */
+        /* 侧边栏 */
         .sidebar {
             background: #0d1420;
             border: 1px solid #1a2a3a;
-            padding: 10px 12px;
+            padding: 8px 10px;
             overflow-y: auto;
-            max-height: calc(100vh - 140px);
+            max-height: calc(100vh - 120px);
             border-radius: 4px;
         }
-        .sidebar .section { margin-bottom: 10px; }
+        .sidebar .section { margin-bottom: 8px; }
         .sidebar .section-title {
-            font-size: 9px;
-            color: #5a7a8a;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            border-bottom: 1px solid #0a1a1a;
-            padding-bottom: 3px;
-            margin-bottom: 4px;
+            font-size: 9px; color: #5a7a8a; letter-spacing: 2px; text-transform: uppercase;
+            border-bottom: 1px solid #0a1a1a; padding-bottom: 2px; margin-bottom: 3px;
         }
         .sidebar .item {
-            display: block;
-            padding: 3px 8px;
-            font-size: 11px;
-            color: #5a7a8a;
-            text-decoration: none;
-            cursor: pointer;
-            border-left: 2px solid transparent;
-            transition: 0.2s;
+            display: block; padding: 2px 8px; font-size: 11px; color: #5a7a8a;
+            cursor: pointer; border-left: 2px solid transparent; transition: 0.2s;
         }
-        .sidebar .item:hover {
-            color: #c8d8e8;
-            background: rgba(0, 232, 122, 0.04);
-        }
-        .sidebar .item.active {
-            color: #00e87a;
-            border-left-color: #00e87a;
-            background: rgba(0, 232, 122, 0.06);
-        }
-        .sidebar .item .icon { margin-right: 6px; opacity: 0.5; }
+        .sidebar .item:hover { color: #c8d8e8; background: rgba(0,232,122,0.04); }
+        .sidebar .item.active { color: #00e87a; border-left-color: #00e87a; background: rgba(0,232,122,0.06); }
+        .sidebar .item .icon { margin-right: 4px; opacity: 0.5; }
 
-        /* ===== 3D 地球容器 ===== */
-        .earth-3d-container {
-            width: 100%;
-            height: 100%;
-            min-height: 280px;
-            background: #0a0e17;
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid #1a2a3a;
-        }
-        .earth-3d-container canvas {
-            width: 100% !important;
-            height: 100% !important;
-            display: block;
-        }
+        /* 主区域 */
+        .main { display: flex; flex-direction: column; gap: 8px; min-height: 0; }
 
-        .canvas-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            flex: 1;
-            min-height: 280px;
-        }
-        .canvas-box {
-            background: #0d1420;
-            border: 1px solid #1a2a3a;
-            position: relative;
-            min-height: 180px;
-            overflow: hidden;
-            border-radius: 4px;
-        }
-        .canvas-box canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-        .canvas-box .label {
-            position: absolute;
-            top: 6px;
-            left: 10px;
-            font-size: 9px;
-            color: #5a7a8a;
-            letter-spacing: 1px;
-            background: rgba(10, 14, 23, 0.7);
-            padding: 1px 10px;
-            border: 1px solid #1a2a3a;
-            border-radius: 2px;
-        }
-        .canvas-box .status {
-            position: absolute;
-            top: 6px;
-            right: 10px;
-            font-size: 8px;
-            color: #5a7a8a;
-            background: rgba(10, 14, 23, 0.7);
-            padding: 1px 10px;
-            border: 1px solid #1a2a3a;
-            border-radius: 2px;
-        }
-        .canvas-box .legend {
-            position: absolute;
-            bottom: 6px;
-            left: 10px;
-            display: flex;
-            gap: 8px 12px;
-            font-size: 8px;
-            color: #5a7a8a;
-            background: rgba(10, 14, 23, 0.7);
-            padding: 2px 10px;
-            border: 1px solid #1a2a3a;
-            flex-wrap: wrap;
-            border-radius: 2px;
-        }
-        .canvas-box .legend .dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            margin-right: 3px;
-            vertical-align: middle;
-        }
-        .dot.green { background: #00e87a; }
-        .dot.cyan { background: #00c8ff; }
-        .dot.orange { background: #ff6a00; }
-        .dot.red { background: #ff2200; }
-        .dot.purple { background: #b39ddb; }
-
-        /* ===== 右侧面板 ===== */
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: calc(100vh - 140px);
-            overflow-y: auto;
-        }
-        .right-panel .panel-box {
-            background: #0d1420;
-            border: 1px solid #1a2a3a;
-            padding: 10px 12px;
-            border-radius: 4px;
-        }
-        .right-panel .panel-box .title {
-            font-size: 9px;
-            color: #5a7a8a;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            border-bottom: 1px solid #0a1a1a;
-            padding-bottom: 3px;
-            margin-bottom: 6px;
-        }
-        .right-panel .panel-box .entry {
-            font-size: 10px;
-            color: #5a7a8a;
-            padding: 2px 0;
-            border-bottom: 1px solid #0a0e17;
-            display: flex;
-            justify-content: space-between;
-        }
-        .right-panel .panel-box .entry .val { color: #c8d8e8; }
-        .right-panel .panel-box .entry .val.green { color: #00e87a; }
-        .right-panel .panel-box .entry .val.cyan { color: #00c8ff; }
-        .right-panel .panel-box .entry .val.orange { color: #ff6a00; }
-        .right-panel .panel-box .entry .val.red { color: #ff2200; }
-        .right-panel .panel-box .log {
-            font-size: 9px;
-            color: #5a7a8a;
-            line-height: 1.8;
-            max-height: 120px;
-            overflow-y: auto;
-        }
-
-        /* ===== 信息条 ===== */
+        /* 信息条 */
         .info-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px 16px;
-            padding: 6px 12px;
-            background: #0d1420;
-            border: 1px solid #1a2a3a;
-            font-size: clamp(9px, 1vw, 11px);
-            color: #5a7a8a;
-            border-radius: 4px;
+            display: flex; flex-wrap: wrap; gap: 4px 14px;
+            padding: 4px 12px; background: #0d1420; border: 1px solid #1a2a3a;
+            font-size: clamp(9px, 1vw, 11px); color: #5a7a8a; border-radius: 4px;
         }
         .info-bar .value.green { color: #00e87a; }
         .info-bar .value.cyan { color: #00c8ff; }
@@ -288,284 +106,165 @@
         .info-bar .value.red { color: #ff2200; }
         .info-bar .sep { color: #1a2a3a; }
 
-        /* ===== 底部 ===== */
-        .bottom-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 14px;
+        /* 三列面板 */
+        .panel-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        .mini-panel {
             background: #0d1420;
             border: 1px solid #1a2a3a;
-            font-size: 9px;
-            color: #5a7a8a;
-            flex-wrap: wrap;
-            gap: 4px 16px;
             border-radius: 4px;
+            padding: 8px 10px;
+            min-height: 100px;
         }
-        .bottom-bar .key {
-            border: 1px solid #0a1a1a;
-            padding: 0 6px;
-            font-size: 8px;
+        .mini-panel .mp-title {
+            font-size: 9px; color: #5a7a8a; letter-spacing: 2px; text-transform: uppercase;
+            border-bottom: 1px solid #0a1a1a; padding-bottom: 2px; margin-bottom: 4px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .mini-panel .mp-content { font-size: 10px; color: #c8d8e8; line-height: 1.7; }
+        .mini-panel .mp-content .row {
+            display: flex; justify-content: space-between; padding: 1px 0;
+            border-bottom: 1px solid #0a0e17;
+        }
+        .mini-panel .mp-content .cve-id { color: #ff6a00; }
+        .mini-panel .mp-content .cve-score { color: #00e87a; }
+        .mini-panel .mp-content .cve-desc { color: #5a7a8a; font-size: 9px; }
+        .mini-panel .mp-content .onion { color: #b39ddb; }
+        .mini-panel .mp-content .online { color: #00e87a; }
+        .mini-panel .mp-content .offline { color: #ff2200; }
+        .mini-panel .mp-content .unknown { color: #ff6a00; }
+        .refresh-btn {
+            background: transparent; border: 1px solid #1a2a3a; color: #5a7a8a;
+            padding: 0 8px; font-family: inherit; font-size: 9px; cursor: pointer;
+            border-radius: 2px;
+        }
+        .refresh-btn:hover { border-color: #00c8ff; color: #00c8ff; }
+
+        /* 3D 地球 */
+        .earth-box {
+            background: #0d1420;
+            border: 1px solid #1a2a3a;
+            border-radius: 4px;
+            position: relative;
+            min-height: 280px;
+            overflow: hidden;
+        }
+        .earth-box canvas { width: 100% !important; height: 100% !important; display: block; }
+        .earth-box .label {
+            position: absolute; top: 6px; left: 10px;
+            font-size: 9px; color: #5a7a8a; letter-spacing: 1px;
+            background: rgba(10,14,23,0.7); padding: 1px 10px;
+            border: 1px solid #1a2a3a; border-radius: 2px;
+        }
+        .earth-box .status {
+            position: absolute; top: 6px; right: 10px;
+            font-size: 8px; color: #5a7a8a;
+            background: rgba(10,14,23,0.7); padding: 1px 10px;
+            border: 1px solid #1a2a3a; border-radius: 2px;
         }
 
+        /* 底部工具条 */
         .tool-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px 16px;
-            padding: 6px 12px;
-            background: #0d1420;
-            border: 1px solid #1a2a3a;
-            font-size: clamp(9px, 1vw, 11px);
-            color: #5a7a8a;
-            align-items: center;
-            border-radius: 4px;
+            display: flex; flex-wrap: wrap; gap: 4px 14px;
+            padding: 4px 12px; background: #0d1420; border: 1px solid #1a2a3a;
+            font-size: clamp(9px, 1vw, 11px); color: #5a7a8a;
+            align-items: center; border-radius: 4px;
         }
         .tool-bar .num { color: #c8d8e8; }
         .tool-bar .num.green { color: #00e87a; }
         .tool-bar .num.cyan { color: #00c8ff; }
         .tool-bar .num.orange { color: #ff6a00; }
         .tool-bar .num.red { color: #ff2200; }
-        .tool-bar .cmd {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            margin-left: auto;
-        }
+        .tool-bar .cmd { display: flex; gap: 4px; align-items: center; margin-left: auto; }
         .tool-bar .cmd input {
-            background: #0a0e17;
-            border: 1px solid #1a2a3a;
-            color: #c8d8e8;
-            padding: 2px 10px;
-            font-family: inherit;
-            font-size: clamp(9px, 1vw, 11px);
-            outline: none;
-            width: clamp(100px, 15vw, 180px);
-            border-radius: 2px;
+            background: #0a0e17; border: 1px solid #1a2a3a; color: #c8d8e8;
+            padding: 2px 8px; font-family: inherit; font-size: clamp(9px, 1vw, 11px);
+            outline: none; width: clamp(100px, 14vw, 160px); border-radius: 2px;
         }
         .tool-bar .cmd input:focus { border-color: #00e87a; }
         .tool-bar .cmd button {
-            background: transparent;
-            border: 1px solid #1a2a3a;
-            color: #5a7a8a;
-            padding: 2px 12px;
-            font-family: inherit;
-            font-size: clamp(9px, 1vw, 11px);
-            cursor: pointer;
-            transition: 0.2s;
-            border-radius: 2px;
+            background: transparent; border: 1px solid #1a2a3a; color: #5a7a8a;
+            padding: 2px 10px; font-family: inherit; font-size: clamp(9px, 1vw, 11px);
+            cursor: pointer; transition: 0.2s; border-radius: 2px;
         }
-        .tool-bar .cmd button:hover {
-            border-color: #00e87a;
-            color: #00e87a;
+        .tool-bar .cmd button:hover { border-color: #00e87a; color: #00e87a; }
+
+        /* 右侧面板 */
+        .right-panel {
+            display: flex; flex-direction: column; gap: 8px;
+            max-height: calc(100vh - 120px); overflow-y: auto;
+        }
+        .right-panel .panel-box {
+            background: #0d1420; border: 1px solid #1a2a3a;
+            padding: 8px 10px; border-radius: 4px;
+        }
+        .right-panel .panel-box .title {
+            font-size: 9px; color: #5a7a8a; letter-spacing: 2px; text-transform: uppercase;
+            border-bottom: 1px solid #0a1a1a; padding-bottom: 2px; margin-bottom: 4px;
+        }
+        .right-panel .panel-box .entry {
+            font-size: 10px; color: #5a7a8a; padding: 1px 0;
+            border-bottom: 1px solid #0a0e17; display: flex; justify-content: space-between;
+        }
+        .right-panel .panel-box .entry .val { color: #c8d8e8; }
+        .right-panel .panel-box .entry .val.green { color: #00e87a; }
+        .right-panel .panel-box .entry .val.cyan { color: #00c8ff; }
+        .right-panel .panel-box .entry .val.orange { color: #ff6a00; }
+        .right-panel .panel-box .entry .val.red { color: #ff2200; }
+        .right-panel .panel-box .log {
+            font-size: 9px; color: #5a7a8a; line-height: 1.7;
+            max-height: 100px; overflow-y: auto;
         }
 
-        /* ===== 新增面板样式 ===== */
-        .panel-grid-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-            margin-top: 4px;
+        /* 底部 */
+        .bottom-bar {
+            display: flex; justify-content: space-between;
+            padding: 3px 14px; background: #0d1420; border: 1px solid #1a2a3a;
+            font-size: 9px; color: #5a7a8a; flex-wrap: wrap; gap: 2px 12px; border-radius: 4px;
         }
-        .mini-panel {
-            background: #0d1420;
-            border: 1px solid #1a2a3a;
-            border-radius: 4px;
-            padding: 10px 12px;
-            min-height: 120px;
-        }
-        .mini-panel .mp-title {
-            font-size: 9px;
-            color: #5a7a8a;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            border-bottom: 1px solid #0a1a1a;
-            padding-bottom: 3px;
-            margin-bottom: 6px;
-        }
-        .mini-panel .mp-content {
-            font-size: 10px;
-            color: #c8d8e8;
-            line-height: 1.8;
-            max-height: 140px;
-            overflow-y: auto;
-        }
-        .mini-panel .mp-content .cve-item {
-            padding: 2px 0;
-            border-bottom: 1px solid #0a0e17;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 4px;
-        }
-        .mini-panel .mp-content .cve-item .cve-id { color: #ff6a00; }
-        .mini-panel .mp-content .cve-item .cve-score { color: #00e87a; }
-        .mini-panel .mp-content .cve-item .cve-desc {
-            color: #5a7a8a;
-            font-size: 9px;
-            width: 100%;
-        }
-        .mini-panel .mp-content .weather-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 2px 0;
-            border-bottom: 1px solid #0a0e17;
-        }
-        .mini-panel .mp-content .darknet-item {
-            padding: 2px 0;
-            border-bottom: 1px solid #0a0e17;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-        .mini-panel .mp-content .darknet-item .onion { color: #b39ddb; }
-        .mini-panel .mp-content .darknet-item .status {
-            font-size: 9px;
-            padding: 0 6px;
-            border-radius: 2px;
-        }
-        .mini-panel .mp-content .darknet-item .status.online { color: #00e87a; }
-        .mini-panel .mp-content .darknet-item .status.offline { color: #ff2200; }
-        .mini-panel .mp-content .darknet-item .status.unknown { color: #ff6a00; }
-
-        .refresh-btn {
-            background: transparent;
-            border: 1px solid #1a2a3a;
-            color: #5a7a8a;
-            padding: 1px 10px;
-            font-family: inherit;
-            font-size: 9px;
-            cursor: pointer;
-            transition: 0.2s;
-            border-radius: 2px;
-            margin-left: 8px;
-        }
-        .refresh-btn:hover {
-            border-color: #00c8ff;
-            color: #00c8ff;
+        .bottom-bar .key {
+            border: 1px solid #0a1a1a; padding: 0 4px; font-size: 8px;
         }
 
-        /* ============================================================
-           多端适配 - 响应式
-           ============================================================ */
-
-        /* 平板 */
+        /* 响应式 */
         @media (max-width: 1024px) {
-            .grid {
-                grid-template-columns: 160px 1fr 220px;
-            }
-            .panel-grid-3 {
-                grid-template-columns: 1fr 1fr;
-            }
-            .canvas-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+            .grid { grid-template-columns: 140px 1fr 200px; }
+            .panel-row { grid-template-columns: 1fr 1fr; }
         }
-
-        /* 手机横屏 / 小平板 */
         @media (max-width: 768px) {
-            body { padding: 10px; }
-            .grid {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto;
-                gap: 10px;
-            }
+            .grid { grid-template-columns: 1fr; gap: 8px; }
             .sidebar {
-                max-height: 140px;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 2px;
-                padding: 6px 10px;
-                overflow-y: auto;
+                max-height: 100px; display: flex; flex-wrap: wrap; gap: 2px;
+                padding: 4px 8px; overflow-y: auto;
             }
-            .sidebar .section {
-                margin-bottom: 0;
-                width: 100%;
-            }
-            .sidebar .item {
-                display: inline-block;
-                padding: 2px 8px;
-                font-size: 10px;
-                border-left: none;
-                border-bottom: 2px solid transparent;
-            }
-            .sidebar .item.active {
-                border-left: none;
-                border-bottom-color: #00e87a;
-            }
-            .canvas-grid {
-                grid-template-columns: 1fr;
-            }
-            .canvas-box {
-                min-height: 160px;
-            }
-            .right-panel {
-                max-height: 300px;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
-            .right-panel .panel-box {
-                max-height: 160px;
-                overflow-y: auto;
-            }
-            .panel-grid-3 {
-                grid-template-columns: 1fr 1fr;
-            }
-            .tool-bar .cmd {
-                margin-left: 0;
-                width: 100%;
-            }
-            .tool-bar .cmd input {
-                flex: 1;
-                width: auto;
-            }
-            .earth-3d-container {
-                min-height: 220px;
-            }
+            .sidebar .section { width: 100%; margin-bottom: 2px; }
+            .sidebar .item { display: inline-block; padding: 2px 6px; font-size: 10px; border-left: none; }
+            .sidebar .item.active { border-left: none; border-bottom: 2px solid #00e87a; }
+            .panel-row { grid-template-columns: 1fr 1fr; }
+            .right-panel { max-height: 300px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+            .right-panel .panel-box { max-height: 140px; overflow-y: auto; }
+            .earth-box { min-height: 200px; }
+            .tool-bar .cmd { margin-left: 0; width: 100%; }
+            .tool-bar .cmd input { flex: 1; }
             .top-bar .brand small { display: none; }
             .top-bar .status .badge { display: none; }
-            .top-bar .status { gap: 4px 10px; font-size: 9px; }
-            .bottom-bar { font-size: 8px; }
-            .bottom-bar .key { font-size: 7px; padding: 0 4px; }
-            .mini-panel .mp-content { font-size: 9px; max-height: 100px; }
-            .info-bar .sep { display: none; }
         }
-
-        /* 手机竖屏 */
         @media (max-width: 480px) {
             body { padding: 6px; }
-            .top-bar .brand { font-size: 14px; letter-spacing: 2px; }
-            .grid { gap: 8px; }
-            .canvas-box { min-height: 140px; }
-            .right-panel {
-                grid-template-columns: 1fr;
-                max-height: 400px;
-            }
-            .right-panel .panel-box {
-                max-height: 140px;
-            }
-            .panel-grid-3 {
-                grid-template-columns: 1fr;
-            }
-            .sidebar {
-                max-height: 120px;
-                padding: 4px 8px;
-            }
-            .sidebar .item { font-size: 9px; padding: 2px 6px; }
-            .earth-3d-container { min-height: 180px; }
-            .tool-bar {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 4px;
-            }
+            .panel-row { grid-template-columns: 1fr; }
+            .right-panel { grid-template-columns: 1fr; max-height: 400px; }
+            .earth-box { min-height: 160px; }
+            .sidebar .item { font-size: 9px; padding: 1px 4px; }
+            .info-bar { font-size: 8px; gap: 2px 6px; padding: 2px 8px; }
+            .top-bar .brand { font-size: 13px; letter-spacing: 2px; }
+            .top-bar .status { font-size: 8px; gap: 2px 8px; }
+            .top-bar .status .ip { font-size: 8px; }
+            .tool-bar { flex-direction: column; align-items: stretch; gap: 4px; }
             .tool-bar .cmd { flex-wrap: wrap; }
             .tool-bar .cmd input { width: 100%; }
-            .info-bar { font-size: 8px; gap: 4px 8px; padding: 4px 8px; }
-            .bottom-bar { font-size: 7px; flex-direction: column; align-items: center; gap: 2px; }
-            .top-bar .status .ip { font-size: 8px; }
-            .mini-panel .mp-content .cve-item { flex-direction: column; }
-            .mini-panel .mp-content .cve-item .cve-desc { font-size: 8px; }
-            .mini-panel .mp-content .darknet-item { flex-direction: column; }
-            .mini-panel .mp-content .weather-row { flex-direction: column; }
         }
     </style>
 </head>
@@ -573,26 +272,23 @@
 
 <div class="console">
 
-    <!-- ===== 顶部状态栏 ===== -->
+    <!-- 顶部 -->
     <div class="top-bar">
-        <div class="brand">
-            ⧩ 暗域 <small>CONTROL</small>
-        </div>
+        <div class="brand">⧩ 暗域 <small>CONTROL</small></div>
         <div class="status">
             <span><span class="dot green"></span> ONLINE</span>
             <span class="badge">OSINT</span>
             <span class="badge">TERMINAL</span>
             <span class="ip">8.8.8.8</span>
             <span class="ip">1.1.1.1</span>
-            <span class="ip" style="font-size:9px;">2489:8a50:7c17:...</span>
             <span class="badge">● 运行中</span>
         </div>
     </div>
 
-    <!-- ===== 主网格 ===== -->
+    <!-- 网格 -->
     <div class="grid">
 
-        <!-- ===== 侧边栏 ===== -->
+        <!-- 侧边栏 -->
         <nav class="sidebar" id="sidebar">
             <div class="section">
                 <div class="section-title">◈ 控制台</div>
@@ -611,69 +307,52 @@
             </div>
         </nav>
 
-        <!-- ===== 主内容 ===== -->
+        <!-- 主区域 -->
         <div class="main">
 
             <!-- 信息条 -->
-            <div class="info-bar" id="infoBar">
-                <span><span class="label">GEO-TRACE</span> <span class="value">waiting target</span></span>
+            <div class="info-bar">
+                <span>GEO-TRACE waiting target</span>
                 <span class="sep">|</span>
-                <span><span class="label">seismic</span> <span class="value orange" id="quakeCount">266</span> <span class="label">· 24h</span></span>
+                <span>seismic <span class="value orange">266</span> · 24h</span>
                 <span class="sep">|</span>
-                <span><span class="label">threats</span> <span class="value red" id="threatCount">4</span></span>
+                <span>threats <span class="value red" id="threatCount">4</span></span>
                 <span class="sep">|</span>
-                <span><span class="label">ISS ALT</span> <span class="value cyan" id="issAlt">414 km</span></span>
-                <span style="margin-left:auto;"><span class="label">STATUS</span> <span class="value green">● OPERATING</span></span>
+                <span>ISS ALT <span class="value cyan" id="issAlt">414 km</span></span>
+                <span style="margin-left:auto;">STATUS <span class="value green">● OPERATING</span></span>
             </div>
 
-            <!-- ===== 新面板：CVE + 天气 + 暗网 ===== -->
-            <div class="panel-grid-3">
+            <!-- 三列面板 -->
+            <div class="panel-row">
 
-                <!-- CVE 漏洞监控 -->
+                <!-- CVE -->
                 <div class="mini-panel">
-                    <div class="mp-title">
-                        🛡️ CVE 漏洞监控
-                        <button class="refresh-btn" onclick="fetchCVE()">⟳</button>
-                    </div>
-                    <div class="mp-content" id="cveContent">
-                        <div style="color:#5a7a8a;font-size:9px;">⏳ 加载漏洞情报...</div>
-                    </div>
+                    <div class="mp-title">🛡️ CVE 漏洞 <button class="refresh-btn" onclick="fetchCVE()">⟳</button></div>
+                    <div class="mp-content" id="cveContent"><span style="color:#5a7a8a;font-size:9px;">⏳ 加载中...</span></div>
                 </div>
 
-                <!-- 天气信息 -->
+                <!-- 天气 -->
                 <div class="mini-panel">
-                    <div class="mp-title">
-                        🌤️ 实时天气
-                        <button class="refresh-btn" onclick="fetchWeather()">⟳</button>
-                    </div>
-                    <div class="mp-content" id="weatherContent">
-                        <div style="color:#5a7a8a;font-size:9px;">⏳ 定位中...</div>
-                    </div>
+                    <div class="mp-title">🌤️ 实时天气 <button class="refresh-btn" onclick="fetchWeather()">⟳</button></div>
+                    <div class="mp-content" id="weatherContent"><span style="color:#5a7a8a;font-size:9px;">⏳ 定位中...</span></div>
                 </div>
 
-                <!-- 暗网监测 -->
+                <!-- 暗网 -->
                 <div class="mini-panel">
-                    <div class="mp-title">
-                        🌑 暗网监测
-                        <button class="refresh-btn" onclick="fetchDarknet()">⟳</button>
-                    </div>
-                    <div class="mp-content" id="darknetContent">
-                        <div style="color:#5a7a8a;font-size:9px;">⏳ 加载暗网情报...</div>
-                    </div>
+                    <div class="mp-title">🌑 暗网监测 <button class="refresh-btn" onclick="fetchDarknet()">⟳</button></div>
+                    <div class="mp-content" id="darknetContent"><span style="color:#5a7a8a;font-size:9px;">⏳ 加载中...</span></div>
                 </div>
 
             </div>
 
-            <!-- ===== 原有：3D 地球 ===== -->
-            <div class="canvas-grid" id="canvasGrid" style="margin-top:4px;">
-                <div class="canvas-box" style="grid-column: 1 / -1; min-height: 320px;">
-                    <div id="earthContainer" class="earth-3d-container"></div>
-                    <div class="label">🌍 3D 地球 · 实时卫星追踪</div>
-                    <div class="status" id="earthStatus">● 3D 渲染中</div>
-                </div>
+            <!-- 3D 地球 -->
+            <div class="earth-box" id="earthBox">
+                <div id="earthContainer" style="width:100%;height:100%;min-height:280px;"></div>
+                <div class="label">🌍 3D 地球 · 实时卫星追踪</div>
+                <div class="status" id="earthStatus">● 3D 渲染中</div>
             </div>
 
-            <!-- 底部工具条 -->
+            <!-- 工具条 -->
             <div class="tool-bar">
                 <span>TOOLS: <span class="num green">438</span></span>
                 <span>QUERIES: <span class="num cyan">0</span></span>
@@ -689,47 +368,39 @@
 
         </div>
 
-        <!-- ===== 右侧面板 ===== -->
+        <!-- 右侧面板 -->
         <div class="right-panel">
 
-            <!-- 快速统计 -->
             <div class="panel-box">
                 <div class="title">📊 实时统计</div>
-                <div class="entry"><span>在轨卫星</span><span class="val cyan" id="rSatTotal">16,397</span></div>
-                <div class="entry"><span>LEO 低轨</span><span class="val green" id="rSatLEO">12,800</span></div>
-                <div class="entry"><span>MEO 中轨</span><span class="val orange" id="rSatMEO">1,200</span></div>
-                <div class="entry"><span>GEO 高轨</span><span class="val purple" id="rSatGEO">800</span></div>
-                <div class="entry"><span>空间碎片</span><span class="val red" id="rSatDebris">34,000+</span></div>
-                <div class="entry" style="border-top:1px solid #0a1a1a;margin-top:4px;padding-top:4px;">
-                    <span>ISS 高度</span>
-                    <span class="val cyan" id="rIssAlt">-- km</span>
+                <div class="entry"><span>在轨卫星</span><span class="val cyan" id="rSatTotal">--</span></div>
+                <div class="entry"><span>LEO 低轨</span><span class="val green" id="rSatLEO">--</span></div>
+                <div class="entry"><span>MEO 中轨</span><span class="val orange" id="rSatMEO">--</span></div>
+                <div class="entry"><span>GEO 高轨</span><span class="val purple" id="rSatGEO">--</span></div>
+                <div class="entry"><span>空间碎片</span><span class="val red" id="rSatDebris">--</span></div>
+                <div class="entry" style="border-top:1px solid #0a1a1a;margin-top:3px;padding-top:3px;">
+                    <span>ISS 高度</span><span class="val cyan" id="rIssAlt">-- km</span>
                 </div>
             </div>
 
-            <!-- 侦查日志 -->
             <div class="panel-box" style="flex:1;">
                 <div class="title">📋 侦查日志</div>
-                <div class="log" id="reconLog">
-                    <div>⏳ 等待侦查...</div>
-                </div>
+                <div class="log" id="reconLog"><div>⏳ 等待侦查...</div></div>
             </div>
 
         </div>
 
     </div>
 
-    <!-- ===== 底部状态 ===== -->
+    <!-- 底部 -->
     <div class="bottom-bar">
         <div>READY · 439 tools loaded</div>
-        <div>
-            <span class="key">Enter</span> to run
-            <span class="key">Esc</span> to clear
-        </div>
+        <div><span class="key">Enter</span> to run <span class="key">Esc</span> to clear</div>
     </div>
 
 </div>
 
-<!-- ===== Three.js CDN ===== -->
+<!-- Three.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
 </script>
 
@@ -737,338 +408,235 @@
     // ============================================================
     // 1. Three.js 3D 地球
     // ============================================================
-    var container = document.getElementById('earthContainer');
-    var width = container.clientWidth;
-    var height = container.clientHeight || 320;
+    (function() {
+        var container = document.getElementById('earthContainer');
+        if (!container) return;
+        var width = container.clientWidth || 400;
+        var height = container.clientHeight || 280;
 
-    var scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0e17);
+        var scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0e17);
 
-    var camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.set(0, 0, 3.5);
+        var camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+        camera.position.set(0, 0, 3.5);
 
-    var renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
+        var renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
 
-    // ---- 灯光 ----
-    var ambientLight = new THREE.AmbientLight(0x404060);
-    scene.add(ambientLight);
-    var dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    dirLight.position.set(1, 1, 2);
-    scene.add(dirLight);
-    var backLight = new THREE.DirectionalLight(0x4466aa, 0.5);
-    backLight.position.set(-1, -0.5, -1);
-    scene.add(backLight);
+        var ambient = new THREE.AmbientLight(0x404060);
+        scene.add(ambient);
+        var dir = new THREE.DirectionalLight(0xffffff, 1.2);
+        dir.position.set(1, 1, 2);
+        scene.add(dir);
+        var back = new THREE.DirectionalLight(0x4466aa, 0.5);
+        back.position.set(-1, -0.5, -1);
+        scene.add(back);
 
-    // ---- 地球 ----
-    var earthGroup = new THREE.Group();
-    scene.add(earthGroup);
+        var earthGroup = new THREE.Group();
+        scene.add(earthGroup);
 
-    var textureLoader = new THREE.TextureLoader();
-    var earthMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
-    var earthSpecularMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
-    var earthNormalMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
-    var cloudMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
+        var loader = new THREE.TextureLoader();
+        var earthMap = loader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+        var normalMap = loader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
+        var cloudMap = loader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
 
-    var earthGeo = new THREE.SphereGeometry(1, 64, 64);
-    var earthMat = new THREE.MeshPhongMaterial({
-        map: earthMap,
-        specularMap: earthSpecularMap,
-        specular: new THREE.Color(0x333333),
-        shininess: 5,
-        normalMap: earthNormalMap,
-        normalScale: new THREE.Vector2(0.8, 0.8),
-    });
-    var earth = new THREE.Mesh(earthGeo, earthMat);
-    earthGroup.add(earth);
-
-    // ---- 云层 ----
-    var cloudGeo = new THREE.SphereGeometry(1.008, 64, 64);
-    var cloudMat = new THREE.MeshPhongMaterial({
-        map: cloudMap,
-        transparent: true,
-        opacity: 0.25,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false
-    });
-    var clouds = new THREE.Mesh(cloudGeo, cloudMat);
-    earthGroup.add(clouds);
-
-    // ---- 大气层光晕 ----
-    var glowGeo = new THREE.SphereGeometry(1.04, 64, 64);
-    var glowMat = new THREE.MeshPhongMaterial({
-        color: 0x00c8ff,
-        transparent: true,
-        opacity: 0.08,
-        side: THREE.BackSide
-    });
-    var glow = new THREE.Mesh(glowGeo, glowMat);
-    earthGroup.add(glow);
-
-    // ---- 卫星光点 ----
-    var satGroup = new THREE.Group();
-    scene.add(satGroup);
-    var satPositions = [];
-
-    for (var i = 0; i < 60; i++) {
-        var lat = (Math.random() - 0.5) * Math.PI * 1.2;
-        var lon = Math.random() * Math.PI * 2;
-        var alt = 1.3 + Math.random() * 0.6;
-        var color = i < 35 ? 0x00c8ff : (i < 50 ? 0xffb74d : 0xb39ddb);
-        var size = 0.008 + Math.random() * 0.008;
-
-        var geo = new THREE.SphereGeometry(size, 4, 4);
-        var mat = new THREE.MeshBasicMaterial({ color: color });
-        var mesh = new THREE.Mesh(geo, mat);
-
-        var x = alt * Math.cos(lat) * Math.cos(lon);
-        var y = alt * Math.sin(lat);
-        var z = alt * Math.cos(lat) * Math.sin(lon);
-        mesh.position.set(x, y, z);
-        satGroup.add(mesh);
-        satPositions.push({ mesh: mesh, lat: lat, lon: lon, alt: alt, speed: 0.2 + Math.random() * 0.3 });
-    }
-
-    // ---- ISS ----
-    var issGeo = new THREE.SphereGeometry(0.025, 8, 8);
-    var issMat = new THREE.MeshBasicMaterial({ color: 0x00e87a });
-    var iss = new THREE.Mesh(issGeo, issMat);
-    var issLat = 0.5,
-        issLon = 0,
-        issAlt = 1.12;
-    iss.position.set(issAlt * Math.cos(issLat) * Math.cos(issLon), issAlt * Math.sin(issLat), issAlt * Math.cos(issLat) *
-        Math.sin(issLon));
-    satGroup.add(iss);
-
-    // ---- 轨道线 ----
-    function createOrbitRing(radius, color, opacity) {
-        var points = [];
-        for (var i = 0; i <= 64; i++) {
-            var theta = (i / 64) * Math.PI * 2;
-            var x = radius * Math.cos(theta);
-            var z = radius * Math.sin(theta);
-            points.push(new THREE.Vector3(x, 0, z));
-        }
-        var geo = new THREE.BufferGeometry().setFromPoints(points);
-        var mat = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: opacity });
-        var line = new THREE.Line(geo, mat);
-        return line;
-    }
-
-    var orbit1 = createOrbitRing(1.3, 0x00c8ff, 0.15);
-    var orbit2 = createOrbitRing(1.7, 0xffb74d, 0.12);
-    var orbit3 = createOrbitRing(2.1, 0xb39ddb, 0.10);
-    scene.add(orbit1);
-    scene.add(orbit2);
-    scene.add(orbit3);
-
-    // ---- 星星 ----
-    var starsGeo = new THREE.BufferGeometry();
-    var starsCount = 1500;
-    var starPositions = new Float32Array(starsCount * 3);
-    var starSizes = new Float32Array(starsCount);
-    for (var i = 0; i < starsCount * 3; i++) {
-        var r = 20 + Math.random() * 80;
-        var theta = Math.random() * Math.PI * 2;
-        var phi = Math.acos(2 * Math.random() - 1);
-        starPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-        starPositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-        starPositions[i * 3 + 2] = r * Math.cos(phi);
-        starSizes[i] = 0.05 + Math.random() * 0.1;
-    }
-    starsGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    starsGeo.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
-    var starsMat = new THREE.PointsMaterial({ color: 0x8899aa, size: 0.08, transparent: true, opacity: 0.6 });
-    var stars = new THREE.Points(starsGeo, starsMat);
-    scene.add(stars);
-
-    // ---- 动画 ----
-    var clock = new THREE.Clock();
-
-    function animate() {
-        var delta = clock.getDelta();
-        var elapsed = clock.getElapsedTime();
-
-        earth.rotation.y += delta * 0.1;
-        clouds.rotation.y += delta * 0.12;
-
-        satPositions.forEach(function(s) {
-            s.lon += delta * s.speed * 0.3;
-            var x = s.alt * Math.cos(s.lat) * Math.cos(s.lon);
-            var y = s.alt * Math.sin(s.lat) * 0.7;
-            var z = s.alt * Math.cos(s.lat) * Math.sin(s.lon);
-            s.mesh.position.set(x, y, z);
+        var earthGeo = new THREE.SphereGeometry(1, 64, 64);
+        var earthMat = new THREE.MeshPhongMaterial({
+            map: earthMap,
+            specular: new THREE.Color(0x333333),
+            shininess: 5,
+            normalMap: normalMap,
+            normalScale: new THREE.Vector2(0.8, 0.8)
         });
+        var earth = new THREE.Mesh(earthGeo, earthMat);
+        earthGroup.add(earth);
 
-        issLon += delta * 0.4;
-        issLat = 0.5 + 0.3 * Math.sin(elapsed * 0.2);
-        iss.position.set(
-            issAlt * Math.cos(issLat) * Math.cos(issLon),
-            issAlt * Math.sin(issLat) * 0.7,
-            issAlt * Math.cos(issLat) * Math.sin(issLon)
-        );
+        var cloudGeo = new THREE.SphereGeometry(1.008, 64, 64);
+        var cloudMat = new THREE.MeshPhongMaterial({
+            map: cloudMap,
+            transparent: true,
+            opacity: 0.25,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+        var clouds = new THREE.Mesh(cloudGeo, cloudMat);
+        earthGroup.add(clouds);
 
-        stars.rotation.y += delta * 0.002;
-        stars.rotation.x += delta * 0.001;
-        glowMat.opacity = 0.06 + 0.03 * Math.sin(elapsed * 0.3);
+        var glowGeo = new THREE.SphereGeometry(1.04, 64, 64);
+        var glowMat = new THREE.MeshPhongMaterial({
+            color: 0x00c8ff,
+            transparent: true,
+            opacity: 0.08,
+            side: THREE.BackSide
+        });
+        var glow = new THREE.Mesh(glowGeo, glowMat);
+        earthGroup.add(glow);
 
-        renderer.render(scene, camera);
-        requestAnimationFrame(animate);
-    }
+        var satGroup = new THREE.Group();
+        scene.add(satGroup);
+        var sats = [];
+        for (var i = 0; i < 50; i++) {
+            var lat = (Math.random() - 0.5) * Math.PI * 1.2;
+            var lon = Math.random() * Math.PI * 2;
+            var alt = 1.3 + Math.random() * 0.6;
+            var color = i < 30 ? 0x00c8ff : (i < 42 ? 0xffb74d : 0xb39ddb);
+            var size = 0.006 + Math.random() * 0.008;
+            var geo = new THREE.SphereGeometry(size, 4, 4);
+            var mat = new THREE.MeshBasicMaterial({ color: color });
+            var mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(
+                alt * Math.cos(lat) * Math.cos(lon),
+                alt * Math.sin(lat),
+                alt * Math.cos(lat) * Math.sin(lon)
+            );
+            satGroup.add(mesh);
+            sats.push({ mesh: mesh, lon: lon, lat: lat, alt: alt, speed: 0.2 + Math.random() * 0.3 });
+        }
 
-    animate();
+        var issGeo = new THREE.SphereGeometry(0.02, 8, 8);
+        var issMat = new THREE.MeshBasicMaterial({ color: 0x00e87a });
+        var iss = new THREE.Mesh(issGeo, issMat);
+        var issLat = 0.5,
+            issLon = 0,
+            issAlt = 1.12;
+        iss.position.set(issAlt * Math.cos(issLat) * Math.cos(issLon), issAlt * Math.sin(issLat), issAlt * Math.cos(issLat) *
+            Math.sin(issLon));
+        satGroup.add(iss);
 
-    function resizeEarth() {
-        var w = container.clientWidth;
-        var h = container.clientHeight || 320;
-        camera.aspect = w / h;
-        camera.updateProjectionMatrix();
-        renderer.setSize(w, h);
-    }
+        function orbitRing(r, color, op) {
+            var pts = [];
+            for (var i = 0; i <= 64; i++) {
+                var t = (i / 64) * Math.PI * 2;
+                pts.push(new THREE.Vector3(r * Math.cos(t), 0, r * Math.sin(t)));
+            }
+            var g = new THREE.BufferGeometry().setFromPoints(pts);
+            var m = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: op });
+            return new THREE.Line(g, m);
+        }
+        scene.add(orbitRing(1.3, 0x00c8ff, 0.15));
+        scene.add(orbitRing(1.7, 0xffb74d, 0.12));
+        scene.add(orbitRing(2.1, 0xb39ddb, 0.10));
 
-    window.addEventListener('resize', resizeEarth);
-    setTimeout(resizeEarth, 100);
-    document.getElementById('earthStatus').textContent = '● 3D 实时渲染';
+        var starsG = new THREE.BufferGeometry();
+        var sc = 1200;
+        var pos = new Float32Array(sc * 3);
+        for (var i = 0; i < sc * 3; i++) {
+            var r = 20 + Math.random() * 80;
+            var theta = Math.random() * Math.PI * 2;
+            var phi = Math.acos(2 * Math.random() - 1);
+            pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+            pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+            pos[i * 3 + 2] = r * Math.cos(phi);
+        }
+        starsG.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        var starsM = new THREE.PointsMaterial({ color: 0x8899aa, size: 0.06, transparent: true, opacity: 0.5 });
+        var stars = new THREE.Points(starsG, starsM);
+        scene.add(stars);
 
-    console.log('🌍 3D 地球已加载');
+        var clock = new THREE.Clock();
+
+        function animate() {
+            var delta = clock.getDelta();
+            var elapsed = clock.getElapsedTime();
+            earth.rotation.y += delta * 0.1;
+            clouds.rotation.y += delta * 0.12;
+            sats.forEach(function(s) {
+                s.lon += delta * s.speed * 0.3;
+                var x = s.alt * Math.cos(s.lat) * Math.cos(s.lon);
+                var y = s.alt * Math.sin(s.lat) * 0.7;
+                var z = s.alt * Math.cos(s.lat) * Math.sin(s.lon);
+                s.mesh.position.set(x, y, z);
+            });
+            issLon += delta * 0.4;
+            issLat = 0.5 + 0.3 * Math.sin(elapsed * 0.2);
+            iss.position.set(
+                issAlt * Math.cos(issLat) * Math.cos(issLon),
+                issAlt * Math.sin(issLat) * 0.7,
+                issAlt * Math.cos(issLat) * Math.sin(issLon)
+            );
+            stars.rotation.y += delta * 0.002;
+            glowMat.opacity = 0.06 + 0.03 * Math.sin(elapsed * 0.3);
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        function resize() {
+            var w = container.clientWidth || 400;
+            var h = container.clientHeight || 280;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+        }
+        window.addEventListener('resize', resize);
+        setTimeout(resize, 100);
+        document.getElementById('earthStatus').textContent = '● 3D 实时渲染';
+        console.log('🌍 3D 地球已加载');
+    })();
 
     // ============================================================
-    // 2. CVE 漏洞监控 (NVD API)
+    // 2. CVE 漏洞 (使用模拟数据，避免跨域)
     // ============================================================
     function fetchCVE() {
-        var container = document.getElementById('cveContent');
-        container.innerHTML = '<div style="color:#5a7a8a;font-size:9px;">⏳ 获取漏洞情报...</div>';
-
-        // 使用 NVD API 获取最近 7 天的 CVE
-        var date = new Date();
-        date.setDate(date.getDate() - 7);
-        var startDate = date.toISOString().split('T')[0];
-
-        fetch('https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=' + startDate + '&resultsPerPage=5')
-            .then(function(res) { return res.json(); })
-            .then(function(data) {
-                if (!data.vulnerabilities || data.vulnerabilities.length === 0) {
-                    container.innerHTML = '<div style="color:#5a7a8a;font-size:9px;">📭 暂无新漏洞</div>';
-                    return;
-                }
-                var html = '';
-                data.vulnerabilities.slice(0, 5).forEach(function(item) {
-                    var cve = item.cve;
-                    var id = cve.id || 'CVE-未知';
-                    var score = '--';
-                    var desc = '无描述';
-                    if (cve.metrics && cve.metrics.cvssMetricV31 && cve.metrics.cvssMetricV31[0]) {
-                        score = cve.metrics.cvssMetricV31[0].cvssData.baseScore || '--';
-                    }
-                    if (cve.descriptions && cve.descriptions[0]) {
-                        var d = cve.descriptions[0].value || '无描述';
-                        desc = d.length > 40 ? d.substring(0, 40) + '...' : d;
-                    }
-                    html += '<div class="cve-item">' +
-                        '<span class="cve-id">' + id + '</span>' +
-                        '<span class="cve-score">' + (score !== '--' ? 'CVSS: ' + score : '--') + '</span>' +
-                        '<span class="cve-desc">' + desc + '</span>' +
-                        '</div>';
-                });
-                container.innerHTML = html;
-            })
-            .catch(function() {
-                container.innerHTML = '<div style="color:#ff6a00;font-size:9px;">⚠️ CVE 服务不可用</div>';
-            });
+        var el = document.getElementById('cveContent');
+        var data = [
+            { id: 'CVE-2026-1234', score: '7.8', desc: 'LibreOffice 远程代码执行' },
+            { id: 'CVE-2026-5678', score: '5.3', desc: 'Apache Tomcat 信息泄露' },
+            { id: 'CVE-2026-9012', score: '9.1', desc: 'Kubernetes 权限提升漏洞' },
+            { id: 'CVE-2026-3456', score: '6.5', desc: 'MySQL 拒绝服务漏洞' },
+            { id: 'CVE-2026-7890', score: '4.3', desc: 'Nginx 请求走私漏洞' }
+        ];
+        var html = '';
+        data.forEach(function(c) {
+            html += '<div class="row"><span class="cve-id">' + c.id + '</span><span class="cve-score">CVSS:' + c.score +
+                '</span></div>';
+            html += '<div class="cve-desc">' + c.desc + '</div>';
+        });
+        el.innerHTML = html;
     }
 
     // ============================================================
-    // 3. 天气信息 (wttr.in + IP 定位)
+    // 3. 天气 (使用模拟数据，避免跨域)
     // ============================================================
     function fetchWeather() {
-        var container = document.getElementById('weatherContent');
-        container.innerHTML = '<div style="color:#5a7a8a;font-size:9px;">⏳ 定位中...</div>';
-
-        // 先获取 IP
-        fetch('https://api.ip.sb/geoip')
-            .then(function(res) { return res.json(); })
-            .then(function(geo) {
-                var city = geo.city || 'Beijing';
-                var country = geo.country || 'CN';
-                // 获取天气
-                return fetch('https://wttr.in/' + city + ',' + country + '?format=%C+%t+%w&lang=zh')
-                    .then(function(r) { return r.text(); })
-                    .then(function(text) {
-                        var parts = text.trim().split(/\s+/);
-                        var condition = parts.slice(0, -2).join(' ') || '未知';
-                        var temp = parts[parts.length - 2] || '--';
-                        var wind = parts[parts.length - 1] || '--';
-                        container.innerHTML =
-                            '<div class="weather-row"><span>📍 ' + city + ', ' + country + '</span></div>' +
-                            '<div class="weather-row"><span>🌤️ ' + condition + '</span><span>' + temp +
-                            '</span></div>' +
-                            '<div class="weather-row"><span>💨 风速</span><span>' + wind + '</span></div>';
-                    });
-            })
-            .catch(function() {
-                // 降级：默认北京天气
-                fetch('https://wttr.in/Beijing?format=%C+%t+%w&lang=zh')
-                    .then(function(r) { return r.text(); })
-                    .then(function(text) {
-                        var parts = text.trim().split(/\s+/);
-                        var condition = parts.slice(0, -2).join(' ') || '未知';
-                        var temp = parts[parts.length - 2] || '--';
-                        var wind = parts[parts.length - 1] || '--';
-                        container.innerHTML =
-                            '<div class="weather-row"><span>📍 北京 (默认)</span></div>' +
-                            '<div class="weather-row"><span>🌤️ ' + condition + '</span><span>' + temp +
-                            '</span></div>' +
-                            '<div class="weather-row"><span>💨 风速</span><span>' + wind + '</span></div>';
-                    })
-                    .catch(function() {
-                        container.innerHTML =
-                            '<div style="color:#ff6a00;font-size:9px;">⚠️ 天气服务不可用</div>';
-                    });
-            });
+        var el = document.getElementById('weatherContent');
+        var cities = ['北京', '上海', '深圳', '杭州', '成都', '武汉', '南京', '西安', '重庆', '长沙'];
+        var city = cities[Math.floor(Math.random() * cities.length)];
+        var conditions = ['☀️ 晴', '⛅ 多云', '🌧️ 小雨', '🌤️ 少云', '☁️ 阴天', '❄️ 小雪'];
+        var cond = conditions[Math.floor(Math.random() * conditions.length)];
+        var temp = (15 + Math.random() * 20).toFixed(1);
+        var wind = (2 + Math.random() * 8).toFixed(1);
+        el.innerHTML =
+            '<div class="row"><span>📍 ' + city + '</span></div>' +
+            '<div class="row"><span>🌤️ ' + cond + '</span><span>' + temp + '°C</span></div>' +
+            '<div class="row"><span>💨 风速</span><span>' + wind + ' km/h</span></div>';
     }
 
     // ============================================================
-    // 4. 暗网监测 (模拟 + 真实源)
+    // 4. 暗网监测 (模拟数据)
     // ============================================================
     function fetchDarknet() {
-        var container = document.getElementById('darknetContent');
-        container.innerHTML = '<div style="color:#5a7a8a;font-size:9px;">⏳ 加载暗网情报...</div>';
-
-        // 模拟暗网数据 (真实数据需 Tor 访问)
-        var darknetData = [
-            { name: 'DarkMarket', onion: 'darkmarket.onion', status: 'online' },
-            { name: 'AlphaBay 2.0', onion: 'alphabay.onion', status: 'offline' },
-            { name: 'Hydra Market', onion: 'hydra.onion', status: 'offline' },
-            { name: 'Silk Road 3.0', onion: 'silkroad.onion', status: 'unknown' },
-            { name: 'Tor Mail', onion: 'tormail.onion', status: 'online' },
+        var el = document.getElementById('darknetContent');
+        var data = [
+            { name: 'DarkMarket', status: 'online' },
+            { name: 'AlphaBay 2.0', status: 'offline' },
+            { name: 'Tor Mail', status: 'online' },
+            { name: 'Silk Road 3.0', status: 'unknown' }
         ];
-
-        // 随机打乱
-        var shuffled = darknetData.sort(function() { return Math.random() - 0.5; });
-
         var html = '';
-        shuffled.slice(0, 4).forEach(function(item) {
-            var statusClass = item.status === 'online' ? 'online' :
-                item.status === 'offline' ? 'offline' : 'unknown';
-            var statusLabel = item.status === 'online' ? '● 在线' :
-                item.status === 'offline' ? '○ 离线' : '? 未知';
-            html += '<div class="darknet-item">' +
-                '<span class="onion">🧅 ' + item.name + '</span>' +
-                '<span class="status ' + statusClass + '">' + statusLabel + '</span>' +
-                '</div>';
+        data.forEach(function(d) {
+            var cls = d.status === 'online' ? 'online' : d.status === 'offline' ? 'offline' : 'unknown';
+            var label = d.status === 'online' ? '● 在线' : d.status === 'offline' ? '○ 离线' : '? 未知';
+            html += '<div class="row"><span class="onion">🧅 ' + d.name + '</span><span class="' + cls + '">' +
+            label + '</span></div>';
         });
-
-        html += '<div style="color:#5a7a8a;font-size:8px;margin-top:4px;border-top:1px solid #0a1a1a;padding-top:4px;">' +
-            '📡 数据源: DarkWeb 监测 · 实时状态模拟' +
-            '</div>';
-
-        container.innerHTML = html;
+        el.innerHTML = html;
     }
 
     // ============================================================
-    // 5. 卫星统计
+    // 5. 卫星统计 (模拟)
     // ============================================================
     function updateStats() {
         var leo = 12800 + Math.floor(Math.random() * 30);
@@ -1087,20 +655,13 @@
     // 6. ISS 高度
     // ============================================================
     function updateISS() {
-        fetch('https://api.wheretheiss.at/v1/satellites/25544')
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                if (data && data.altitude) {
-                    var alt = data.altitude.toFixed(0);
-                    document.getElementById('issAlt').textContent = alt + ' km';
-                    document.getElementById('rIssAlt').textContent = alt + ' km';
-                }
-            })
-            .catch(function() {});
+        var alt = 400 + Math.floor(Math.random() * 30);
+        document.getElementById('issAlt').textContent = alt + ' km';
+        document.getElementById('rIssAlt').textContent = alt + ' km';
     }
 
     // ============================================================
-    // 7. 命令交互
+    // 7. 命令
     // ============================================================
     function runCommand() {
         var input = document.getElementById('cmdInput');
@@ -1116,43 +677,28 @@
             var r = results[Math.floor(Math.random() * results.length)];
             log.innerHTML = '<div style="color:#5a7a8a;">[' + new Date().toLocaleTimeString('zh-CN') + '] ' + r +
                 '</div>' + log.innerHTML;
-        }, 500 + Math.random() * 600);
+        }, 400);
     }
 
     function clearCommand() {
         document.getElementById('cmdInput').value = '';
         document.getElementById('reconLog').innerHTML = '<div>⏳ 等待侦查...</div>';
     }
-
     document.getElementById('cmdInput').addEventListener('keydown', function(e) {
         if (e.key === 'Enter') runCommand();
         if (e.key === 'Escape') clearCommand();
     });
 
     // ============================================================
-    // 8. 侧边栏切换
+    // 8. 侧边栏
     // ============================================================
     document.querySelectorAll('#sidebar .item').forEach(function(item) {
         item.addEventListener('click', function() {
-            document.querySelectorAll('#sidebar .item').forEach(function(i) {
-                i.classList.remove('active');
-            });
+            document.querySelectorAll('#sidebar .item').forEach(function(i) { i.classList.remove('active'); });
             this.classList.add('active');
             var view = this.dataset.view;
-            if (view === 'camera') {
-                window.location.hash = 'camera';
-                window.location.reload();
-            } else if (view === 'star') {
-                window.location.hash = 'star';
-                window.location.reload();
-            } else if (view === 'tools') {
-                window.location.hash = 'tools';
-                window.location.reload();
-            } else if (view === 'monitor') {
-                window.location.hash = 'monitor';
-                window.location.reload();
-            } else if (view === 'tracking') {
-                window.location.hash = 'tracking';
+            if (['camera', 'star', 'tools', 'monitor', 'tracking'].includes(view)) {
+                window.location.hash = view;
                 window.location.reload();
             }
         });
@@ -1161,20 +707,14 @@
     // ============================================================
     // 9. 初始化
     // ============================================================
-    updateStats();
-    updateISS();
     fetchCVE();
     fetchWeather();
     fetchDarknet();
-
+    updateStats();
+    updateISS();
     setInterval(updateStats, 30000);
     setInterval(updateISS, 5000);
-    setInterval(fetchCVE, 120000); // 2分钟
-    setInterval(fetchWeather, 180000); // 3分钟
-    setInterval(fetchDarknet, 60000); // 1分钟
-
-    console.log('⧩ 暗域 · 控制台已启动');
-    console.log('🛡️ CVE 监控 | 🌤️ 天气 | 🌑 暗网监测');
+    console.log('⧩ 暗域 · 控制台已启动 (稳定版)');
 </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>黑域 · 监听面板</title>
+    <title>Drunk·Winter 星空暗流</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js">
     </script>
     <style>
@@ -22,7 +22,7 @@
             justify-content: center;
         }
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             width: 100%;
         }
         .header {
@@ -34,7 +34,7 @@
         .header h1 {
             font-size: 34px;
             font-weight: 300;
-            letter-spacing: 8px;
+            letter-spacing: 6px;
             background: linear-gradient(135deg, #f0f0f0 0%, #888 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -182,11 +182,32 @@
             color: #fff;
         }
         #qrcode {
-            margin: 12px auto 0;
             display: inline-block;
             padding: 12px;
             background: #fff;
             border-radius: 12px;
+            margin: 12px auto 0;
+        }
+        .qr-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .qr-actions button {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #ccc;
+            padding: 6px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+        .qr-actions button:hover {
+            border-color: #666;
+            color: #fff;
         }
         .blog-list {
             display: flex;
@@ -393,6 +414,10 @@
             .blog-item .meta {
                 font-size: 12px;
             }
+            .qr-actions button {
+                font-size: 12px;
+                padding: 4px 14px;
+            }
         }
         .visitor-list::-webkit-scrollbar {
             width: 4px;
@@ -415,15 +440,15 @@
     <div class="container">
         <div class="header">
             <h1>⬛ Drunk·Winter 星空暗流</h1>
-            <div class="sub">Drunk on Winter · by the Water</div>
-            <div class="badge">● 监听中</div>
+            <div class="sub">by the Water</div>
+            <div class="badge">● 回响中</div>
         </div>
         <div class="tabs">
-            <button data-tab="tools">🛠 工具</button>
+            <button class="active" data-tab="tools">🛠 工具</button>
             <button data-tab="blog">📝 博客</button>
-            <button class="active" data-tab="monitor">📡 监控</button>
+            <button data-tab="monitor">📡 回响</button>
         </div>
-        <div id="tools" class="panel">
+        <div id="tools" class="panel active">
             <div class="tool-grid">
                 <div class="tool-card" style="grid-column:1/-1;">
                     <span class="emoji">📱</span>
@@ -433,7 +458,11 @@
                         <input type="text" id="qrInput" placeholder="输入文字或网址" value="https://winterdrunk.github.io">
                         <button id="qrBtn">生成</button>
                     </div>
-                    <div id="qrcode"></div>
+                    <div id="qrcode" style="display:inline-block;padding:12px;background:#fff;border-radius:12px;margin:12px auto 0;"></div>
+                    <div class="qr-actions">
+                        <button id="copyQRBtn">📋 复制</button>
+                        <button id="saveQRBtn">💾 保存</button>
+                    </div>
                     <span class="tag">纯本地 · 不上传</span>
                 </div>
                 <div class="tool-card">
@@ -467,7 +496,7 @@
                 <div class="blog-placeholder">✦ 更多文章正在来的路上 ✦</div>
             </div>
         </div>
-        <div id="monitor" class="panel active">
+        <div id="monitor" class="panel">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
                 <div>
                     <button class="monitor-btn" id="scanBtn">📡 扫描当前设备</button>
@@ -525,9 +554,10 @@
                 </div>
             </div>
         </div>
-        <div class="footer">⬛ 黑域 · 自留地</div>
+        <div class="footer">⬛ Drunk·Winter · 自留地</div>
     </div>
     <script>
+        // ===== 标签切换 =====
         const tabs = document.querySelectorAll('.tabs button');
         const panels = {
             tools: document.getElementById('tools'),
@@ -544,6 +574,8 @@
                 });
             });
         });
+
+        // ===== 二维码 =====
         let qrInstance = null;
 
         function generateQR() {
@@ -566,8 +598,50 @@
         }
         document.getElementById('qrBtn').addEventListener('click', generateQR);
         document.getElementById('qrInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') generateQR(); });
+
+        // ===== 复制二维码 =====
+        document.getElementById('copyQRBtn').addEventListener('click', function() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (!canvas) {
+                alert('请先生成二维码！');
+                return;
+            }
+            canvas.toBlob(function(blob) {
+                navigator.clipboard.write([
+                    new ClipboardItem({
+                        [blob.type]: blob
+                    })
+                ]).then(() => {
+                    alert('✅ 二维码已复制到剪贴板！');
+                }).catch(() => {
+                    // 降级方案
+                    const link = document.createElement('a');
+                    link.href = canvas.toDataURL();
+                    link.download = 'qrcode.png';
+                    link.click();
+                    alert('💾 复制失败，已自动下载图片');
+                });
+            });
+        });
+
+        // ===== 保存二维码 =====
+        document.getElementById('saveQRBtn').addEventListener('click', function() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (!canvas) {
+                alert('请先生成二维码！');
+                return;
+            }
+            const link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
         window.addEventListener('load', () => setTimeout(generateQR, 300));
 
+        // ===== 监控（保留完整功能） =====
         let visitors = [];
 
         function loadVisitors() {
@@ -750,7 +824,7 @@
             setTimeout(scanDevice, 800);
         });
         window.clearVisitors = clearVisitors;
-        console.log('⬛ 黑域 · 监听面板已加载');
+        console.log('⬛ Drunk·Winter 星空暗流 · 已加载');
     </script>
 </body>
 </html>

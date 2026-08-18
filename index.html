@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drunk on Winter · 黑域</title>
+    <title>黑域 · 监听面板</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js">
+    </script>
     <style>
+        /* ===== 全局黑色主题 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -20,9 +23,11 @@
             justify-content: center;
         }
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             width: 100%;
         }
+
+        /* ===== 头部 ===== */
         .header {
             text-align: center;
             margin-bottom: 40px;
@@ -30,9 +35,9 @@
             padding-bottom: 30px;
         }
         .header h1 {
-            font-size: 32px;
+            font-size: 34px;
             font-weight: 300;
-            letter-spacing: 6px;
+            letter-spacing: 8px;
             background: linear-gradient(135deg, #f0f0f0 0%, #888 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -44,11 +49,25 @@
             letter-spacing: 4px;
             margin-top: 6px;
         }
+        .header .badge {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #4caf50;
+            border: 1px solid #1a3a2a;
+            padding: 4px 18px;
+            border-radius: 20px;
+            letter-spacing: 2px;
+            background: #0d1a12;
+        }
+
+        /* ===== 导航标签 ===== */
         .tabs {
             display: flex;
             justify-content: center;
             gap: 12px;
             margin-bottom: 40px;
+            flex-wrap: wrap;
         }
         .tabs button {
             background: transparent;
@@ -72,6 +91,7 @@
             color: #fff;
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.02);
         }
+
         .panel {
             display: none;
             animation: fadeIn 0.4s ease;
@@ -80,12 +100,20 @@
             display: block;
         }
         @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(12px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
+        /* ===== 工具卡片 ===== */
         .tool-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
         }
         .tool-card {
@@ -94,7 +122,6 @@
             border-radius: 16px;
             padding: 28px 22px;
             transition: all 0.25s ease;
-            cursor: default;
         }
         .tool-card:hover {
             border-color: #333;
@@ -127,6 +154,50 @@
             border-radius: 20px;
             letter-spacing: 1px;
         }
+        .qr-input-group {
+            display: flex;
+            gap: 10px;
+            margin: 14px 0 10px;
+            flex-wrap: wrap;
+        }
+        .qr-input-group input {
+            flex: 1;
+            padding: 10px 16px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 30px;
+            color: #e0e0e0;
+            font-size: 14px;
+            outline: none;
+            min-width: 180px;
+        }
+        .qr-input-group input:focus {
+            border-color: #555;
+        }
+        .qr-input-group button {
+            padding: 10px 24px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #ccc;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .qr-input-group button:hover {
+            border-color: #666;
+            color: #fff;
+        }
+        #qrcode {
+            margin: 12px auto 0;
+            display: inline-block;
+            padding: 12px;
+            background: #fff;
+            border-radius: 12px;
+        }
+
+        /* ===== 博客列表 ===== */
         .blog-list {
             display: flex;
             flex-direction: column;
@@ -168,6 +239,139 @@
             border: 1px dashed #1a1a1a;
             border-radius: 16px;
         }
+
+        /* ===== 监控面板（核心） ===== */
+        .monitor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+        .monitor-item {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+        .monitor-item.full {
+            grid-column: 1 / -1;
+        }
+        .monitor-item .label {
+            font-size: 10px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2px;
+        }
+        .monitor-item .value {
+            font-size: 15px;
+            color: #eee;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+        }
+        .monitor-item .value.warn {
+            color: #ff9800;
+            font-size: 13px;
+        }
+        .monitor-item .value.danger {
+            color: #f44336;
+        }
+        .monitor-item .value.success {
+            color: #4caf50;
+        }
+        .monitor-item .value.cyan {
+            color: #4dd0e1;
+        }
+
+        .monitor-btn {
+            margin: 16px 0 8px;
+            padding: 10px 32px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #ccc;
+            border-radius: 40px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            letter-spacing: 1px;
+        }
+        .monitor-btn:hover {
+            border-color: #666;
+            color: #fff;
+        }
+        .monitor-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .monitor-status {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #555;
+            letter-spacing: 1px;
+        }
+        .monitor-status.done {
+            color: #4caf50;
+        }
+        .monitor-status.error {
+            color: #f44336;
+        }
+        .monitor-status.loading {
+            color: #ff9800;
+        }
+
+        /* 访客列表 */
+        .visitor-list {
+            margin-top: 16px;
+            max-height: 350px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .visitor-item {
+            background: #0d0d0d;
+            border: 1px solid #161616;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: #888;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 16px;
+            align-items: center;
+        }
+        .visitor-item .v-time {
+            color: #555;
+            font-size: 11px;
+        }
+        .visitor-item .v-ip {
+            color: #4caf50;
+        }
+        .visitor-item .v-loc {
+            color: #ffb74d;
+        }
+        .visitor-item .v-device {
+            color: #64b5f6;
+        }
+        .visitor-item .v-local {
+            color: #ff8a65;
+            font-size: 11px;
+        }
+        .visitor-item .v-badge {
+            font-size: 9px;
+            padding: 1px 10px;
+            border-radius: 12px;
+            background: #1a1a2e;
+            color: #888;
+        }
+        .visitor-empty {
+            color: #333;
+            text-align: center;
+            padding: 30px 0;
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+
         .footer {
             margin-top: 60px;
             text-align: center;
@@ -177,102 +381,473 @@
             padding-top: 24px;
             letter-spacing: 2px;
         }
-        @media (max-width: 600px) {
-            .header h1 { font-size: 24px; letter-spacing: 4px; }
-            .tabs button { padding: 8px 20px; font-size: 13px; }
-            .tool-grid { grid-template-columns: 1fr; }
-            .blog-item { flex-direction: column; align-items: flex-start; gap: 4px; }
-            .blog-item .meta { font-size: 12px; }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 768px) {
+            .monitor-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 500px) {
+            .monitor-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 24px;
+                letter-spacing: 4px;
+            }
+            .tabs button {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            .tool-grid {
+                grid-template-columns: 1fr;
+            }
+            .blog-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .blog-item .meta {
+                font-size: 12px;
+            }
+        }
+
+        .visitor-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .visitor-list::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        .visitor-list::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+
+        .count-badge {
+            color: #555;
+            font-size: 13px;
+            margin-left: 8px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <div class="header">
-        <h1>⬛ 黑 域</h1>
-        <div class="sub">Drunk on Winter · by the Water</div>
-    </div>
+        <!-- ===== 头部 ===== -->
+        <div class="header">
+            <h1>⬛ 黑 域</h1>
+            <div class="sub">Drunk on Winter · by the Water</div>
+            <div class="badge">● 监听中</div>
+        </div>
 
-    <div class="tabs">
-        <button class="active" data-tab="tools">🛠 工具</button>
-        <button data-tab="blog">📝 博客</button>
-    </div>
+        <!-- ===== 导航 ===== -->
+        <div class="tabs">
+            <button data-tab="tools">🛠 工具</button>
+            <button data-tab="blog">📝 博客</button>
+            <button class="active" data-tab="monitor">📡 监控</button>
+        </div>
 
-    <div id="tools" class="panel active">
-        <div class="tool-grid">
-            <div class="tool-card">
-                <span class="emoji">📐</span>
-                <h3>Base64 编解码</h3>
-                <p>文本与 Base64 互转，轻量小工具</p>
-                <span class="tag">占位 · 待开发</span>
-            </div>
-            <div class="tool-card">
-                <span class="emoji">⏱</span>
-                <h3>倒计时 · 专注</h3>
-                <p>25 分钟番茄钟，保持专注</p>
-                <span class="tag">占位 · 待开发</span>
-            </div>
-            <div class="tool-card">
-                <span class="emoji">🌦</span>
-                <h3>天气卡片</h3>
-                <p>输入城市，显示实时天气</p>
-                <span class="tag">占位 · 待开发</span>
-            </div>
-            <div class="tool-card">
-                <span class="emoji">🔗</span>
-                <h3>短链生成</h3>
-                <p>长链接一键缩短</p>
-                <span class="tag">占位 · 待开发</span>
+        <!-- ========================================================= -->
+        <!-- 面板：工具 -->
+        <div id="tools" class="panel">
+            <div class="tool-grid">
+                <div class="tool-card" style="grid-column:1/-1;">
+                    <span class="emoji">📱</span>
+                    <h3>二维码生成器</h3>
+                    <p>输入文字或链接，生成二维码</p>
+                    <div class="qr-input-group">
+                        <input type="text" id="qrInput" placeholder="输入文字或网址" value="https://winterdrunk.github.io">
+                        <button id="qrBtn">生成</button>
+                    </div>
+                    <div id="qrcode"></div>
+                    <span class="tag">纯本地 · 不上传</span>
+                </div>
+                <div class="tool-card">
+                    <span class="emoji">📐</span>
+                    <h3>Base64</h3>
+                    <p>文本与Base64互转</p>
+                    <span class="tag">待开发</span>
+                </div>
+                <div class="tool-card">
+                    <span class="emoji">🔗</span>
+                    <h3>短链生成</h3>
+                    <p>长链接缩短</p>
+                    <span class="tag">待开发</span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="blog" class="panel">
-        <div class="blog-list">
-            <a href="#" class="blog-item">
-                <span class="title">🌱 为什么我要在黑域写博客</span>
-                <span class="meta">2026-08-18</span>
-            </a>
-            <a href="#" class="blog-item">
-                <span class="title">⚙️ 用 GitHub Pages 搭建网站的零碎记录</span>
-                <span class="meta">2026-08-17</span>
-            </a>
-            <a href="#" class="blog-item">
-                <span class="title">🎧 冬日听歌 · 与水边的寂静</span>
-                <span class="meta">2026-08-16</span>
-            </a>
-            <div class="blog-placeholder">
-                ✦ 更多文章正在来的路上 ✦
+        <!-- ========================================================= -->
+        <!-- 面板：博客 -->
+        <div id="blog" class="panel">
+            <div class="blog-list">
+                <a href="#" class="blog-item">
+                    <span class="title">🌱 为什么我要在黑域写博客</span>
+                    <span class="meta">2026-08-18</span>
+                </a>
+                <a href="#" class="blog-item">
+                    <span class="title">⚙️ 用 GitHub Pages 搭建网站的零碎记录</span>
+                    <span class="meta">2026-08-17</span>
+                </a>
+                <a href="#" class="blog-item">
+                    <span class="title">🎧 冬日听歌 · 与水边的寂静</span>
+                    <span class="meta">2026-08-16</span>
+                </a>
+                <div class="blog-placeholder">✦ 更多文章正在来的路上 ✦</div>
             </div>
         </div>
+
+        <!-- ========================================================= -->
+        <!-- 面板：监控（默认显示） -->
+        <div id="monitor" class="panel active">
+
+            <!-- 控制栏 -->
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+                <div>
+                    <button class="monitor-btn" id="scanBtn">📡 扫描当前设备</button>
+                    <span class="monitor-status" id="scanStatus">● 就绪</span>
+                </div>
+                <div style="display:flex;gap:8px;font-size:13px;color:#555;">
+                    <span>👤 <span id="visitorCount">0</span> 条记录</span>
+                    <button onclick="clearVisitors()" style="background:transparent;border:1px solid #2a2a2a;color:#666;padding:4px 16px;border-radius:16px;cursor:pointer;font-size:12px;">清空</button>
+                </div>
+            </div>
+
+            <!-- 当前设备信息卡片 -->
+            <div class="monitor-grid" id="monitorGrid">
+                <div class="monitor-item">
+                    <div class="label">🌐 公网 IPv4</div>
+                    <div class="value success" id="m_ipv4">--</div>
+                </div>
+                <div class="monitor-item">
+                    <div class="label">📡 公网 IPv6</div>
+                    <div class="value" id="m_ipv6">--</div>
+                </div>
+                <div class="monitor-item">
+                    <div class="label">📍 归属地</div>
+                    <div class="value cyan" id="m_location">--</div>
+                </div>
+                <div class="monitor-item">
+                    <div class="label">🏢 运营商</div>
+                    <div class="value" id="m_isp">--</div>
+                </div>
+                <div class="monitor-item">
+                    <div class="label">📱 设备</div>
+                    <div class="value" id="m_device">--</div>
+                </div>
+                <div class="monitor-item">
+                    <div class="label">💻 操作系统</div>
+                    <div class="value" id="m_os">--</div>
+                </div>
+                <div class="monitor-item">
+                    <div class="label">🌍 浏览器</div>
+                    <div class="value" id="m_browser">--</div>
+                </div>
+                <div class="monitor-item">
+                    <div class="label">📐 屏幕 · 语言</div>
+                    <div class="value" id="m_extra">--</div>
+                </div>
+                <div class="monitor-item full">
+                    <div class="label">🔗 内网 IP (WebRTC 探测)</div>
+                    <div class="value warn" id="m_localip">点击"扫描"获取</div>
+                </div>
+            </div>
+
+            <!-- 访客记录列表 -->
+            <div style="margin-top:20px;">
+                <div style="color:#555;font-size:12px;letter-spacing:1px;padding:0 4px 6px 4px;border-bottom:1px solid #111;">
+                    📋 访客记录
+                </div>
+                <div class="visitor-list" id="visitorList">
+                    <div class="visitor-empty">暂无记录</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 页脚 ===== -->
+        <div class="footer">⬛ 黑域 · 自留地</div>
+
     </div>
 
-    <div class="footer">
-        ⬛ 黑域 · 自留地
-    </div>
-
-</div>
-
-<script>
-    const tabs = document.querySelectorAll('.tabs button');
-    const panels = {
-        tools: document.getElementById('tools'),
-        blog: document.getElementById('blog')
-    };
-
-    tabs.forEach(btn => {
-        btn.addEventListener('click', () => {
-            tabs.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const target = btn.dataset.tab;
-            Object.keys(panels).forEach(key => {
-                panels[key].classList.toggle('active', key === target);
+    <!-- ========================================================= -->
+    <!-- JavaScript -->
+    <script>
+        // =========================================================
+        // 1. 标签切换
+        // =========================================================
+        const tabs = document.querySelectorAll('.tabs button');
+        const panels = {
+            tools: document.getElementById('tools'),
+            blog: document.getElementById('blog'),
+            monitor: document.getElementById('monitor')
+        };
+        tabs.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabs.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const target = btn.dataset.tab;
+                Object.keys(panels).forEach(key => {
+                    panels[key].classList.toggle('active', key === target);
+                });
             });
         });
-    });
-</script>
+
+        // =========================================================
+        // 2. 二维码
+        // =========================================================
+        let qrInstance = null;
+
+        function generateQR() {
+            const input = document.getElementById('qrInput');
+            const container = document.getElementById('qrcode');
+            const text = input.value.trim() || 'https://winterdrunk.github.io';
+            container.innerHTML = '';
+            try {
+                qrInstance = new QRCode(container, {
+                    text: text,
+                    width: 180,
+                    height: 180,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            } catch {
+                container.innerHTML = '<span style="color:#f44336;font-size:14px;">❌ 生成失败</span>';
+            }
+        }
+        document.getElementById('qrBtn').addEventListener('click', generateQR);
+        document.getElementById('qrInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') generateQR(); });
+        window.addEventListener('load', () => setTimeout(generateQR, 300));
+
+        // =========================================================
+        // 3. 监控核心
+        // =========================================================
+
+        // 存储访客记录（localStorage持久化）
+        let visitors = [];
+
+        function loadVisitors() {
+            try {
+                const data = localStorage.getItem('black_visitors');
+                visitors = data ? JSON.parse(data) : [];
+            } catch {
+                visitors = [];
+            }
+        }
+
+        function saveVisitors() {
+            try {
+                localStorage.setItem('black_visitors', JSON.stringify(visitors));
+            } catch {}
+        }
+
+        function setVal(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val || '--';
+        }
+
+        function setStatus(text, type) {
+            const el = document.getElementById('scanStatus');
+            el.textContent = text;
+            el.className = 'monitor-status ' + (type || '');
+        }
+
+        // 解析 UA
+        function parseUA(ua) {
+            let device = '未知',
+                os = '未知',
+                browser = '未知';
+            if (/iPhone/.test(ua)) device = 'iPhone';
+            else if (/iPad/.test(ua)) device = 'iPad';
+            else if (/Android/.test(ua)) {
+                const m = ua.match(/Android\s+([\d.]+)/);
+                device = 'Android' + (m ? ' ' + m[1] : '');
+            } else if (/Windows NT/.test(ua)) device = 'Windows PC';
+            else if (/Macintosh/.test(ua)) device = 'Mac';
+            else if (/Linux/.test(ua)) device = 'Linux';
+
+            if (/Windows NT 10.0/.test(ua)) os = 'Windows 10/11';
+            else if (/Windows NT 6.1/.test(ua)) os = 'Windows 7';
+            else if (/Mac OS X/.test(ua)) {
+                const m = ua.match(/Mac OS X ([_\d]+)/);
+                os = 'macOS ' + (m ? m[1].replace(/_/g, '.') : '');
+            } else if (/Android/.test(ua)) {
+                const m = ua.match(/Android\s+([\d.]+)/);
+                os = 'Android ' + (m ? m[1] : '');
+            } else if (/iPhone OS/.test(ua)) {
+                const m = ua.match(/iPhone OS ([\d_]+)/);
+                os = 'iOS ' + (m ? m[1].replace(/_/g, '.') : '');
+            } else if (/iPad/.test(ua)) {
+                const m = ua.match(/iPad OS ([\d_]+)/);
+                os = 'iPadOS ' + (m ? m[1].replace(/_/g, '.') : '');
+            } else if (/Linux/.test(ua)) os = 'Linux';
+
+            if (/Edg\//.test(ua)) {
+                const m = ua.match(/Edg\/([\d.]+)/);
+                browser = 'Edge ' + (m ? m[1] : '');
+            } else if (/Firefox\//.test(ua)) {
+                const m = ua.match(/Firefox\/([\d.]+)/);
+                browser = 'Firefox ' + (m ? m[1] : '');
+            } else if (/OPR\//.test(ua)) {
+                const m = ua.match(/OPR\/([\d.]+)/);
+                browser = 'Opera ' + (m ? m[1] : '');
+            } else if (/Chrome\//.test(ua) && !/Edg/.test(ua)) {
+                const m = ua.match(/Chrome\/([\d.]+)/);
+                browser = 'Chrome ' + (m ? m[1] : '');
+            } else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) {
+                const m = ua.match(/Version\/([\d.]+)/);
+                browser = 'Safari ' + (m ? m[1] : '');
+            }
+            return { device, os, browser };
+        }
+
+        // 获取内网IP (WebRTC)
+        function getLocalIPs() {
+            return new Promise((resolve) => {
+                const ips = [];
+                try {
+                    const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+                    pc.createDataChannel('test');
+                    pc.createOffer().then(o => pc.setLocalDescription(o)).catch(() => {});
+                    pc.onicecandidate = (e) => {
+                        if (!e.candidate) {
+                            pc.close();
+                            resolve(ips.length ? ips : ['未获取到']);
+                            return;
+                        }
+                        const ip = e.candidate.candidate.match(/(\d+\.\d+\.\d+\.\d+)/)?.[1];
+                        const ip6 = e.candidate.candidate.match(/([a-f0-9:]+:[a-f0-9:]+)/i)?.[1];
+                        if (ip && !ips.includes(ip) && !ip.startsWith('192.168.0.')) ips.push(ip);
+                        if (ip6 && !ips.includes(ip6)) ips.push(ip6);
+                    };
+                    setTimeout(() => { pc.close();
+                        resolve(ips.length ? ips : ['超时']); }, 5000);
+                } catch {
+                    resolve(['不支持']);
+                }
+            });
+        }
+
+        // 主扫描函数
+        async function scanDevice() {
+            const btn = document.getElementById('scanBtn');
+            btn.disabled = true;
+            setStatus('⏳ 扫描中...', 'loading');
+
+            try {
+                // 1. 公网IP
+                const ipRes = await fetch('https://ipinfo.io/json');
+                const ipData = await ipRes.json();
+
+                // 2. UA解析
+                const ua = navigator.userAgent;
+                const parsed = parseUA(ua);
+
+                // 3. 内网IP
+                const localIPs = await getLocalIPs();
+
+                // 4. 组装数据
+                const record = {
+                    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+                    time: new Date().toLocaleString('zh-CN'),
+                    timestamp: Date.now(),
+                    ipv4: ipData.ip || '未知',
+                    ipv6: 'N/A',
+                    location: [ipData.city, ipData.region, ipData.country].filter(Boolean).join(', ') || '未知',
+                    isp: ipData.org || '未知',
+                    device: parsed.device,
+                    os: parsed.os,
+                    browser: parsed.browser,
+                    screen: `${window.screen.width}x${window.screen.height}`,
+                    language: navigator.language,
+                    localIP: localIPs.join(' | ') || '未获取到'
+                };
+
+                // 5. 显示在面板上
+                setVal('m_ipv4', record.ipv4);
+                setVal('m_ipv6', record.ipv6);
+                setVal('m_location', record.location);
+                setVal('m_isp', record.isp);
+                setVal('m_device', record.device);
+                setVal('m_os', record.os);
+                setVal('m_browser', record.browser);
+                setVal('m_extra', `${record.screen} · ${record.language}`);
+                setVal('m_localip', record.localIP);
+
+                // 6. 保存到访客列表
+                visitors.unshift(record);
+                if (visitors.length > 100) visitors.length = 100;
+                saveVisitors();
+                renderVisitors();
+
+                setStatus('✅ 扫描完成!', 'done');
+
+            } catch (e) {
+                setStatus('❌ 失败: ' + e.message, 'error');
+            }
+
+            btn.disabled = false;
+        }
+
+        // 渲染访客列表
+        function renderVisitors() {
+            const container = document.getElementById('visitorList');
+            const countEl = document.getElementById('visitorCount');
+
+            countEl.textContent = visitors.length;
+
+            if (visitors.length === 0) {
+                container.innerHTML = '<div class="visitor-empty">暂无记录</div>';
+                return;
+            }
+
+            container.innerHTML = visitors.map(v => `
+                <div class="visitor-item">
+                    <span class="v-time">${v.time}</span>
+                    <span class="v-ip">${v.ipv4}</span>
+                    <span class="v-loc">${v.location}</span>
+                    <span class="v-device">${v.device}</span>
+                    ${v.localIP && v.localIP !== '未获取到' ? `<span class="v-local">🖧 ${v.localIP}</span>` : ''}
+                    <span class="v-badge">${v.browser}</span>
+                </div>
+            `).join('');
+        }
+
+        // 清空访客记录
+        function clearVisitors() {
+            if (!confirm('确定清空所有访客记录吗？')) return;
+            visitors = [];
+            saveVisitors();
+            renderVisitors();
+            // 同时清空显示面板
+            ['m_ipv4', 'm_ipv6', 'm_location', 'm_isp', 'm_device', 'm_os', 'm_browser', 'm_extra', 'm_localip']
+            .forEach(id => setVal(id, '--'));
+            setStatus('● 已清空', '');
+        }
+
+        // =========================================================
+        // 4. 事件绑定 + 初始化
+        // =========================================================
+
+        document.getElementById('scanBtn').addEventListener('click', scanDevice);
+
+        // 加载数据
+        loadVisitors();
+        renderVisitors();
+
+        // 页面加载后自动扫描一次
+        window.addEventListener('load', () => {
+            setTimeout(scanDevice, 800);
+        });
+
+        // 暴露给全局（用于按钮 onclick）
+        window.clearVisitors = clearVisitors;
+
+        console.log('⬛ 黑域 · 监听面板已加载');
+        console.log('📡 访客记录数:', visitors.length);
+    </script>
 
 </body>
 </html>
